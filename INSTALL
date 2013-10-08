@@ -1,0 +1,16 @@
+
+Linux
+1. install Go1 and OpenCV
+2. go get code.google.com/p/go-opencv/trunk/opencv
+3. cd ${GoOpenCVRoot}/trunk/samples && go run hellocv.go
+
+Windows
+1. install Go1 and MinGW
+2. install OpenCV-2.4.x to MinGW dir 
+   libopencv*.dll --> ${MinGWRoot}\bin
+   libopencv*.lib --> ${MinGWRoot}\lib
+   include\opencv --> ${MinGWRoot}\include\opencv
+   include\opencv2 --> ${MinGWRoot}\include\opencv2
+2. go get code.google.com/p/go-opencv/trunk/opencv
+3. cd ${GoOpenCVRoot}/trunk/samples && go run hellocv.go
+
