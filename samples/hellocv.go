@@ -8,7 +8,7 @@ import (
 	"fmt"
 	"os"
 
-	"github.com/lazywei/go-opencv"
+	"github.com/lazywei/go-opencv/opencv"
 )
 
 func main() {
