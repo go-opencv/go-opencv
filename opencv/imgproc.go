@@ -20,12 +20,12 @@ func Resize(src *IplImage, width, height, interpolation int) *IplImage {
 		panic("Width and Height cannot be 0 at the same time")
 	}
 	if width == 0 {
-		ratio := float64(height / src.Height())
+		ratio := float64(height) / float64(src.Height())
 		width = int(float64(src.Width()) * ratio)
 		log.Println(ratio)
 		log.Println(width)
 	} else if height == 0 {
-		ratio := float64(width / src.Width())
+		ratio := float64(width) / float64(src.Width())
 		height = int(float64(src.Height()) * ratio)
 		log.Println(ratio)
 		log.Println(height)
