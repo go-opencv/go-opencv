@@ -9,12 +9,12 @@ Original project (https://code.google.com/p/go-opencv) looks abandoned. Therefor
 
 ## Install
 
-Linux
+### Linux
 - install Go1 and OpenCV
-- go get code.google.com/p/go-opencv/trunk/opencv
-- cd ${GoOpenCVRoot}/trunk/samples && go run hellocv.go
+- `go get github.com/lazywei/go-opencv`
+- `cd ${GoOpenCVRoot}/samples && go run hellocv.go`
 
-Windows
+### Windows
 - install Go1 and MinGW
 - install OpenCV-2.4.x to MinGW dir
   - libopencv*.dll --> ${MinGWRoot}\bin
