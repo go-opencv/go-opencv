@@ -23,3 +23,10 @@ Original project (https://code.google.com/p/go-opencv) looks abandoned. Therefor
   - include\opencv2 --> ${MinGWRoot}\include\opencv2
 - go get code.google.com/p/go-opencv/trunk/opencv
 - cd ${GoOpenCVRoot}/trunk/samples && go run hellocv.go
+
+## Contribute
+
+- Fork this repo
+- Create new feature branch, `git checkout -b your-feature-branch`
+- Commit your change and push it to your repo `git commit -m 'new feature'; git push origin your-feature-branch`
+- Open pull request!
