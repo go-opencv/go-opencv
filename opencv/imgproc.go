@@ -11,7 +11,7 @@ package opencv
 import "C"
 import (
 	//"errors"
-	"log"
+	//"log"
 	"unsafe"
 )
 
