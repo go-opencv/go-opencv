@@ -7,8 +7,11 @@ package main
 import (
 	"fmt"
 	"os"
+  "path"
+  "runtime"
 
-	"github.com/lazywei/go-opencv/opencv"
+  //"github.com/lazywei/go-opencv/opencv"
+	"../opencv" // can be used in forks, comment in real application
 )
 
 func main() {
@@ -22,7 +25,7 @@ func main() {
 
 	cap := opencv.NewFileCapture(filename)
 	if cap == nil {
-		panic("can not open video")	
+		panic("can not open video")
 	}
 	defer cap.Release()
 
@@ -60,7 +63,7 @@ func main() {
 			frame_pos := int(cap.GetProperty(opencv.CV_CAP_PROP_POS_FRAMES))
 			if frame_pos >= frames { break }
 			win.SetTrackbarPos("Seek", frame_pos)
-		
+
 			win.ShowImage(img)
 			key := opencv.WaitKey(1000/fps)
 			if key == 27 { os.Exit(0) }
@@ -70,8 +73,5 @@ func main() {
 		}
 	}
 
-
 	opencv.WaitKey(0)
 }
-
-

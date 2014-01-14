@@ -7,12 +7,16 @@ package main
 import (
 	"fmt"
 	"os"
+  "path"
+  "runtime"
 
-	"github.com/lazywei/go-opencv/opencv"
+  //"github.com/lazywei/go-opencv/opencv"
+	"../opencv" // can be used in forks, comment in real application
 )
 
 func main() {
-	filename := "../images/lena.jpg"
+  _, currentfile, _, _ := runtime.Caller(0)
+	filename := path.Join(path.Dir(currentfile), "../images/lena.jpg")
 	if len(os.Args) == 2 {
 		filename = os.Args[1]
 	}
