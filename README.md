@@ -22,6 +22,8 @@ Original project (https://code.google.com/p/go-opencv) looks abandoned. Therefor
 
 ## Example
 
+### Resizing
+
 ```go
 package main
 
@@ -42,6 +44,18 @@ func main() {
 	opencv.SaveImage("resized3.jpg", resized3, 0)
 }
 ```
+
+### Webcam
+
+Yet another cool example is created by @saratovsource which demos how to use webcam:
+
+```
+cd samples
+go run webcam.go
+```
+
+### More
+
 You can find more samples at: https://github.com/lazywei/go-opencv/tree/master/samples
 
 ## Contribute
