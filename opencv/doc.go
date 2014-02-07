@@ -4,4 +4,3 @@
 
 // Bindings for Intel's OpenCV computer vision library.
 package opencv
-

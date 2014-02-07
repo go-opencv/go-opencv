@@ -31,7 +31,7 @@ func Free(p unsafe.Pointer) {
 /* Allocates and initializes IplImage header */
 func CreateImageHeader(w, h, depth, channels int) *IplImage {
 	hdr := C.cvCreateImageHeader(
-		C.cvSize(C.int(w),C.int(h)),
+		C.cvSize(C.int(w), C.int(h)),
 		C.int(depth),
 		C.int(channels),
 	)
@@ -39,10 +39,10 @@ func CreateImageHeader(w, h, depth, channels int) *IplImage {
 }
 
 /* Inializes IplImage header */
-func (img *IplImage)InitHeader(w, h, depth, channels, origin, align int) {
+func (img *IplImage) InitHeader(w, h, depth, channels, origin, align int) {
 	C.cvInitImageHeader(
 		(*C.IplImage)(img),
-		C.cvSize(C.int(w),C.int(h)),
+		C.cvSize(C.int(w), C.int(h)),
 		C.int(depth),
 		C.int(channels),
 		C.int(origin),
@@ -58,44 +58,47 @@ func CreateImage(w, h, depth, channels int) *IplImage {
 }
 
 /* Releases (i.e. deallocates) IPL image header */
-func (img *IplImage)ReleaseHeader() {
+func (img *IplImage) ReleaseHeader() {
 	img_c := (*C.IplImage)(img)
 	C.cvReleaseImageHeader(&img_c)
 }
 
 /* Releases IPL image header and data */
-func (img *IplImage)Release() {
+func (img *IplImage) Release() {
 	img_c := (*C.IplImage)(img)
 	C.cvReleaseImage(&img_c)
 }
 
 /* Creates a copy of IPL image (widthStep may differ) */
-func (img *IplImage)Clone() *IplImage {
+func (img *IplImage) Clone() *IplImage {
 	p := C.cvCloneImage((*C.IplImage)(img))
-	return (*IplImage)(p);
+	return (*IplImage)(p)
 }
 
 /* Sets a Channel Of Interest (only a few functions support COI) -
    use cvCopy to extract the selected channel and/or put it back */
-func (img *IplImage)SetCOI(coi int) {
+func (img *IplImage) SetCOI(coi int) {
 	C.cvSetImageCOI((*C.IplImage)(img), C.int(coi))
 }
+
 /* Retrieves image Channel Of Interest */
-func (img *IplImage)GetCOI() int {
+func (img *IplImage) GetCOI() int {
 	coi := C.cvGetImageCOI((*C.IplImage)(img))
 	return int(coi)
 }
 
 /* Sets image ROI (region of interest) (COI is not changed) */
-func (img *IplImage)SetROI(rect Rect) {
+func (img *IplImage) SetROI(rect Rect) {
 	C.cvSetImageROI((*C.IplImage)(img), C.CvRect(rect))
 }
+
 /* Resets image ROI and COI */
-func (img *IplImage)ResetROI() {
+func (img *IplImage) ResetROI() {
 	C.cvResetImageROI((*C.IplImage)(img))
 }
+
 /* Retrieves image ROI */
-func (img *IplImage)GetROI() Rect {
+func (img *IplImage) GetROI() Rect {
 	r := C.cvGetImageROI((*C.IplImage)(img))
 	return Rect(r)
 }
@@ -112,6 +115,7 @@ func CreateMatHeader(rows, cols, type_ int) *Mat {
 	)
 	return (*Mat)(mat)
 }
+
 /* Allocates and initializes CvMat header and allocates data */
 func CreateMat(rows, cols, type_ int) *Mat {
 	mat := C.cvCreateMat(
@@ -121,7 +125,7 @@ func CreateMat(rows, cols, type_ int) *Mat {
 }
 
 /* Initializes CvMat header */
-func (mat *Mat)InitHeader(rows, cols, type_ int, data unsafe.Pointer, step int) {
+func (mat *Mat) InitHeader(rows, cols, type_ int, data unsafe.Pointer, step int) {
 	C.cvInitMatHeader(
 		(*C.CvMat)(mat),
 		C.int(rows),
@@ -134,7 +138,7 @@ func (mat *Mat)InitHeader(rows, cols, type_ int, data unsafe.Pointer, step int) 
 
 /* Releases CvMat header and deallocates matrix data
    (reference counting is used for data) */
-func (mat *Mat)Release() {
+func (mat *Mat) Release() {
 	mat_c := (*C.CvMat)(mat)
 	C.cvReleaseMat(&mat_c)
 }
@@ -144,13 +148,14 @@ func (mat *Mat)Release() {
 func DecRefData(arr Arr) {
 	C.cvDecRefData(unsafe.Pointer(arr))
 }
+
 /* Increments CvMat data reference counter */
 func IncRefData(arr Arr) {
 	C.cvIncRefData(unsafe.Pointer(arr))
 }
 
 /* Creates an exact copy of the input matrix (except, may be, step value) */
-func (mat *Mat)Clone() *Mat {
+func (mat *Mat) Clone() *Mat {
 	mat_new := C.cvCloneMat((*C.CvMat)(mat))
 	return (*Mat)(mat_new)
 }
@@ -165,10 +170,11 @@ func GetSubRect(arr Arr, submat *Mat, rect Rect) *Mat {
 	)
 	return (*Mat)(mat_new)
 }
+
 //#define cvGetSubArr cvGetSubRect
 
 /* Selects row span of the input array: arr(start_row:delta_row:end_row,:)
-    (end_row is not included into the span). */
+   (end_row is not included into the span). */
 func GetRows(arr Arr, submat *Mat, start_row, end_row, delta_row int) *Mat {
 	mat_new := C.cvGetRows(
 		unsafe.Pointer(arr),
@@ -230,7 +236,7 @@ func ScalarToRawData(scalar *Scalar, data unsafe.Pointer, type_, extend_to_12 in
 		C.int(extend_to_12),
 	)
 }
-func RawDataToScalar(data unsafe.Pointer, type_ int , scalar *Scalar) {
+func RawDataToScalar(data unsafe.Pointer, type_ int, scalar *Scalar) {
 	C.cvRawDataToScalar(
 		data,
 		C.int(type_),
@@ -249,7 +255,7 @@ func CreateMatNDHeader(sizes []int, type_ int) *MatND {
 	mat := C.cvCreateMatNDHeader(
 		dims, (*C.int)(&sizes_c[0]), C.int(type_),
 	)
-	return (*MatND)(mat);
+	return (*MatND)(mat)
 }
 
 /* Allocates and initializes CvMatND header and allocates data */
@@ -263,11 +269,11 @@ func CreateMatND(sizes []int, type_ int) *MatND {
 	mat := C.cvCreateMatND(
 		dims, (*C.int)(&sizes_c[0]), C.int(type_),
 	)
-	return (*MatND)(mat);
+	return (*MatND)(mat)
 }
 
 /* Initializes preallocated CvMatND header */
-func (mat *MatND)InitMatNDHeader(sizes []int, type_ int, data unsafe.Pointer) {
+func (mat *MatND) InitMatNDHeader(sizes []int, type_ int, data unsafe.Pointer) {
 	dims := C.int(len(sizes))
 	sizes_c := make([]C.int, len(sizes))
 	for i := 0; i < len(sizes); i++ {
@@ -282,13 +288,13 @@ func (mat *MatND)InitMatNDHeader(sizes []int, type_ int, data unsafe.Pointer) {
 }
 
 /* Releases CvMatND */
-func (mat *MatND)Release() {
+func (mat *MatND) Release() {
 	mat_c := (*C.CvMatND)(mat)
 	C.cvReleaseMatND(&mat_c)
 }
 
 /* Creates a copy of CvMatND (except, may be, steps) */
-func (mat *MatND)Clone() *MatND {
+func (mat *MatND) Clone() *MatND {
 	mat_c := (*C.CvMatND)(mat)
 	mat_ret := C.cvCloneMatND(mat_c)
 	return (*MatND)(mat_ret)
@@ -305,17 +311,17 @@ func CreateSparseMat(sizes []int, type_ int) *SparseMat {
 	mat := C.cvCreateSparseMat(
 		dims, (*C.int)(&sizes_c[0]), C.int(type_),
 	)
-	return (*SparseMat)(mat);
+	return (*SparseMat)(mat)
 }
 
 /* Releases CvSparseMat */
-func (mat *SparseMat)Release() {
+func (mat *SparseMat) Release() {
 	mat_c := (*C.CvSparseMat)(mat)
 	C.cvReleaseSparseMat(&mat_c)
 }
 
 /* Creates a copy of CvSparseMat (except, may be, zero items) */
-func (mat *SparseMat)Clone() *SparseMat {
+func (mat *SparseMat) Clone() *SparseMat {
 	mat_c := (*C.CvSparseMat)(mat)
 	mat_ret := C.cvCloneSparseMat(mat_c)
 	return (*SparseMat)(mat_ret)
@@ -323,14 +329,14 @@ func (mat *SparseMat)Clone() *SparseMat {
 
 /* Initializes sparse array iterator
    (returns the first node or NULL if the array is empty) */
-func (mat *SparseMat)InitSparseMatIterator(iter *SparseMatIterator) *SparseNode {
+func (mat *SparseMat) InitSparseMatIterator(iter *SparseMatIterator) *SparseNode {
 	mat_c := (*C.CvSparseMat)(mat)
 	node := C.cvInitSparseMatIterator(mat_c, (*C.CvSparseMatIterator)(iter))
 	return (*SparseNode)(node)
 }
 
 // returns next sparse array node (or NULL if there is no more nodes)
-func (iter *SparseMatIterator)Next() *SparseNode {
+func (iter *SparseMatIterator) Next() *SparseNode {
 	node := C.cvGetNextSparseNode((*C.CvSparseMatIterator)(iter))
 	return (*SparseNode)(node)
 }
@@ -352,7 +358,7 @@ func GetSizeHeight(img *IplImage) int {
 }
 func GetSize(img *IplImage) Size {
 	sz := C.cvGetSize(unsafe.Pointer(img))
-	return Size{ int(sz.width), int(sz.height) }
+	return Size{int(sz.width), int(sz.height)}
 
 }
 
@@ -360,6 +366,7 @@ func GetSize(img *IplImage) Size {
 func Copy(src, dst, mask *IplImage) {
 	C.cvCopy(unsafe.Pointer(src), unsafe.Pointer(dst), unsafe.Pointer(mask))
 }
+
 //CVAPI(void)  cvCopy( const CvArr* src, CvArr* dst,
 //                     const CvArr* mask CV_DEFAULT(NULL) );
 
@@ -367,57 +374,47 @@ func Copy(src, dst, mask *IplImage) {
 func Zero(img *IplImage) {
 	C.cvSetZero(unsafe.Pointer(img))
 }
+
 //CVAPI(void)  cvSetZero( CvArr* arr );
 //#define cvZero  cvSetZero
-
 
 /****************************************************************************************\
 *                   Arithmetic, logic and comparison operations               *
 \****************************************************************************************/
 
-
 /* dst(idx) = ~src(idx) */
 func Not(src, dst *IplImage) {
 	C.cvNot(unsafe.Pointer(src), unsafe.Pointer(dst))
 }
+
 //CVAPI(void) cvNot( const CvArr* src, CvArr* dst );
 
 /****************************************************************************************\
 *                                Math operations                              *
 \****************************************************************************************/
 
-
 /****************************************************************************************\
 *                                Matrix operations                            *
 \****************************************************************************************/
-
-
 
 /****************************************************************************************\
 *                                    Array Statistics                         *
 \****************************************************************************************/
 
-
-
 /****************************************************************************************\
 *                      Discrete Linear Transforms and Related Functions       *
 \****************************************************************************************/
 
-
-
-
 /****************************************************************************************\
 *                              Dynamic data structures                        *
 \****************************************************************************************/
-
-
 
 /****************************************************************************************\
 *                                     Drawing                                 *
 \****************************************************************************************/
 
 /* Draws 4-connected, 8-connected or antialiased line segment connecting two points */
-//color Scalar, 
+//color Scalar,
 func Line(image *IplImage, pt1, pt2 Point, color Scalar, thickness, line_type, shift int) {
 	C.cvLine(
 		unsafe.Pointer(image),
@@ -433,19 +430,10 @@ func Line(image *IplImage, pt1, pt2 Point, color Scalar, thickness, line_type, s
 //                     CvScalar color, int thickness CV_DEFAULT(1),
 //                     int line_type CV_DEFAULT(8), int shift CV_DEFAULT(0) );
 
-
 /****************************************************************************************\
 *                                    System functions                         *
 \****************************************************************************************/
 
-
 /****************************************************************************************\
 *                                    Data Persistence                         *
 \****************************************************************************************/
-
-
-
-
-
-
-

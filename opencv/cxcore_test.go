@@ -7,4 +7,3 @@ import (
 func TestLoadImage2(t *testing.T) {
 	// t.Errorf("aaa")
 }
-
