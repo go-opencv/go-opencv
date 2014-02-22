@@ -14,8 +14,8 @@
 
 // trackbar data
 struct TrackbarUserdata {
-	schar* win_name;
-	schar* bar_name;
+	char* win_name;
+	char* bar_name;
 	int value;
 };
 static struct TrackbarUserdata *trackbar_list[1000];
@@ -32,8 +32,8 @@ int GoOpenCV_CreateTrackbar(
 	struct TrackbarUserdata *userdata = malloc(sizeof(*userdata));
 	trackbar_list[trackbar_list_len++] = userdata;
 
-	userdata->win_name = (schar*)window_name;
-	userdata->bar_name = (schar*)trackbar_name;
+	userdata->win_name = (char*)window_name;
+	userdata->bar_name = (char*)trackbar_name;
 	userdata->value = value;
 
 	return cvCreateTrackbar2(trackbar_name, window_name,
@@ -58,7 +58,7 @@ void GoOpenCV_DestroyTrackbar(char* trackbar_name, char* window_name) {
 //-----------------------------------------------------------------------------
 
 static void mouseCallback(int event, int x, int y, int flags, void* param) {
-	schar* name = (schar*)param;
+	char* name = (char*)param;
 	goMouseCallback(name, event, x, y, flags);
 }
 void GoOpenCV_SetMouseCallback(const char* window_name) {
