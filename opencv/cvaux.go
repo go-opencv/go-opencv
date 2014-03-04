@@ -9,6 +9,9 @@ package opencv
 //#cgo darwin pkg-config: opencv
 //#cgo windows LDFLAGS: -lopencv_core242.dll -lopencv_imgproc242.dll -lopencv_photo242.dll -lopencv_highgui242.dll -lstdc++
 import "C"
+import (
+	"unsafe"
+)
 
 /****************************************************************************************\
 *                                  Eigen objects                                         *
@@ -48,6 +51,26 @@ import "C"
 /****************************************************************************************\
 *                                  Face eyes&mouth tracking                              *
 \****************************************************************************************/
+type HaarCascade struct {
+	cascade *C.CvHaarClassifierCascade
+}
+
+func LoadHaarClassifierCascade(haar string) *HaarCascade {
+	haarCascade := new(HaarCascade)
+	haarCascade.cascade = C.cvLoadHaarClassifierCascade(C.CString(haar), C.cvSize(1, 1))
+	return haarCascade
+}
+
+func (this *HaarCascade) DetectObjects(image *IplImage) []*Rect {
+	storage := C.cvCreateMemStorage(0)
+	seq := C.cvHaarDetectObjects(unsafe.Pointer(image), this.cascade, storage, 1.1, 3, 0, C.cvSize(0, 0), C.cvSize(0, 0))
+	var faces []*Rect
+	for i := 0; i < (int)(seq.total); i++ {
+		rect := (*Rect)((*_Ctype_CvRect)(unsafe.Pointer(C.cvGetSeqElem(seq, C.int(i)))))
+		faces = append(faces, rect)
+	}
+	return faces
+}
 
 /****************************************************************************************\
 *                                         3D Tracker                                     *
