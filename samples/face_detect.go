@@ -14,7 +14,6 @@ func main() {
 	faces := cascade.DetectObjects(image)
 
 	for _, value := range faces {
-		opencv.Circle(image, opencv.Point{value.X(), value.Y()}, 2, opencv.ScalarAll(255.0), 1, 1, 0)
 		opencv.Rectangle(image,
 			opencv.Point{value.X() + value.Width(), value.Y()},
 			opencv.Point{value.X(), value.Y() + value.Height()},
