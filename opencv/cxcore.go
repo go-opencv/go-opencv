@@ -423,7 +423,24 @@ func Line(image *IplImage, pt1, pt2 Point, color Scalar, thickness, line_type, s
 		(C.CvScalar)(color),
 		C.int(thickness), C.int(line_type), C.int(shift),
 	)
-	//Scalar
+}
+func Rectangle(image *IplImage, pt1, pt2 Point, color Scalar, thickness, line_type, shift int) {
+	C.cvRectangle(
+		unsafe.Pointer(image),
+		C.cvPoint(C.int(pt1.X), C.int(pt1.Y)),
+		C.cvPoint(C.int(pt2.X), C.int(pt2.Y)),
+		(C.CvScalar)(color),
+		C.int(thickness), C.int(line_type), C.int(shift),
+	)
+}
+func Circle(image *IplImage, pt1 Point, radius int, color Scalar, thickness, line_type, shift int) {
+	C.cvCircle(
+		unsafe.Pointer(image),
+		C.cvPoint(C.int(pt1.X), C.int(pt1.Y)),
+		C.int(radius),
+		(C.CvScalar)(color),
+		C.int(thickness), C.int(line_type), C.int(shift),
+	)
 }
 
 //CVAPI(void)  cvLine( CvArr* img, CvPoint pt1, CvPoint pt2,
