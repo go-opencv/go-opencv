@@ -602,6 +602,11 @@ const (
 
 type Scalar C.CvScalar
 
+func NewScalar(b, g, r int) Scalar {
+	rv := C.cvScalar(C.double(b), C.double(g), C.double(r), C.double(0))
+	return (Scalar)(rv)
+}
+
 func ScalarAll(val0 float64) Scalar {
 	rv := C.cvScalarAll(C.double(val0))
 	return (Scalar)(rv)
