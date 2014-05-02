@@ -59,7 +59,6 @@ import (
 
 //-----------------------------------------------------------------------------
 
-
 // cvver.h
 
 //-----------------------------------------------------------------------------
@@ -71,7 +70,7 @@ const (
 )
 
 var (
-	//CV_VERSION = C.GoString(C.CV_VERSION_)
+//CV_VERSION = C.GoString(C.CV_VERSION_)
 )
 
 //-----------------------------------------------------------------------------
@@ -229,58 +228,58 @@ const (
 type IplImage C.IplImage
 
 // normal fields
-func (img *IplImage)Channels() int {
+func (img *IplImage) Channels() int {
 	return int(img.nChannels)
 }
-func (img *IplImage)Depth() int {
+func (img *IplImage) Depth() int {
 	return int(img.depth)
 }
-func (img *IplImage)Origin() int {
+func (img *IplImage) Origin() int {
 	return int(img.origin)
 }
-func (img *IplImage)Width() int {
+func (img *IplImage) Width() int {
 	return int(img.width)
 }
-func (img *IplImage)Height() int {
+func (img *IplImage) Height() int {
 	return int(img.height)
 }
-func (img *IplImage)WidthStep() int {
+func (img *IplImage) WidthStep() int {
 	return int(img.widthStep)
 }
-func (img *IplImage)ImageSize() int {
+func (img *IplImage) ImageSize() int {
 	return int(img.imageSize)
 }
-func (img *IplImage)ImageData() unsafe.Pointer {
+func (img *IplImage) ImageData() unsafe.Pointer {
 	return unsafe.Pointer(img.imageData)
 }
 
 type IplROI C.IplROI
 
-func (roi *IplROI)Init(coi, xOffset, yOffset, width, height int) {
+func (roi *IplROI) Init(coi, xOffset, yOffset, width, height int) {
 	roi_c := (*C.IplROI)(roi)
 	roi_c.coi = C.int(coi)
 	roi_c.xOffset = C.int(xOffset)
 	roi_c.yOffset = C.int(yOffset)
-	roi_c.width  = C.int(width)
+	roi_c.width = C.int(width)
 	roi_c.height = C.int(height)
 }
-func (roi *IplROI)Coi() int {
+func (roi *IplROI) Coi() int {
 	roi_c := (*C.IplROI)(roi)
 	return int(roi_c.coi)
 }
-func (roi *IplROI)XOffset() int {
+func (roi *IplROI) XOffset() int {
 	roi_c := (*C.IplROI)(roi)
 	return int(roi_c.xOffset)
 }
-func (roi *IplROI)YOffset() int {
+func (roi *IplROI) YOffset() int {
 	roi_c := (*C.IplROI)(roi)
 	return int(roi_c.yOffset)
 }
-func (roi *IplROI)Width() int {
+func (roi *IplROI) Width() int {
 	roi_c := (*C.IplROI)(roi)
 	return int(roi_c.width)
 }
-func (roi *IplROI)Height() int {
+func (roi *IplROI) Height() int {
 	roi_c := (*C.IplROI)(roi)
 	return int(roi_c.height)
 }
@@ -319,17 +318,17 @@ const (
 
 type Mat C.CvMat
 
-func (mat *Mat)Type() int {
+func (mat *Mat) Type() int {
 	return int(C.myGetMatType((*C.CvMat)(mat)))
 }
-func (mat *Mat)Step() int {
+func (mat *Mat) Step() int {
 	return int(mat.step)
 }
 
-func (mat *Mat)Rows() int {
+func (mat *Mat) Rows() int {
 	return int(mat.rows)
 }
-func (mat *Mat)Cols() int {
+func (mat *Mat) Cols() int {
 	return int(mat.cols)
 }
 
@@ -346,14 +345,14 @@ func CV_ARE_TYPE_EQ() bool {
 	return false
 }
 
-func (m *Mat)Init(rows, cols int, type_ int, data unsafe.Pointer) {
+func (m *Mat) Init(rows, cols int, type_ int, data unsafe.Pointer) {
 	return
 }
-func (m *Mat)Get(row, col int) float64 {
+func (m *Mat) Get(row, col int) float64 {
 	rv := C.cvmGet((*C.CvMat)(m), C.int(row), C.int(col))
 	return float64(rv)
 }
-func (m *Mat)Set(row, col int, value float64) {
+func (m *Mat) Set(row, col int, value float64) {
 	C.cvmSet((*C.CvMat)(m), C.int(row), C.int(col), C.double(value))
 }
 
@@ -370,17 +369,17 @@ const (
 	CV_MATND_MAGIC_VAL = C.CV_MATND_MAGIC_VAL
 	CV_TYPE_NAME_MATND = C.CV_TYPE_NAME_MATND
 
-	CV_MAX_DIM         = C.CV_MAX_DIM
-	CV_MAX_DIM_HEAP    = C.CV_MAX_DIM_HEAP
+	CV_MAX_DIM      = C.CV_MAX_DIM
+	CV_MAX_DIM_HEAP = C.CV_MAX_DIM_HEAP
 )
 
 type MatND C.CvMatND
 
-func (m *MatND)Type() int {
+func (m *MatND) Type() int {
 	rv := C.myGetMatNDType((*C.CvMatND)(m))
 	return int(rv)
 }
-func (m *MatND)Dims() int {
+func (m *MatND) Dims() int {
 	rv := m.dims
 	return int(rv)
 }
@@ -396,11 +395,11 @@ const (
 
 type SparseMat C.CvSparseMat
 
-func (m *SparseMat)Type() int {
+func (m *SparseMat) Type() int {
 	rv := C.myGetSparseMatType((*C.CvSparseMat)(m))
 	return int(rv)
 }
-func (m *SparseMat)Dims() int {
+func (m *SparseMat) Dims() int {
 	rv := m.dims
 	return int(rv)
 }
@@ -409,26 +408,26 @@ func (m *SparseMat)Dims() int {
 
 type SparseNode C.CvSparseNode
 
-func (node *SparseNode)HashVal() uint32 {
+func (node *SparseNode) HashVal() uint32 {
 	rv := node.hashval
 	return uint32(rv)
 }
-func (node *SparseNode)Next() *SparseNode {
+func (node *SparseNode) Next() *SparseNode {
 	rv := node.next
 	return (*SparseNode)(rv)
 }
 
 type SparseMatIterator C.CvSparseMatIterator
 
-func (node *SparseMatIterator)Mat() *SparseMat {
+func (node *SparseMatIterator) Mat() *SparseMat {
 	rv := node.mat
 	return (*SparseMat)(rv)
 }
-func (node *SparseMatIterator)Node() *SparseNode {
+func (node *SparseMatIterator) Node() *SparseNode {
 	rv := node.node
 	return (*SparseNode)(rv)
 }
-func (node *SparseMatIterator)CurIdx() int {
+func (node *SparseMatIterator) CurIdx() int {
 	rv := node.curidx
 	return (int)(rv)
 }
@@ -440,15 +439,15 @@ func (node *SparseMatIterator)CurIdx() int {
 type HistType C.CvHistType
 
 const (
-	CV_HIST_MAGIC_VAL = C.CV_HIST_MAGIC_VAL
+	CV_HIST_MAGIC_VAL    = C.CV_HIST_MAGIC_VAL
 	CV_HIST_UNIFORM_FLAG = C.CV_HIST_UNIFORM_FLAG
 
 	/* indicates whether bin ranges are set already or not */
 	CV_HIST_RANGES_FLAG = C.CV_HIST_RANGES_FLAG
 
-	CV_HIST_ARRAY = C.CV_HIST_ARRAY
+	CV_HIST_ARRAY  = C.CV_HIST_ARRAY
 	CV_HIST_SPARSE = C.CV_HIST_SPARSE
-	CV_HIST_TREE = C.CV_HIST_TREE
+	CV_HIST_TREE   = C.CV_HIST_TREE
 
 	/* should be used as a parameter only,
 	   it turns to CV_HIST_UNIFORM_FLAG of hist->type */
@@ -478,35 +477,35 @@ func CV_HIST_HAS_RANGES() bool {
 
 type Rect C.CvRect
 
-func (r *Rect)Init(x, y, w, h int) {
+func (r *Rect) Init(x, y, w, h int) {
 	r.x = C.int(x)
 	r.y = C.int(y)
 	r.width = C.int(w)
 	r.height = C.int(h)
 }
-func (r *Rect)X() int {
+func (r *Rect) X() int {
 	r_c := (*C.CvRect)(r)
 	return int(r_c.x)
 }
-func (r *Rect)Y() int {
+func (r *Rect) Y() int {
 	r_c := (*C.CvRect)(r)
 	return int(r_c.y)
 }
-func (r *Rect)Width() int {
+func (r *Rect) Width() int {
 	r_c := (*C.CvRect)(r)
 	return int(r_c.width)
 }
-func (r *Rect)Height() int {
+func (r *Rect) Height() int {
 	r_c := (*C.CvRect)(r)
 	return int(r_c.height)
 }
 
-func (r *Rect)ToROI(coi int) IplROI {
+func (r *Rect) ToROI(coi int) IplROI {
 	r_c := (*C.CvRect)(r)
 	return (IplROI)(C.cvRectToROI(*r_c, C.int(coi)))
 }
 
-func (roi *IplROI)ToRect() Rect {
+func (roi *IplROI) ToRect() Rect {
 	r := C.cvRect(
 		C.int(roi.XOffset()),
 		C.int(roi.YOffset()),
@@ -519,27 +518,27 @@ func (roi *IplROI)ToRect() Rect {
 /*********************************** CvTermCriteria *************************************/
 
 const (
-	CV_TERMCRIT_ITER = C.CV_TERMCRIT_ITER
+	CV_TERMCRIT_ITER   = C.CV_TERMCRIT_ITER
 	CV_TERMCRIT_NUMBER = C.CV_TERMCRIT_NUMBER
-	CV_TERMCRIT_EPS = C.CV_TERMCRIT_EPS
+	CV_TERMCRIT_EPS    = C.CV_TERMCRIT_EPS
 )
 
 type TermCriteria C.CvTermCriteria
 
-func (x *TermCriteria)Init(type_, max_iter int, epsilon float64) {
+func (x *TermCriteria) Init(type_, max_iter int, epsilon float64) {
 	rv := C.cvTermCriteria(C.int(type_), C.int(max_iter), C.double(epsilon))
 	(*x) = (TermCriteria)(rv)
 }
 
-func (x *TermCriteria)Type() int {
+func (x *TermCriteria) Type() int {
 	rv := C.myGetTermCriteriaType((*C.CvTermCriteria)(x))
 	return int(rv)
 }
-func (x *TermCriteria)MaxIter() int {
+func (x *TermCriteria) MaxIter() int {
 	rv := x.max_iter
 	return int(rv)
 }
-func (x *TermCriteria)Epsilon() float64 {
+func (x *TermCriteria) Epsilon() float64 {
 	rv := x.epsilon
 	return float64(rv)
 }
@@ -560,7 +559,6 @@ type Point3D32f struct {
 	Y float32
 	Z float32
 }
-
 
 type Point2D64f struct {
 	X float64
@@ -604,6 +602,11 @@ const (
 
 type Scalar C.CvScalar
 
+func NewScalar(b, g, r int) Scalar {
+	rv := C.cvScalar(C.double(b), C.double(g), C.double(r), C.double(0))
+	return (Scalar)(rv)
+}
+
 func ScalarAll(val0 float64) Scalar {
 	rv := C.cvScalarAll(C.double(val0))
 	return (Scalar)(rv)
@@ -615,14 +618,14 @@ func ScalarAll(val0 float64) Scalar {
 
 /******************************** Memory storage ****************************************/
 
-type MemBlock      C.CvMemBlock
-type MemStorage    C.CvMemStorage
+type MemBlock C.CvMemBlock
+type MemStorage C.CvMemStorage
 type MemStoragePos C.CvMemStoragePos
 
 /*********************************** Sequence *******************************************/
 
 type SeqBlock C.CvSeqBlock
-type Seq      C.CvSeq
+type Seq C.CvSeq
 
 /*************************************** Set ********************************************/
 
@@ -630,15 +633,15 @@ type Set C.CvSet
 
 /************************************* Graph ********************************************/
 
-type GraphEdge  C.CvGraphEdge
-type GraphVtx   C.CvGraphVtx
+type GraphEdge C.CvGraphEdge
+type GraphVtx C.CvGraphVtx
 
 type GraphVtx2D C.CvGraphVtx2D
-type Graph      C.CvGraph
+type Graph C.CvGraph
 
 /*********************************** Chain/Countour *************************************/
 
-type Chain   C.CvChain
+type Chain C.CvChain
 type Contour C.CvContour
 
 /****************************************************************************************\
@@ -665,11 +668,11 @@ type FileStorage C.CvFileStorage
 
 /* Storage flags: */
 const (
-	CV_STORAGE_READ = C.CV_STORAGE_READ
-	CV_STORAGE_WRITE = C.CV_STORAGE_WRITE
-	CV_STORAGE_WRITE_TEXT = C.CV_STORAGE_WRITE_TEXT
+	CV_STORAGE_READ         = C.CV_STORAGE_READ
+	CV_STORAGE_WRITE        = C.CV_STORAGE_WRITE
+	CV_STORAGE_WRITE_TEXT   = C.CV_STORAGE_WRITE_TEXT
 	CV_STORAGE_WRITE_BINARY = C.CV_STORAGE_WRITE_BINARY
-	CV_STORAGE_APPEND = C.CV_STORAGE_APPEND
+	CV_STORAGE_APPEND       = C.CV_STORAGE_APPEND
 )
 
 type AttrList C.CvAttrList
@@ -677,4 +680,3 @@ type AttrList C.CvAttrList
 /*****************************************************************************\
 *                                 --- END ---                                 *
 \*****************************************************************************/
-
