@@ -1,7 +1,7 @@
 package main
 
 import (
-	"github.com/hybridgroup/go-opencv/opencv"
+	"github.com/lazywei/go-opencv/opencv"
 	"path"
 	"runtime"
 )
