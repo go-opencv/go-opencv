@@ -10,7 +10,7 @@ import (
 	"path"
 	"runtime"
 
-	"github.com/hybridgroup/go-opencv/opencv"
+	"github.com/lazywei/go-opencv/opencv"
 	//"../opencv" // can be used in forks, comment in real application
 )
 
