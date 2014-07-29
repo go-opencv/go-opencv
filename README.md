@@ -5,20 +5,28 @@ Original project (https://code.google.com/p/go-opencv) looks abandoned. Therefor
 
 ## Install
 
-### Linux
-- install Go1 and OpenCV
-- `go get github.com/lazywei/go-opencv`
-- `cd ${GoOpenCVRoot}/samples && go run hellocv.go`
+### Linux & Mac OS X
+
+Install Go and OpenCV, you might want to install both of them via `apt-get` or `homebrew`.
+
+```
+go get github.com/lazywei/go-opencv
+cd ${GoOpenCVRoot}/samples && go run hellocv.go
+```
 
 ### Windows
-- install Go1 and MinGW
+
+- Install Go and MinGw
 - install OpenCV-2.4.x to MinGW dir
-  - libopencv*.dll --> ${MinGWRoot}\bin
-  - libopencv*.lib --> ${MinGWRoot}\lib
-  - include\opencv --> ${MinGWRoot}\include\opencv
-  - include\opencv2 --> ${MinGWRoot}\include\opencv2
-- go get code.google.com/p/go-opencv/trunk/opencv
-- cd ${GoOpenCVRoot}/trunk/samples && go run hellocv.go
+  - `libopencv*.dll` --> `${MinGWRoot}\bin`
+  - `libopencv*.lib` --> `${MinGWRoot}\lib`
+  - `include\opencv` --> `${MinGWRoot}\include\opencv`
+  - `include\opencv2` --> `${MinGWRoot}\include\opencv2`
+
+```
+go get code.google.com/p/go-opencv/trunk/opencv
+cd ${GoOpenCVRoot}/trunk/samples && go run hellocv.go
+```
 
 ## Example
 
