@@ -58,12 +58,32 @@ go run webcam.go
 
 You can find more samples at: https://github.com/lazywei/go-opencv/tree/master/samples
 
-## Contribute
+## How to contribute
 
 - Fork this repo
-- Create new feature branch, `git checkout -b your-feature-branch`
-- Commit your change and push it to your repo `git commit -m 'new feature'; git push origin your-feature-branch`
-- Open pull request!
+- Clone the main repo, and add your fork as a remote
+
+```
+git clone https://github.com/lazywei/go-opencv.git
+cd go-opencv
+git remote rename origin upstream
+git remote add origin https://github.com/your_github_account/go-opencv.git
+```
+
+- Create new feature branch
+
+```
+git checkout -b your-feature-branch
+```
+
+- Commit your change and push it to your repo 
+
+```
+git commit -m 'new feature'
+git push origin your-feature-branch
+```
+
+- Open a pull request!
 
 ## TODOs
 - More details doc
