@@ -19,6 +19,7 @@ func init() {
 
 const (
 	CV_BGR2GRAY = C.CV_BGR2GRAY
+	CV_BGR2BGRA = C.CV_BGR2BGRA
 
 	CV_BLUR = C.CV_BLUR
 )
