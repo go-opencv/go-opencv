@@ -22,6 +22,14 @@ const (
 	CV_BGR2BGRA = C.CV_BGR2BGRA
 
 	CV_BLUR = C.CV_BLUR
+
+	CV_8U  = C.CV_8U
+	CV_8S  = C.CV_8S
+	CV_16U = C.CV_16U
+	CV_16S = C.CV_16S
+	CV_32S = C.CV_32S
+	CV_32F = C.CV_32F
+	CV_64F = C.CV_64F
 )
 
 /* Smoothes array (removes noise) */
@@ -38,6 +46,18 @@ func Smooth(src, dst *IplImage, smoothtype,
 //                      int param2 CV_DEFAULT(0),
 //                      double param3 CV_DEFAULT(0),
 //                      double param4 CV_DEFAULT(0));
+
+/*
+ConvertScale converts one image to another with optional linear transformation.
+*/
+func ConvertScale(a, b *IplImage, scale, shift float64) {
+	C.cvConvertScale(unsafe.Pointer(a), unsafe.Pointer(b), C.double(scale), C.double(shift))
+}
+
+//CVAPI(void)  cvConvertScale( const CvArr* src,
+//                             CvArr* dst,
+//                             double scale CV_DEFAULT(1),
+//                             double shift CV_DEFAULT(0) );
 
 /* Converts input array pixels from one color space to another */
 func CvtColor(src, dst *IplImage, code int) {

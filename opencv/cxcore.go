@@ -103,6 +103,25 @@ func (img *IplImage) GetROI() Rect {
 	return Rect(r)
 }
 
+/*
+Reshape changes shape of the image without copying data. A value of `0` means
+that channels or rows remain unchanged.
+*/
+func (img *IplImage) Reshape(channels, rows, _type int) *Mat {
+	total := img.Width() * img.Height()
+	header := CreateMat(rows, total/rows, _type)
+	n := C.cvReshape(unsafe.Pointer(img), (*C.CvMat)(header), C.int(channels), C.int(rows))
+	return (*Mat)(n)
+}
+
+/* GetMat returns the matrix header for an image.*/
+func (img *IplImage) GetMat() *Mat {
+	var null C.int
+	tmp := CreateMat(img.Height(), img.Width(), CV_32S)
+	m := C.cvGetMat(unsafe.Pointer(img), (*C.CvMat)(tmp), &null, C.int(0))
+	return (*Mat)(m)
+}
+
 // mat step
 const (
 	CV_AUTOSTEP = C.CV_AUTOSTEP
@@ -158,6 +177,17 @@ func IncRefData(arr Arr) {
 func (mat *Mat) Clone() *Mat {
 	mat_new := C.cvCloneMat((*C.CvMat)(mat))
 	return (*Mat)(mat_new)
+}
+
+/*
+Reshape changes shape of the matrix without copying data. A value of `0` means
+that channels or rows remain unchanged.
+*/
+func (m *Mat) Reshape(channels, rows int) *Mat {
+	total := m.Cols() * m.Rows()
+	n := CreateMat(rows, total/rows, m.Type())
+	C.cvReshape(unsafe.Pointer(m), (*C.CvMat)(n), C.int(channels), C.int(rows))
+	return n
 }
 
 /* Makes a new matrix from <rect> subrectangle of input array.
@@ -225,6 +255,32 @@ func GetDiag(arr Arr, submat *Mat, diag int) *Mat {
 		C.int(diag),
 	)
 	return (*Mat)(mat_new)
+}
+
+/* Get1D return a specific element from a 1-dimensional matrix. */
+func (m *Mat) Get1D(x int) Scalar {
+	ret := C.cvGet1D(unsafe.Pointer(m), C.int(x))
+	return Scalar(ret)
+}
+
+/* Get2D return a specific element from a 2-dimensional matrix. */
+func (m *Mat) Get2D(x, y int) Scalar {
+	ret := C.cvGet2D(unsafe.Pointer(m), C.int(x), C.int(y))
+	return Scalar(ret)
+}
+
+/* Get3D return a specific element from a 3-dimensional matrix. */
+func (m *Mat) Get3D(x, y, z int) Scalar {
+	ret := C.cvGet3D(unsafe.Pointer(m), C.int(x), C.int(y), C.int(z))
+	return Scalar(ret)
+}
+
+/* GetImage returns the image header for the matrix. */
+func (m *Mat) GetImage(channels int) *IplImage {
+	tmp := CreateImage(m.Cols(), m.Rows(), m.Type(), channels)
+	img := C.cvGetImage(unsafe.Pointer(m), (*C.IplImage)(tmp))
+
+	return (*IplImage)(img)
 }
 
 /* low-level scalar <-> raw data conversion functions */
