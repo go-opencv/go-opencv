@@ -612,6 +612,16 @@ func ScalarAll(val0 float64) Scalar {
 	return (Scalar)(rv)
 }
 
+/* Val returns an array with the scalars values. */
+func (s Scalar) Val() [4]float64 {
+	return [4]float64{
+		float64(s.val[0]),
+		float64(s.val[1]),
+		float64(s.val[2]),
+		float64(s.val[3]),
+	}
+}
+
 /****************************************************************************************\
 *                                   Dynamic Data structures                              *
 \****************************************************************************************/
