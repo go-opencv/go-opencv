@@ -114,6 +114,39 @@ func (img *IplImage) Reshape(channels, rows, _type int) *Mat {
 	return (*Mat)(n)
 }
 
+/* Get1D return a specific element from a 1-dimensional matrix. */
+func (img *IplImage) Get1D(x int) Scalar {
+	ret := C.cvGet1D(unsafe.Pointer(img), C.int(x))
+	return Scalar(ret)
+}
+
+/* Get2D return a specific element from a 2-dimensional matrix. */
+func (img *IplImage) Get2D(x, y int) Scalar {
+	ret := C.cvGet2D(unsafe.Pointer(img), C.int(x), C.int(y))
+	return Scalar(ret)
+}
+
+/* Get3D return a specific element from a 3-dimensional matrix. */
+func (img *IplImage) Get3D(x, y, z int) Scalar {
+	ret := C.cvGet3D(unsafe.Pointer(img), C.int(x), C.int(y), C.int(z))
+	return Scalar(ret)
+}
+
+/* Set1D sets a particular element in the image */
+func (img *IplImage) Set1D(x int, value Scalar) {
+	C.cvSet1D(unsafe.Pointer(img), C.int(x), (C.CvScalar)(value))
+}
+
+/* Set2D sets a particular element in the image */
+func (img *IplImage) Set2D(x, y int, value Scalar) {
+	C.cvSet2D(unsafe.Pointer(img), C.int(x), C.int(y), (C.CvScalar)(value))
+}
+
+/* Set3D sets a particular element in the image */
+func (img *IplImage) Set3D(x, y, z int, value Scalar) {
+	C.cvSet3D(unsafe.Pointer(img), C.int(x), C.int(y), C.int(z), (C.CvScalar)(value))
+}
+
 /* GetMat returns the matrix header for an image.*/
 func (img *IplImage) GetMat() *Mat {
 	var null C.int
@@ -153,6 +186,11 @@ func (mat *Mat) InitHeader(rows, cols, type_ int, data unsafe.Pointer, step int)
 		data,
 		C.int(step),
 	)
+}
+
+/* SetData assigns user data to the matrix header. */
+func (mat *Mat) SetData(data unsafe.Pointer, step int) {
+	C.cvSetData(unsafe.Pointer(mat), data, C.int(step))
 }
 
 /* Releases CvMat header and deallocates matrix data
@@ -273,6 +311,21 @@ func (m *Mat) Get2D(x, y int) Scalar {
 func (m *Mat) Get3D(x, y, z int) Scalar {
 	ret := C.cvGet3D(unsafe.Pointer(m), C.int(x), C.int(y), C.int(z))
 	return Scalar(ret)
+}
+
+/* Set1D sets a particular element in them matrix */
+func (m *Mat) Set1D(x int, value Scalar) {
+	C.cvSet1D(unsafe.Pointer(m), C.int(x), (C.CvScalar)(value))
+}
+
+/* Set2D sets a particular element in them matrix */
+func (m *Mat) Set2D(x, y int, value Scalar) {
+	C.cvSet2D(unsafe.Pointer(m), C.int(x), C.int(y), (C.CvScalar)(value))
+}
+
+/* Set3D sets a particular element in them matrix */
+func (m *Mat) Set3D(x, y, z int, value Scalar) {
+	C.cvSet3D(unsafe.Pointer(m), C.int(x), C.int(y), C.int(z), (C.CvScalar)(value))
 }
 
 /* GetImage returns the image header for the matrix. */
