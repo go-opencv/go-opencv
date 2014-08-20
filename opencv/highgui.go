@@ -399,11 +399,11 @@ func SaveImage(filename string, image *IplImage, params int) int {
 }
 
 /* decode image stored in the buffer */
-func DecodeImage(buf *Mat, iscolor int) *IplImage {
+func DecodeImage(buf unsafe.Pointer, iscolor int) *IplImage {
 	rv := C.cvDecodeImage((*C.CvMat)(buf), C.int(iscolor))
 	return (*IplImage)(rv)
 }
-func DecodeImageM(buf *Mat, iscolor int) *Mat {
+func DecodeImageM(buf unsafe.Pointer, iscolor int) *Mat {
 	rv := C.cvDecodeImageM((*C.CvMat)(buf), C.int(iscolor))
 	return (*Mat)(rv)
 }
