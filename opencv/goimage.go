@@ -14,7 +14,7 @@ func DecodeImageMem(data []byte) *IplImage {
 	return DecodeImage(unsafe.Pointer(buf), CV_LOAD_IMAGE_UNCHANGED)
 }
 
-/* From Image converts a go image.Image to an opencv.IplImage. */
+/* FromImage converts a go image.Image to an opencv.IplImage. */
 func FromImage(img image.Image) *IplImage {
 	b := img.Bounds()
 	model := color.RGBAModel
@@ -32,6 +32,26 @@ func FromImage(img image.Image) *IplImage {
 			dst.Set2D(x, y, value)
 		}
 	}
+
+	return dst
+}
+
+/* FromImageUnsafe create an opencv.IplImage that shares the buffer with the
+go image.RGBA image. All changes made from opencv might affect go! */
+func FromImageUnsafe(img *image.RGBA) *IplImage {
+	b := img.Bounds()
+	buf := CreateImageHeader(
+		b.Max.X-b.Min.X,
+		b.Max.Y-b.Min.Y,
+		IPL_DEPTH_8U, 4)
+	dst := CreateImage(
+		b.Max.X-b.Min.X,
+		b.Max.Y-b.Min.Y,
+		IPL_DEPTH_8U, 4)
+
+	buf.SetData(unsafe.Pointer(&img.Pix[0]), CV_AUTOSTEP)
+	CvtColor(buf, dst, CV_RGBA2BGRA)
+	buf.Release()
 
 	return dst
 }

@@ -57,6 +57,11 @@ func CreateImage(w, h, depth, channels int) *IplImage {
 	return (*IplImage)(img)
 }
 
+/* SetData assigns user data to the image header */
+func (img *IplImage) SetData(data unsafe.Pointer, step int) {
+	C.cvSetData(unsafe.Pointer(img), data, C.int(step))
+}
+
 /* Releases (i.e. deallocates) IPL image header */
 func (img *IplImage) ReleaseHeader() {
 	img_c := (*C.IplImage)(img)
