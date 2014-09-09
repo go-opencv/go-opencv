@@ -7,16 +7,12 @@
 #ifndef _GO_OPENCV_BINDING_H_
 #define _GO_OPENCV_BINDING_H_
 
-//  OpenCV 2.4.x
 #include <opencv/cv.h>
 #include <opencv/highgui.h>
 #include <opencv2/photo/photo_c.h>
 #include <opencv2/imgproc/imgproc_c.h>
 #include <opencv2/core/core_c.h>
-#include <opencv2/core/core.hpp>
-#include <opencv2/objdetect/objdetect.hpp>
-#include <opencv2/legacy/compat.hpp>
-#include <opencv2/legacy/legacy.hpp>
+#include <opencv2/core/version.hpp>
 
 // Trackbar
 int GoOpenCV_CreateTrackbar(
@@ -38,5 +34,3 @@ unsigned GoOpenCV_FOURCC_(
 );
 
 #endif // _GO_OPENCV_BINDING_H_
-
-
