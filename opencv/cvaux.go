@@ -72,6 +72,11 @@ func (this *HaarCascade) DetectObjects(image *IplImage) []*Rect {
 	return faces
 }
 
+func (this *HaarCascade) Release() {
+	cascade_c := (*C.CvHaarClassifierCascade)(this.cascade)
+	C.cvReleaseHaarClassifierCascade(&cascade_c)
+}
+
 /****************************************************************************************\
 *                                         3D Tracker                                     *
 \****************************************************************************************/
