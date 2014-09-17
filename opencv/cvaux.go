@@ -69,7 +69,16 @@ func (this *HaarCascade) DetectObjects(image *IplImage) []*Rect {
 		rect := (*Rect)((*_Ctype_CvRect)(unsafe.Pointer(C.cvGetSeqElem(seq, C.int(i)))))
 		faces = append(faces, rect)
 	}
+	
+	storage_c := (*C.CvMemStorage)(storage)
+	C.cvReleaseMemStorage(&storage_c)
+	
 	return faces
+}
+
+func (this *HaarCascade) Release() {
+	cascade_c := (*C.CvHaarClassifierCascade)(this.cascade)
+	C.cvReleaseHaarClassifierCascade(&cascade_c)
 }
 
 /****************************************************************************************\
