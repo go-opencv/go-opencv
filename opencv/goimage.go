@@ -10,6 +10,7 @@ import (
 func DecodeImageMem(data []byte) *IplImage {
 	buf := CreateMatHeader(1, len(data), CV_8U)
 	buf.SetData(unsafe.Pointer(&data[0]), CV_AUTOSTEP)
+	defer buf.Release()
 
 	return DecodeImage(unsafe.Pointer(buf), CV_LOAD_IMAGE_UNCHANGED)
 }
