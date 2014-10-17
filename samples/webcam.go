@@ -11,6 +11,8 @@ import (
 )
 
 func main() {
+	var edge_threshold int
+
 	win := opencv.NewWindow("Go-OpenCV Webcam")
 	defer win.Destroy()
 
@@ -21,22 +23,25 @@ func main() {
 	defer cap.Release()
 
 	win.CreateTrackbar("Thresh", 1, 100, func(pos int, param ...interface{}) {
-		for {
-			if cap.GrabFrame() {
-				img := cap.RetrieveFrame(1)
-				if img != nil {
-					ProcessImage(img, win, pos)
-				} else {
-					fmt.Println("Image ins nil")
-				}
-			}
+		edge_threshold = pos
+	})
 
-			if key := opencv.WaitKey(10); key == 27 {
-				os.Exit(0)
+	fmt.Println("Press ESC to quit")
+	for {
+		if cap.GrabFrame() {
+			img := cap.RetrieveFrame(1)
+			if img != nil {
+				ProcessImage(img, win, edge_threshold)
+			} else {
+				fmt.Println("Image ins nil")
 			}
 		}
-	})
-	opencv.WaitKey(0)
+		key := opencv.WaitKey(10)
+
+		if key == 27 {
+			os.Exit(0)
+		}
+	}
 }
 
 func ProcessImage(img *opencv.IplImage, win *opencv.Window, pos int) error {
