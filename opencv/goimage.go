@@ -30,7 +30,7 @@ func FromImage(img image.Image) *IplImage {
 			c := model.Convert(px).(color.RGBA)
 
 			value := NewScalar(float64(c.B), float64(c.G), float64(c.R), float64(c.A))
-			dst.Set2D(x, y, value)
+			dst.Set2D(x-b.Min.X, y-b.Min.Y, value)
 		}
 	}
 
