@@ -69,10 +69,10 @@ func (this *HaarCascade) DetectObjects(image *IplImage) []*Rect {
 		rect := (*Rect)((*_Ctype_CvRect)(unsafe.Pointer(C.cvGetSeqElem(seq, C.int(i)))))
 		faces = append(faces, rect)
 	}
-	
+
 	storage_c := (*C.CvMemStorage)(storage)
 	C.cvReleaseMemStorage(&storage_c)
-	
+
 	return faces
 }
 
