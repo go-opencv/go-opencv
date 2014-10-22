@@ -40,6 +40,9 @@ static int CV_IS_IMAGE_(void* img) {
 static int myGetMatType(const CvMat* mat) {
 	return mat->type;
 }
+static char* myGetData(const CvMat* mat) {
+	return  (char*)mat->data.ptr;
+}
 static int myGetMatNDType(const CvMatND* mat) {
 	return mat->type;
 }
