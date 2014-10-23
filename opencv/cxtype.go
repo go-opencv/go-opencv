@@ -324,6 +324,9 @@ type Mat C.CvMat
 func (mat *Mat) Type() int {
 	return int(C.myGetMatType((*C.CvMat)(mat)))
 }
+func (mat *Mat) GetData() []byte {
+	return C.GoBytes(unsafe.Pointer(C.myGetData((*C.CvMat)(mat))), C.int(mat.step))
+}
 func (mat *Mat) Step() int {
 	return int(mat.step)
 }
