@@ -1,7 +1,6 @@
 #Go OpenCV binding
 
-## Why fork?
-Original project (https://code.google.com/p/go-opencv) looks abandoned. Therefore, I decide to fork it and host it on Github, so that others can help to maintain this package.
+This is a fork of https://github.com/chai2010/opencv . At the time of the fork (Dec 9, 2013) the original project was inactive, but now it seems to be active again starting from Aug 25, 2014. Efforts to merge the two projects are very welcome.
 
 ## Install
 
