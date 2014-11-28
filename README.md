@@ -1,6 +1,8 @@
 #Go OpenCV binding
 
-This is a fork of https://github.com/chai2010/opencv . At the time of the fork (Dec 9, 2013) the original project was inactive, but now it seems to be active again starting from Aug 25, 2014. Efforts to merge the two projects are very welcome.
+## Disclaimer
+
+This is a fork of [chai's go-opencv](https://github.com/chai2010/opencv). At the time of the fork (Dec 9, 2013) the original project was inactive, and hence I decide to host a fork on Github so people can contribute to this project easily. However, now it seems to be active again starting from Aug 25, 2014. Efforts to merge the two projects are very welcome.
 
 ## Install
 
