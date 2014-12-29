@@ -16,6 +16,14 @@ import (
 	"unsafe"
 )
 
+const (
+	CV_INTER_NN       = int(C.CV_INTER_NN)
+	CV_INTER_LINEAR   = int(C.CV_INTER_LINEAR)
+	CV_INTER_CUBIC    = int(C.CV_INTER_CUBIC)
+	CV_INTER_AREA     = int(C.CV_INTER_AREA)
+	CV_INTER_LANCZOS4 = int(C.CV_INTER_LANCZOS4)
+)
+
 func Resize(src *IplImage, width, height, interpolation int) *IplImage {
 	if width == 0 && height == 0 {
 		panic("Width and Height cannot be 0 at the same time")
@@ -33,18 +41,9 @@ func Resize(src *IplImage, width, height, interpolation int) *IplImage {
 	return dst
 }
 
-func NewRect(x, y, width, height int) Rect {
-	r := C.cvRect(
-		C.int(x),
-		C.int(y),
-		C.int(width),
-		C.int(height),
-	)
-	return Rect(r)
-}
-
 func Crop(src *IplImage, x, y, width, height int) *IplImage {
-	rect := NewRect(x, y, width, height)
+	r := C.cvRect(C.int(x), C.int(y), C.int(width), C.int(height))
+	rect := Rect(r)
 
 	src.SetROI(rect)
 	dest := CreateImage(width, height, src.Depth(), src.Channels())
