@@ -32,3 +32,24 @@ func Resize(src *IplImage, width, height, interpolation int) *IplImage {
 	C.cvResize(unsafe.Pointer(src), unsafe.Pointer(dst), C.int(interpolation))
 	return dst
 }
+
+func NewRect(x, y, width, height int) Rect {
+	r := C.cvRect(
+		C.int(x),
+		C.int(y),
+		C.int(width),
+		C.int(height),
+	)
+	return Rect(r)
+}
+
+func Crop(src *IplImage, x, y, width, height int) *IplImage {
+	rect := NewRect(x, y, width, height)
+
+	src.SetROI(rect)
+	dest := CreateImage(width, height, src.Depth(), src.Channels())
+	Copy(src, dest, nil)
+	src.ResetROI()
+
+	return dest
+}
