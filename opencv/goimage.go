@@ -67,9 +67,10 @@ func (img *IplImage) ToImage() image.Image {
 	for y := 0; y < img.Height(); y++ {
 		for x := 0; x < img.Width(); x++ {
 			s := img.Get2D(x, y).Val()
-			b, g, r, a := s[2], s[1], s[0], s[3]
 
-			c := color.NRGBA{uint8(r), uint8(g), uint8(b), uint8(a)}
+			b, g, r := s[0], s[1], s[2]
+
+			c := color.NRGBA{R: uint8(r), G: uint8(g), B: uint8(b), A: uint8(255)}
 			out.Set(x, y, c)
 		}
 	}
