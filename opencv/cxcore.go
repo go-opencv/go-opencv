@@ -1,12 +1,14 @@
 // Copyright 2011 <chaishushan@gmail.com>. All rights reserved.
 // Use of this source code is governed by a BSD-style
 // license that can be found in the LICENSE file.
+// 22/11/2013 Updated by <mohamd.helala@gmail.com>.
 
 package opencv
 
 //#include "opencv.h"
 //#cgo linux  pkg-config: opencv
 //#cgo darwin pkg-config: opencv
+//#cgo freebsd pkg-config: opencv
 //#cgo windows LDFLAGS: -lopencv_core242.dll -lopencv_imgproc242.dll -lopencv_photo242.dll -lopencv_highgui242.dll -lstdc++
 import "C"
 import (
@@ -57,11 +59,6 @@ func CreateImage(w, h, depth, channels int) *IplImage {
 	return (*IplImage)(img)
 }
 
-/* SetData assigns user data to the image header */
-func (img *IplImage) SetData(data unsafe.Pointer, step int) {
-	C.cvSetData(unsafe.Pointer(img), data, C.int(step))
-}
-
 /* Releases (i.e. deallocates) IPL image header */
 func (img *IplImage) ReleaseHeader() {
 	img_c := (*C.IplImage)(img)
@@ -72,10 +69,6 @@ func (img *IplImage) ReleaseHeader() {
 func (img *IplImage) Release() {
 	img_c := (*C.IplImage)(img)
 	C.cvReleaseImage(&img_c)
-}
-
-func (img *IplImage) Zero() {
-	C.cvSetZero(unsafe.Pointer(img))
 }
 
 /* Creates a copy of IPL image (widthStep may differ) */
@@ -112,58 +105,6 @@ func (img *IplImage) GetROI() Rect {
 	return Rect(r)
 }
 
-/*
-Reshape changes shape of the image without copying data. A value of `0` means
-that channels or rows remain unchanged.
-*/
-func (img *IplImage) Reshape(channels, rows, _type int) *Mat {
-	total := img.Width() * img.Height()
-	header := CreateMat(rows, total/rows, _type)
-	n := C.cvReshape(unsafe.Pointer(img), (*C.CvMat)(header), C.int(channels), C.int(rows))
-	return (*Mat)(n)
-}
-
-/* Get1D return a specific element from a 1-dimensional matrix. */
-func (img *IplImage) Get1D(x int) Scalar {
-	ret := C.cvGet1D(unsafe.Pointer(img), C.int(x))
-	return Scalar(ret)
-}
-
-/* Get2D return a specific element from a 2-dimensional matrix. */
-func (img *IplImage) Get2D(x, y int) Scalar {
-	ret := C.cvGet2D(unsafe.Pointer(img), C.int(y), C.int(x))
-	return Scalar(ret)
-}
-
-/* Get3D return a specific element from a 3-dimensional matrix. */
-func (img *IplImage) Get3D(x, y, z int) Scalar {
-	ret := C.cvGet3D(unsafe.Pointer(img), C.int(z), C.int(y), C.int(x))
-	return Scalar(ret)
-}
-
-/* Set1D sets a particular element in the image */
-func (img *IplImage) Set1D(x int, value Scalar) {
-	C.cvSet1D(unsafe.Pointer(img), C.int(x), (C.CvScalar)(value))
-}
-
-/* Set2D sets a particular element in the image */
-func (img *IplImage) Set2D(x, y int, value Scalar) {
-	C.cvSet2D(unsafe.Pointer(img), C.int(y), C.int(x), (C.CvScalar)(value))
-}
-
-/* Set3D sets a particular element in the image */
-func (img *IplImage) Set3D(x, y, z int, value Scalar) {
-	C.cvSet3D(unsafe.Pointer(img), C.int(z), C.int(y), C.int(x), (C.CvScalar)(value))
-}
-
-/* GetMat returns the matrix header for an image.*/
-func (img *IplImage) GetMat() *Mat {
-	var null C.int
-	tmp := CreateMat(img.Height(), img.Width(), CV_32S)
-	m := C.cvGetMat(unsafe.Pointer(img), (*C.CvMat)(tmp), &null, C.int(0))
-	return (*Mat)(m)
-}
-
 // mat step
 const (
 	CV_AUTOSTEP = C.CV_AUTOSTEP
@@ -197,11 +138,6 @@ func (mat *Mat) InitHeader(rows, cols, type_ int, data unsafe.Pointer, step int)
 	)
 }
 
-/* SetData assigns user data to the matrix header. */
-func (mat *Mat) SetData(data unsafe.Pointer, step int) {
-	C.cvSetData(unsafe.Pointer(mat), data, C.int(step))
-}
-
 /* Releases CvMat header and deallocates matrix data
    (reference counting is used for data) */
 func (mat *Mat) Release() {
@@ -224,21 +160,6 @@ func IncRefData(arr Arr) {
 func (mat *Mat) Clone() *Mat {
 	mat_new := C.cvCloneMat((*C.CvMat)(mat))
 	return (*Mat)(mat_new)
-}
-
-func (mat *Mat) Zero() {
-	C.cvSetZero(unsafe.Pointer(mat))
-}
-
-/*
-Reshape changes shape of the matrix without copying data. A value of `0` means
-that channels or rows remain unchanged.
-*/
-func (m *Mat) Reshape(channels, rows int) *Mat {
-	total := m.Cols() * m.Rows()
-	n := CreateMat(rows, total/rows, m.Type())
-	C.cvReshape(unsafe.Pointer(m), (*C.CvMat)(n), C.int(channels), C.int(rows))
-	return n
 }
 
 /* Makes a new matrix from <rect> subrectangle of input array.
@@ -306,47 +227,6 @@ func GetDiag(arr Arr, submat *Mat, diag int) *Mat {
 		C.int(diag),
 	)
 	return (*Mat)(mat_new)
-}
-
-/* Get1D return a specific element from a 1-dimensional matrix. */
-func (m *Mat) Get1D(x int) Scalar {
-	ret := C.cvGet1D(unsafe.Pointer(m), C.int(x))
-	return Scalar(ret)
-}
-
-/* Get2D return a specific element from a 2-dimensional matrix. */
-func (m *Mat) Get2D(x, y int) Scalar {
-	ret := C.cvGet2D(unsafe.Pointer(m), C.int(x), C.int(y))
-	return Scalar(ret)
-}
-
-/* Get3D return a specific element from a 3-dimensional matrix. */
-func (m *Mat) Get3D(x, y, z int) Scalar {
-	ret := C.cvGet3D(unsafe.Pointer(m), C.int(x), C.int(y), C.int(z))
-	return Scalar(ret)
-}
-
-/* Set1D sets a particular element in them matrix */
-func (m *Mat) Set1D(x int, value Scalar) {
-	C.cvSet1D(unsafe.Pointer(m), C.int(x), (C.CvScalar)(value))
-}
-
-/* Set2D sets a particular element in them matrix */
-func (m *Mat) Set2D(x, y int, value Scalar) {
-	C.cvSet2D(unsafe.Pointer(m), C.int(x), C.int(y), (C.CvScalar)(value))
-}
-
-/* Set3D sets a particular element in them matrix */
-func (m *Mat) Set3D(x, y, z int, value Scalar) {
-	C.cvSet3D(unsafe.Pointer(m), C.int(x), C.int(y), C.int(z), (C.CvScalar)(value))
-}
-
-/* GetImage returns the image header for the matrix. */
-func (m *Mat) GetImage(channels int) *IplImage {
-	tmp := CreateImage(m.Cols(), m.Rows(), m.Type(), channels)
-	img := C.cvGetImage(unsafe.Pointer(m), (*C.IplImage)(tmp))
-
-	return (*IplImage)(img)
 }
 
 /* low-level scalar <-> raw data conversion functions */
@@ -467,6 +347,73 @@ func (iter *SparseMatIterator) Next() *SparseNode {
 
 // P290
 
+/*
+Reshape changes shape of the image without copying data. A value of `0` means
+that channels or rows remain unchanged.
+*/
+func Reshape(img unsafe.Pointer, header *Mat, channels, rows int) *Mat {
+	n := C.cvReshape(img, (*C.CvMat)(header), C.int(channels), C.int(rows))
+	return (*Mat)(n)
+}
+
+
+/* Get1D return a specific element from a 1-dimensional matrix. */
+func Get1D(img unsafe.Pointer, x int) Scalar {
+	ret := C.cvGet1D(img, C.int(x))
+	return Scalar(ret)
+}
+/* Get2D return a specific element from a 2-dimensional matrix. */
+func Get2D(img unsafe.Pointer,x, y int) Scalar {
+	ret := C.cvGet2D(img, C.int(y), C.int(x))
+	return Scalar(ret)
+}
+/* Get3D return a specific element from a 3-dimensional matrix. */
+func Get3D(img unsafe.Pointer,x, y, z int) Scalar {
+	ret := C.cvGet3D(img, C.int(z), C.int(y), C.int(x))
+	return Scalar(ret)
+}
+/* Set1D sets a particular element in the image */
+func Set1D(img unsafe.Pointer, x int, value Scalar) {
+	C.cvSet1D(img, C.int(x), (C.CvScalar)(value))
+}
+/* Set2D sets a particular element in the image */
+func Set2D(img unsafe.Pointer, x, y int, value Scalar) {
+	C.cvSet2D(img, C.int(y), C.int(x), (C.CvScalar)(value))
+}
+/* Set3D sets a particular element in the image */
+func Set3D(img unsafe.Pointer, x, y, z int, value Scalar) {
+	C.cvSet3D(img, C.int(z), C.int(y), C.int(x), (C.CvScalar)(value))
+}
+
+
+// 
+//                        
+//                        
+
+/* Converts CvArr (IplImage or CvMat,...) to CvMat.
+   If the last parameter is non-zero, function can
+   convert multi(>2)-dimensional array to CvMat as long as
+   the last array's dimension is continous. The resultant
+   matrix will be have appropriate (a huge) number of rows 
+
+   CVAPI(CvMat*) cvGetMat( const CvArr* arr, CvMat* header,
+   int* coi CV_DEFAULT(NULL),int allowND CV_DEFAULT(0));*/
+func GetMat(arr unsafe.Pointer, header *Mat, coi *int32, allowND int) *Mat{
+	m := C.cvGetMat(arr, (*C.CvMat)(header), (*C.int)(coi), C.int(allowND))
+	return (*Mat)(m)
+}
+
+/* Converts CvArr (IplImage or CvMat) to IplImage 
+
+   CVAPI(IplImage*) cvGetImage( const CvArr* arr, 
+   IplImage* image_header );*/
+func GetImage(arr unsafe.Pointer, header *IplImage) *IplImage{
+	m := C.cvGetImage(arr, (*C.IplImage)(header))
+	return (*IplImage)(m)
+}
+
+
+
 /* Returns width and height of array in elements */
 func GetSizeWidth(img *IplImage) int {
 	size := C.cvGetSize(unsafe.Pointer(img))
@@ -485,16 +432,16 @@ func GetSize(img *IplImage) Size {
 }
 
 /* Copies source array to destination array */
-func Copy(src, dst, mask *IplImage) {
-	C.cvCopy(unsafe.Pointer(src), unsafe.Pointer(dst), unsafe.Pointer(mask))
+func Copy(src, dst, mask unsafe.Pointer) {
+	C.cvCopy(src, dst, mask)
 }
 
 //CVAPI(void)  cvCopy( const CvArr* src, CvArr* dst,
 //                     const CvArr* mask CV_DEFAULT(NULL) );
 
 /* Clears all the array elements (sets them to 0) */
-func Zero(img *IplImage) {
-	C.cvSetZero(unsafe.Pointer(img))
+func Zero(img unsafe.Pointer) {
+	C.cvSetZero(img)
 }
 
 //CVAPI(void)  cvSetZero( CvArr* arr );
@@ -531,35 +478,261 @@ func Not(src, dst *IplImage) {
 *                              Dynamic data structures                        *
 \****************************************************************************************/
 
+/* Calculates length of sequence slice (with support of negative indices). */
+
+func SliceLength(slice Slice, seq *Seq) {
+	C.cvSliceLength(C.CvSlice(slice), (*C.CvSeq)(seq))
+}
+
+// CVAPI(int) cvSliceLength( CvSlice slice, const CvSeq* seq );
+
+/* Creates new memory storage.
+   block_size == 0 means that default,
+   somewhat optimal size, is used (currently, it is 64K) */
+func CreateMemStorage(block_size int) *MemStorage {
+	block := C.cvCreateMemStorage(C.int(block_size))
+	return (*MemStorage)(block)
+}
+
+// CVAPI()  cvCreateMemStorage( int block_size CV_DEFAULT(0));
+
+/* Creates a memory storage that will borrow memory blocks from parent storage */
+func CreateChildMemStorage(parent *MemStorage) *MemStorage {
+	block := C.cvCreateChildMemStorage((*C.CvMemStorage)(parent))
+	return (*MemStorage)(block)
+}
+
+// CVAPI(CvMemStorage*)  cvCreateChildMemStorage( CvMemStorage* parent );
+
+/* Releases memory storage. All the children of a parent must be released before
+   the parent. A child storage returns all the blocks to parent when it is released */
+func ReleaseMemStorage(storage *MemStorage) {
+	block := (*C.CvMemStorage)(storage)
+	C.cvReleaseMemStorage(&block)
+}
+
+// CVAPI(void)  cvReleaseMemStorage( CvMemStorage** storage );
+
+/* Clears memory storage. This is the only way(!!!) (besides cvRestoreMemStoragePos)
+   to reuse memory allocated for the storage - cvClearSeq,cvClearSet ...
+   do not free any memory.
+   A child storage returns all the blocks to the parent when it is cleared */
+func ClearMemStorage(storage *MemStorage) {
+	C.cvClearMemStorage((*C.CvMemStorage)(storage))
+}
+
+// CVAPI(void)  cvClearMemStorage( CvMemStorage* storage );
+
+/* Remember a storage "free memory" position */
+func SaveMemStoragePos(storage *MemStorage, pos *MemStoragePos) {
+	C.cvSaveMemStoragePos((*C.CvMemStorage)(storage), (*C.CvMemStoragePos)(pos))
+}
+
+// CVAPI(void)  cvSaveMemStoragePos( const CvMemStorage* storage, CvMemStoragePos* pos );
+
+/* Restore a storage "free memory" position */
+func RestoreMemStoragePos(storage *MemStorage, pos *MemStoragePos) {
+	C.cvRestoreMemStoragePos((*C.CvMemStorage)(storage), (*C.CvMemStoragePos)(pos))
+}
+
+// CVAPI(void)  cvRestoreMemStoragePos( CvMemStorage* storage, CvMemStoragePos* pos );
+
+/* Allocates continuous buffer of the specified size in the storage */
+func MemStorageAlloc(storage *MemStorage, size int) {
+	C.cvMemStorageAlloc((*C.CvMemStorage)(storage), C.size_t(size))
+}
+
+// CVAPI(void*) cvMemStorageAlloc( CvMemStorage* storage, size_t size );
+
+/* Allocates string in memory storage */
+func MemStorageAllocString(storage *MemStorage, name string, _len int) {
+	C.cvMemStorageAllocString((*C.CvMemStorage)(storage), C.CString(name), C.int(_len))
+}
+
+// CVAPI(CvString) cvMemStorageAllocString( CvMemStorage* storage, const char* ptr,
+// int len CV_DEFAULT(-1) );
+
+/* Creates new empty sequence that will reside in the specified storage */
+func CreateSeq(seq_flags, header_size, elem_size int, storage *MemStorage) {
+	C.cvCreateSeq(C.int(seq_flags), C.size_t(header_size), C.size_t(elem_size), (*C.CvMemStorage)(storage))
+}
+
+//CVAPI(CvSeq*)  cvCreateSeq( int seq_flags, size_t header_size,
+//                            size_t elem_size, CvMemStorage* storage );
+
+/* Removes all the elements from the sequence. The freed memory
+   can be reused later only by the same sequence unless cvClearMemStorage
+   or cvRestoreMemStoragePos is called */
+func ClearSeq(seq *Seq) {
+	C.cvClearSeq((*C.CvSeq)(seq))
+}
+
+// CVAPI(void)  cvClearSeq( CvSeq* seq );
+
+/* Retrieves pointer to specified sequence element.
+   Negative indices are supported and mean counting from the end
+   (e.g -1 means the last sequence element) */
+func GetSeqElem(seq *Seq, index int) *int8 {
+	el := C.cvGetSeqElem((*C.CvSeq)(seq), C.int(index))
+	return (*int8)(el)
+}
+
+// CVAPI(schar*)  cvGetSeqElem( const CvSeq* seq, int index );
+
+/* Calculates index of the specified sequence element.
+   Returns -1 if element does not belong to the sequence */
+func SeqElemIdx(seq *Seq, el unsafe.Pointer, seqblock *SeqBlock) int {
+	cvseqblock := (*C.CvSeqBlock)(seqblock)
+	r := C.cvSeqElemIdx((*C.CvSeq)(seq), el, &cvseqblock)
+	return (int)(r)
+}
+
+// CVAPI(int)  cvSeqElemIdx( const CvSeq* seq, const void* element,
+//                         CvSeqBlock** block CV_DEFAULT(NULL) );
+
+/* Extracts sequence slice (with or without copying sequence elements) */
+func SeqSlice(seq *Seq, slice Slice, storage *MemStorage, copy_data int) *Seq {
+	r := C.cvSeqSlice((*C.CvSeq)(seq), C.CvSlice(slice), (*C.CvMemStorage)(storage), C.int(copy_data))
+	return (*Seq)(r)
+}
+
+// CVAPI(CvSeq*) cvSeqSlice( const CvSeq* seq, CvSlice slice,
+//                          CvMemStorage* storage CV_DEFAULT(NULL),
+//                          int copy_data CV_DEFAULT(0));
+/* A wrapper for the somewhat more general routine cvSeqSlice() whuch
+creates a deep copy of a sequence and creates another entirely separate
+sequence structure.*/
+func CloneSeq(seq *Seq, storage *MemStorage) *Seq {
+	r := C.cvSeqSlice((*C.CvSeq)(seq), (C.CvSlice)(CV_WHOLE_SEQ), (*C.CvMemStorage)(storage), C.int(1))
+	return (*Seq)(r)
+}
+
+// CV_INLINE CvSeq* cvCloneSeq( const CvSeq* seq, CvMemStorage* storage CV_DEFAULT(NULL))
+// {
+//     return cvSeqSlice( seq, CV_WHOLE_SEQ, storage, 1 );
+// }
+
+/* Removes sequence slice */
+func SeqRemoveSlice(seq *Seq, slice Slice) {
+	C.cvSeqRemoveSlice((*C.CvSeq)(seq), C.CvSlice(slice))
+}
+
+// CVAPI(void)  cvSeqRemoveSlice( CvSeq* seq, CvSlice slice );
+
+/* Inserts a sequence or array into another sequence */
+func SeqInsertSlice(seq *Seq, before_index int, from_arr Arr) {
+	C.cvSeqInsertSlice((*C.CvSeq)(seq), C.int(before_index), unsafe.Pointer(from_arr))
+}
+
+// CVAPI(void)  cvSeqInsertSlice( CvSeq* seq, int before_index, const CvArr* from_arr );
+
+/* Sorts sequence in-place given element comparison function */
+func SeqSort(seq *Seq, f CmpFunc, userdata unsafe.Pointer) {
+	fc := func(a C.CVoid, b C.CVoid, data unsafe.Pointer) int {
+		return f(unsafe.Pointer(a), unsafe.Pointer(b), data)
+	}
+	cmpFunc := C.GoOpenCV_CmpFunc(unsafe.Pointer(&fc))
+	C.cvSeqSort((*C.CvSeq)(seq), cmpFunc, unsafe.Pointer(userdata))
+}
+
+// CVAPI(void) cvSeqSort( CvSeq* seq, CvCmpFunc func, void* userdata CV_DEFAULT(NULL) );
+
+/* Finds element in a [sorted] sequence */
+func SeqSearch(seq *Seq, elem unsafe.Pointer, f CmpFunc, is_sorted int,
+	lem_idx *int32, userdata unsafe.Pointer) {
+	fc := func(a C.CVoid, b C.CVoid, userdata Arr) int {
+		return f(unsafe.Pointer(a), unsafe.Pointer(b), unsafe.Pointer(userdata))
+	}
+	cmpFunc := C.GoOpenCV_CmpFunc(unsafe.Pointer(&fc))
+	C.cvSeqSearch((*C.CvSeq)(seq), elem, cmpFunc,
+		C.int(is_sorted), (*C.int)(lem_idx), userdata)
+}
+
+// CVAPI(schar*) cvSeqSearch( CvSeq* seq, const void* elem, CvCmpFunc func,
+//                            int is_sorted, int* elem_idx,
+//                            void* userdata CV_DEFAULT(NULL) );
+
+/* Reverses order of sequence elements in-place */
+func SeqInvert(seq *Seq) {
+	C.cvSeqInvert((*C.CvSeq)(seq))
+}
+
+// CVAPI(void) cvSeqInvert( CvSeq* seq );
+
+/* Splits sequence into one or more equivalence classes using the specified criteria */
+func SeqPartition(seq *Seq, storage *MemStorage, labels **Seq,
+	f CmpFunc, userdata unsafe.Pointer) {
+	fc := func(a C.CVoid, b C.CVoid, userdata Arr) int {
+		return f(unsafe.Pointer(a), unsafe.Pointer(b), unsafe.Pointer(userdata))
+	}
+	cmpFunc := C.GoOpenCV_CmpFunc(unsafe.Pointer(&fc))
+	cvSeq := (*C.CvSeq)(*labels)
+	C.cvSeqPartition((*C.CvSeq)(seq), (*C.CvMemStorage)(storage), &cvSeq,
+		cmpFunc, userdata)
+}
+
+// CVAPI(int)  cvSeqPartition( const CvSeq* seq, CvMemStorage* storage,
+//                             CvSeq** labels, CvCmpFunc is_equal, void*  );
+
+/* Inserts a new element in the middle of sequence.
+   cvSeqInsert(seq,0,elem) == cvSeqPushFront(seq,elem) */
+func SeqInsert(seq *Seq, before_index int, element unsafe.Pointer) *int8 {
+	r := C.cvSeqInsert((*C.CvSeq)(seq), C.int(before_index), element)
+	return (*int8)(r)
+}
+
+// CVAPI(schar*)  cvSeqInsert( CvSeq* seq, int before_index,
+//                            const void* element CV_DEFAULT(NULL));
+
+/* Removes specified sequence element */
+func SeqRemove(seq *Seq, index int) {
+	C.cvSeqRemove((*C.CvSeq)(seq), C.int(index))
+}
+
+// CVAPI(void)  cvSeqRemove( CvSeq* seq, int index );
+
+/* Changes default size (granularity) of sequence blocks.
+   The default size is ~1Kbyte */
+func SetSeqBlockSize(seq *Seq, delta_elems int) {
+	C.cvSetSeqBlockSize((*C.CvSeq)(seq), C.int(delta_elems))
+}
+
+// CVAPI(void)  cvSetSeqBlockSize( CvSeq* seq, int delta_elems );
+
+/* Copies sequence content to a continuous piece of memory */
+func CvtSeqToArray(seq *Seq, delta_elems unsafe.Pointer, slice Slice) {
+	C.cvCvtSeqToArray((*C.CvSeq)(seq), delta_elems, (C.CvSlice)(slice))
+}
+
+// CVAPI(void*)  cvCvtSeqToArray( const CvSeq* seq, void* elements,
+//                                CvSlice slice CV_DEFAULT(CV_WHOLE_SEQ) );
+
+/* Creates sequence header for array.
+   After that all the operations on sequences that do not alter the content
+   can be applied to the resultant sequence */
+func MakeSeqHeaderForArray(seq_type, header_size, elem_size int,
+	elems unsafe.Pointer, total int, seq *Seq, block *SeqBlock) *Seq {
+	r := C.cvMakeSeqHeaderForArray(C.int(seq_type), C.int(header_size),
+		C.int(elem_size), elems, C.int(total), (*C.CvSeq)(seq),
+		(*C.CvSeqBlock)(block))
+	return (*Seq)(r)
+}
+
+// CVAPI(CvSeq*) cvMakeSeqHeaderForArray( int seq_type, int header_size,
+//                                        int elem_size, void* elements, int total,
+//                                        CvSeq* seq, CvSeqBlock* block );
 /****************************************************************************************\
 *                                     Drawing                                 *
 \****************************************************************************************/
 
+const CV_FILLED = C.CV_FILLED
+
 /* Draws 4-connected, 8-connected or antialiased line segment connecting two points */
 //color Scalar,
-func Line(image *IplImage, pt1, pt2 Point, color Scalar, thickness, line_type, shift int) {
-	C.cvLine(
-		unsafe.Pointer(image),
+func Line(image unsafe.Pointer, pt1, pt2 Point, color Scalar, thickness, line_type, shift int) {
+	C.cvLine(image,
 		C.cvPoint(C.int(pt1.X), C.int(pt1.Y)),
 		C.cvPoint(C.int(pt2.X), C.int(pt2.Y)),
-		(C.CvScalar)(color),
-		C.int(thickness), C.int(line_type), C.int(shift),
-	)
-}
-func Rectangle(image *IplImage, pt1, pt2 Point, color Scalar, thickness, line_type, shift int) {
-	C.cvRectangle(
-		unsafe.Pointer(image),
-		C.cvPoint(C.int(pt1.X), C.int(pt1.Y)),
-		C.cvPoint(C.int(pt2.X), C.int(pt2.Y)),
-		(C.CvScalar)(color),
-		C.int(thickness), C.int(line_type), C.int(shift),
-	)
-}
-func Circle(image *IplImage, pt1 Point, radius int, color Scalar, thickness, line_type, shift int) {
-	C.cvCircle(
-		unsafe.Pointer(image),
-		C.cvPoint(C.int(pt1.X), C.int(pt1.Y)),
-		C.int(radius),
 		(C.CvScalar)(color),
 		C.int(thickness), C.int(line_type), C.int(shift),
 	)
@@ -569,6 +742,92 @@ func Circle(image *IplImage, pt1 Point, radius int, color Scalar, thickness, lin
 //                     CvScalar color, int thickness CV_DEFAULT(1),
 //                     int line_type CV_DEFAULT(8), int shift CV_DEFAULT(0) );
 
+/* Draws a rectangle given two opposite corners of the rectangle (pt1 & pt2),
+   if thickness<0 (e.g. thickness == CV_FILLED), the filled box is drawn */
+func Rectangle(image unsafe.Pointer, pt1, pt2 Point, color Scalar, thickness, line_type, shift int) {
+	C.cvRectangle(image,
+		C.cvPoint(C.int(pt1.X), C.int(pt1.Y)),
+		C.cvPoint(C.int(pt2.X), C.int(pt2.Y)),
+		(C.CvScalar)(color),
+		C.int(thickness), C.int(line_type), C.int(shift),
+	)
+}
+
+// CVAPI(void)  cvRectangle( CvArr* img, CvPoint pt1, CvPoint pt2,
+//                           CvScalar color, int thickness CV_DEFAULT(1),
+//                           int line_type CV_DEFAULT(8),
+//                           int shift CV_DEFAULT(0));
+
+func Circle(image unsafe.Pointer, pt1 Point, r int, color Scalar, thickness, line_type, shift int) {
+	C.cvCircle(image,
+		C.cvPoint(C.int(pt1.X), C.int(pt1.Y)),
+		C.int(r),
+		(C.CvScalar)(color),
+		C.int(thickness), C.int(line_type), C.int(shift),
+	)
+}
+
+/* Draws ellipse outline, filled ellipse, elliptic arc or filled elliptic sector,
+   depending on <thickness>, <start_angle> and <end_angle> parameters. The resultant figure
+   is rotated by <angle>. All the angles are in degrees */
+// CVAPI(void)  cvEllipse( CvArr* img, CvPoint center, CvSize axes,
+//                         double angle, double start_angle, double end_angle,
+//                         CvScalar color, int thickness CV_DEFAULT(1),
+//                         int line_type CV_DEFAULT(8), int shift CV_DEFAULT(0));
+
+func Ellipse(image unsafe.Pointer, center Point, axes Size, angle, start_angle, end_angle float64, 
+					color Scalar, thickness, line_type, shift int) {
+	C.cvEllipse(image,
+		C.cvPoint(C.int(center.X), C.int(center.Y)),
+		C.cvSize(C.int(axes.Width), C.int(axes.Height)), C.double(angle),
+		C.double(start_angle), C.double(end_angle) ,(C.CvScalar)(color),
+		C.int(thickness), C.int(line_type), C.int(shift),
+	)
+}
+
+// CVAPI(void)  cvDrawContours( CvArr *img, CvSeq* contour,
+//                              CvScalar external_color, CvScalar hole_color,
+//                              int max_level, int thickness CV_DEFAULT(1),
+//                              int line_type CV_DEFAULT(8),
+//                              CvPoint offset CV_DEFAULT(cvPoint(0,0)));
+
+/* Draws contour outlines or filled interiors on the image */
+func DrawContours(image unsafe.Pointer, contour *Seq, external_color Scalar,
+	hole_color Scalar, max_level, thickness, line_type int, offset Point) {
+	C.cvDrawContours(image,
+		(*C.CvSeq)(contour),
+		(C.CvScalar)(external_color),
+		(C.CvScalar)(hole_color),
+		C.int(max_level), C.int(thickness), C.int(line_type),
+		C.cvPoint(C.int(offset.X), C.int(offset.Y)),
+	)
+}
+
+const (
+	CV_FONT_HERSHEY_SIMPLEX  = C.CV_FONT_HERSHEY_SIMPLEX
+	CV_FONT_HERSHEY_PLAIN    = C.CV_FONT_HERSHEY_PLAIN
+	CV_FONT_HERSHEY_DUPLEX   = C.CV_FONT_HERSHEY_DUPLEX
+	CV_FONT_HERSHEY_COMPLEX  = C.CV_FONT_HERSHEY_COMPLEX
+	CV_FONT_HERSHEY_TRIPLEX  = C.CV_FONT_HERSHEY_TRIPLEX
+	CV_FONT_HERSHEY_COMPLEX_SMALL   = C.CV_FONT_HERSHEY_COMPLEX_SMALL
+	CV_FONT_HERSHEY_SCRIPT_SIMPLEX  = C.CV_FONT_HERSHEY_SCRIPT_SIMPLEX
+	CV_FONT_HERSHEY_SCRIPT_COMPLEX  = C.CV_FONT_HERSHEY_SCRIPT_COMPLEX
+)
+
+/* Renders text stroke with specified font and color at specified location.
+   CvFont should be initialized with cvInitFont */
+// CVAPI(void)  cvPutText( CvArr* img, const char* text, CvPoint org,
+//                         const CvFont* font, CvScalar color );
+func PutText(image unsafe.Pointer, text string, org Point, font_face int, 
+	 hscale, vscale, shear float64, thickness, line_type int, color Scalar){
+	// create CvFont sturucture
+	f := &C.CvFont{}
+	C.cvInitFont(f, C.int(font_face), C.double(hscale), C.double(vscale), 
+		C.double(shear), C.int(thickness), C.int(line_type))
+	C.cvPutText(image, C.CString(text), C.cvPoint(C.int(org.X), C.int(org.Y)),
+		f, (C.CvScalar)(color))
+}
+
 /****************************************************************************************\
 *                                    System functions                         *
 \****************************************************************************************/
@@ -576,3 +835,10 @@ func Circle(image *IplImage, pt1 Point, radius int, color Scalar, thickness, lin
 /****************************************************************************************\
 *                                    Data Persistence                         *
 \****************************************************************************************/
+
+/*********************************** Adding own types ***********************************/
+
+/* universal functions */
+func Release(ptr unsafe.Pointer) { C.cvRelease(&ptr) }
+
+// CVAPI(void) cvRelease( void** struct_ptr );

@@ -1,6 +1,7 @@
 // Copyright 2011 <chaishushan@gmail.com>. All rights reserved.
 // Use of this source code is governed by a BSD-style
 // license that can be found in the LICENSE file.
+// Updated by <mohamed.helala@gmail.com>
 
 #include "opencv.h"
 #include "_cgo_export.h"
@@ -14,8 +15,8 @@
 
 // trackbar data
 struct TrackbarUserdata {
-	char* win_name;
-	char* bar_name;
+	schar* win_name;
+	schar* bar_name;
 	int value;
 };
 static struct TrackbarUserdata *trackbar_list[1000];
@@ -32,8 +33,8 @@ int GoOpenCV_CreateTrackbar(
 	struct TrackbarUserdata *userdata = malloc(sizeof(*userdata));
 	trackbar_list[trackbar_list_len++] = userdata;
 
-	userdata->win_name = (char*)window_name;
-	userdata->bar_name = (char*)trackbar_name;
+	userdata->win_name = (schar*)window_name;
+	userdata->bar_name = (schar*)trackbar_name;
 	userdata->value = value;
 
 	return cvCreateTrackbar2(trackbar_name, window_name,
@@ -58,7 +59,7 @@ void GoOpenCV_DestroyTrackbar(char* trackbar_name, char* window_name) {
 //-----------------------------------------------------------------------------
 
 static void mouseCallback(int event, int x, int y, int flags, void* param) {
-	char* name = (char*)param;
+	schar* name = (schar*)param;
 	goMouseCallback(name, event, x, y, flags);
 }
 void GoOpenCV_SetMouseCallback(const char* window_name) {
@@ -74,3 +75,11 @@ unsigned GoOpenCV_FOURCC_(int c1, int c2, int c3, int c4) {
 
 //-----------------------------------------------------------------------------
 
+// A wrapper to the CvCmpFunc
+CvCmpFunc GoOpenCV_CmpFunc(void* gofunc)
+{
+	int (*f)( const void*,  const void*,  void*) = gofunc;
+	return f;
+}
+
+//-----------------------------------------------------------------------------
