@@ -1,8 +1,9 @@
-#Go OpenCV binding
+Go OpenCV binding
+==================
 
-## Disclaimer
+A Golang binding for [OpenCV](http://opencv.org/).
 
-This is a fork of [chai's go-opencv](https://github.com/chai2010/opencv). At the time of the fork (Dec 9, 2013) the original project was inactive, and hence I decide to host a fork on Github so people can contribute to this project easily. However, now it seems to be active again starting from Aug 25, 2014. Efforts to merge the two projects are very welcome.
+[**DISCLAIMER**](https://github.com/lazywei/go-opencv#disclaimer)
 
 ## Install
 
@@ -19,15 +20,22 @@ cd ${GoOpenCVRoot}/samples && go run hellocv.go
 
 - Install Go and MinGw
 - install OpenCV-2.4.x to MinGW dir
-  - `libopencv*.dll` --> `${MinGWRoot}\bin`
-  - `libopencv*.lib` --> `${MinGWRoot}\lib`
-  - `include\opencv` --> `${MinGWRoot}\include\opencv`
-  - `include\opencv2` --> `${MinGWRoot}\include\opencv2`
 
 ```
+# libopencv*.dll --> ${MinGWRoot}\bin
+# libopencv*.lib --> ${MinGWRoot}\lib
+# include\opencv --> ${MinGWRoot}\include\opencv
+# include\opencv2 --> ${MinGWRoot}\include\opencv2
+
 go get code.google.com/p/go-opencv/trunk/opencv
 cd ${GoOpenCVRoot}/trunk/samples && go run hellocv.go
 ```
+
+## TODOs
+
+- [ ] Better documents
+- [ ] Split the big package into sub-packages corresponding to the modules described in [OpenCV API Reference](http://docs.opencv.org/modules/core/doc/intro.html)
+- [ ] Clean up the codes
 
 ## Example
 
@@ -72,28 +80,31 @@ You can find more samples at: https://github.com/lazywei/go-opencv/tree/master/s
 - Fork this repo
 - Clone the main repo, and add your fork as a remote
 
-```
-git clone https://github.com/lazywei/go-opencv.git
-cd go-opencv
-git remote rename origin upstream
-git remote add origin https://github.com/your_github_account/go-opencv.git
-```
+  ```
+  git clone https://github.com/lazywei/go-opencv.git
+  cd go-opencv
+  git remote rename origin upstream
+  git remote add origin https://github.com/your_github_account/go-opencv.git
+  ```
 
 - Create new feature branch
 
-```
-git checkout -b your-feature-branch
-```
+  ```
+  git checkout -b your-feature-branch
+  ```
 
 - Commit your change and push it to your repo 
 
-```
-git commit -m 'new feature'
-git push origin your-feature-branch
-```
+  ```
+  git commit -m 'new feature'
+  git push origin your-feature-branch
+  ```
 
 - Open a pull request!
 
-## TODOs
-- More details doc
-- Implement more bindings
+-------------------
+
+## Disclaimer
+
+This is a fork of [chai's go-opencv](https://github.com/chai2010/opencv). At the time of the fork (Dec 9, 2013) the original project was inactive, and hence I decide to host a fork on Github so people can contribute to this project easily. However, now it seems to be active again starting from Aug 25, 2014. Efforts to merge the two projects are very welcome.
+
