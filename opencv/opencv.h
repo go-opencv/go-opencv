@@ -3,7 +3,6 @@
 // license that can be found in the LICENSE file.
 //
 // OpenCV Homepage: http://code.opencv.org
-// Updated by <mohamed.helala@gmail.com>
 
 #ifndef _GO_OPENCV_BINDING_H_
 #define _GO_OPENCV_BINDING_H_
@@ -33,14 +32,5 @@ void GoOpenCV_SetMouseCallback(
 unsigned GoOpenCV_FOURCC_(
 	int c1, int c2, int c3, int c4
 );
-
-//-----------------------------------------------------------------------------
-
-typedef const void* CVoid;
-
-// A wrapper to the CvCmpFunc
-CvCmpFunc GoOpenCV_CmpFunc(void* gofunc);
-
-//-----------------------------------------------------------------------------
 
 #endif // _GO_OPENCV_BINDING_H_

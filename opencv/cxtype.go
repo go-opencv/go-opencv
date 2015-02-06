@@ -1,7 +1,6 @@
 // Copyright 2011 <chaishushan@gmail.com>. All rights reserved.
 // Use of this source code is governed by a BSD-style
 // license that can be found in the LICENSE file.
-// 22/11/2013 Updated by <mohamd.helala@gmail.com>.
 
 package opencv
 
@@ -55,13 +54,7 @@ static int myGetTermCriteriaType(const CvTermCriteria* x) {
 	return x->type;
 }
 
-#define CV_CHAIN_SIZE sizeof(CvChain)
-#define CV_CONTOUR_SIZE sizeof(CvContour)
-#define CV_SEQ_SIZE sizeof(CvSeq)
-#define CV_SEQBLOCK_SIZE sizeof(CvSeqBlock)
-#define CV_POINT_SIZE sizeof(CvPoint)
 //-----------------------------------------------------------------------------
-
 */
 import "C"
 import (
@@ -144,6 +137,7 @@ const (
 //-----------------------------------------------------------------------------
 // cxtypes.h
 //-----------------------------------------------------------------------------
+
 type Arr unsafe.Pointer
 
 /*****************************************************************************\
@@ -262,9 +256,6 @@ func (img *IplImage) ImageSize() int {
 func (img *IplImage) ImageData() unsafe.Pointer {
 	return unsafe.Pointer(img.imageData)
 }
-func (img *IplImage) Ptr() unsafe.Pointer {
-	return unsafe.Pointer(img)
-}
 
 type IplROI C.IplROI
 
@@ -329,55 +320,6 @@ const (
 *                                  Matrix type (CvMat)                                   *
 \****************************************************************************************/
 
-const(
-CV_8U      				= C.CV_8U
-CV_8S      				= C.CV_8S
-CV_16U     				= C.CV_16U
-CV_16S     				= C.CV_16S
-CV_32S     				= C.CV_32S
-CV_32F     				= C.CV_32F
-CV_64F                  = C.CV_64F
-CV_USRTYPE1             = C.CV_USRTYPE1
-
-CV_MAT_DEPTH_MASK       = C.CV_MAT_DEPTH_MASK
-
-CV_8UC1                 = C.CV_8UC1
-CV_8UC2                 = C.CV_8UC2
-CV_8UC3                 = C.CV_8UC3
-CV_8UC4                 = C.CV_8UC4
-
-CV_8SC1                 = C.CV_8SC1
-CV_8SC2                 = C.CV_8SC2
-CV_8SC3                 = C.CV_8SC3
-CV_8SC4                 = C.CV_8SC4
-
-CV_16UC1                = C.CV_16UC1
-CV_16UC2                = C.CV_16UC2
-CV_16UC3                = C.CV_16UC3
-CV_16UC4                = C.CV_16UC4
-
-CV_16SC1                = C.CV_16SC1
-CV_16SC2                = C.CV_16SC2
-CV_16SC3                = C.CV_16SC3
-CV_16SC4                = C.CV_16SC4
-
-CV_32SC1                = C.CV_32SC1
-CV_32SC2                = C.CV_32SC2
-CV_32SC3                = C.CV_32SC3
-CV_32SC4                = C.CV_32SC4
-
-CV_32FC1                = C.CV_32FC1
-CV_32FC2                = C.CV_32FC2
-CV_32FC3                = C.CV_32FC3
-CV_32FC4                = C.CV_32FC4
-
-CV_64FC1                = C.CV_64FC1
-CV_64FC2                = C.CV_64FC2
-CV_64FC3                = C.CV_64FC3
-CV_64FC4                = C.CV_64FC4
-
-)
-
 type Mat C.CvMat
 
 func (mat *Mat) Type() int {
@@ -395,9 +337,6 @@ func (mat *Mat) Rows() int {
 }
 func (mat *Mat) Cols() int {
 	return int(mat.cols)
-}
-func (mat *Mat) Ptr() unsafe.Pointer {
-	return unsafe.Pointer(mat)
 }
 
 func CV_IS_MAT_HDR(mat interface{}) bool {
@@ -613,10 +552,6 @@ func (x *TermCriteria) Epsilon() float64 {
 
 /******************************* CvPoint and variants ***********************************/
 
-const (
-	CV_POINT_SIZE = C.CV_POINT_SIZE
-)
-
 type Point struct {
 	X int
 	Y int
@@ -642,11 +577,6 @@ type Point3D64f struct {
 	Z float64
 }
 
-func GetPoint(p unsafe.Pointer) Point {
-	cvpt := (*C.CvPoint)(p)
-	return Point{int(cvpt.x), int(cvpt.y)}
-}
-
 /******************************** CvSize's & CvBox **************************************/
 
 type Size struct {
@@ -670,10 +600,6 @@ type LineIterator C.CvLineIterator
 /************************************* CvSlice ******************************************/
 
 type Slice C.CvSlice
-
-var (
-	CV_WHOLE_SEQ Slice = (Slice)(C.cvSlice(0, CV_WHOLE_SEQ_END_INDEX))
-)
 
 const (
 	CV_WHOLE_SEQ_END_INDEX = C.CV_WHOLE_SEQ_END_INDEX
@@ -703,23 +629,6 @@ func (s Scalar) Val() [4]float64 {
 	}
 }
 
-// CV_INLINE  CvScalar  cvScalarAll( double val0123 );
-
-func ScalarN(val0, val1, val2, val3 float64) Scalar {
-	rv := C.cvScalar(C.double(val0), C.double(val1),
-		C.double(val2), C.double(val3))
-	return (Scalar)(rv)
-}
-
-// CV_INLINE  CvScalar  cvScalar( double val0, double val1 CV_DEFAULT(0),
-//                                double val2 CV_DEFAULT(0), double val3 CV_DEFAULT(0));
-func RealScalar(val0 float64) Scalar {
-	rv := C.cvRealScalar(C.double(val0))
-	return (Scalar)(rv)
-}
-
-// CV_INLINE  CvScalar  cvRealScalar( double val0 );
-
 /****************************************************************************************\
 *                                   Dynamic Data structures                              *
 \****************************************************************************************/
@@ -734,84 +643,6 @@ type MemStoragePos C.CvMemStoragePos
 
 type SeqBlock C.CvSeqBlock
 type Seq C.CvSeq
-
-const (
-	CV_SEQ_SIZE      = C.CV_SEQ_SIZE
-	CV_SEQBLOCK_SIZE = C.CV_SEQBLOCK_SIZE
-)
-
-func (seq *Seq) Count() int {
-	return int(seq.total)
-}
-
-func (seq *Seq) Ptr() unsafe.Pointer {
-	return unsafe.Pointer(seq)
-}
-
-func (seq *Seq) H_next() *Seq {
-	return (*Seq)(seq.h_next)
-}
-
-func (seq *Seq) H_prev() *Seq {
-	return (*Seq)(seq.h_prev)
-}
-
-/*
-typedef struct CvSeq {
-	int flags; // miscellaneous flags
-	int header_size; // size of sequence header
-	CvSeq* h_prev; // previous sequence
-	CvSeq* h_next; // next sequence
-	CvSeq* v_prev; // 2nd previous sequence
-	CvSeq* v_next // 2nd next sequence
-	int total; // total number of elements
-	int elem_size; // size of sequence element in byte
-	char* block_max; // maximal bound of the last block
-	char* ptr; // current write pointer
-	int delta_elems; // how many elements allocated
-	// when the sequence grows
-	CvMemStorage* storage; // where the sequence is stored
-	CvSeqBlock* free_blocks; // free blocks list
-	CvSeqBlock* first; // pointer to the first sequence block
-}*/
-
-type CmpFunc func(a unsafe.Pointer, b unsafe.Pointer, userdata unsafe.Pointer) int
-
-const (
-	CV_SEQ_ELTYPE_BITS = C.CV_SEQ_ELTYPE_BITS
-	CV_SEQ_ELTYPE_MASK = C.CV_SEQ_ELTYPE_MASK
-
-	CV_SEQ_ELTYPE_POINT          = C.CV_SEQ_ELTYPE_POINT
-	CV_SEQ_ELTYPE_CODE           = C.CV_SEQ_ELTYPE_CODE
-	CV_SEQ_ELTYPE_GENERIC        = C.CV_SEQ_ELTYPE_GENERIC
-	CV_SEQ_ELTYPE_PTR            = C.CV_SEQ_ELTYPE_PTR
-	CV_SEQ_ELTYPE_PPOINT         = C.CV_SEQ_ELTYPE_PPOINT
-	CV_SEQ_ELTYPE_INDEX          = C.CV_SEQ_ELTYPE_INDEX
-	CV_SEQ_ELTYPE_GRAPH_EDGE     = C.CV_SEQ_ELTYPE_GRAPH_EDGE
-	CV_SEQ_ELTYPE_GRAPH_VERTEX   = C.CV_SEQ_ELTYPE_GRAPH_VERTEX
-	CV_SEQ_ELTYPE_TRIAN_ATR      = C.CV_SEQ_ELTYPE_TRIAN_ATR
-	CV_SEQ_ELTYPE_CONNECTED_COMP = C.CV_SEQ_ELTYPE_CONNECTED_COMP
-	CV_SEQ_ELTYPE_POINT3D        = C.CV_SEQ_ELTYPE_POINT3D
-	CV_SEQ_KIND_BITS             = C.CV_SEQ_KIND_BITS
-	CV_SEQ_KIND_MASK             = C.CV_SEQ_KIND_MASK
-
-	/* types of sequences */
-	CV_SEQ_KIND_GENERIC  = C.CV_SEQ_KIND_GENERIC
-	CV_SEQ_KIND_CURVE    = C.CV_SEQ_KIND_CURVE
-	CV_SEQ_KIND_BIN_TREE = C.CV_SEQ_KIND_BIN_TREE
-
-	/* types of sparse sequences (sets) */
-	CV_SEQ_KIND_GRAPH    = C.CV_SEQ_KIND_GRAPH
-	CV_SEQ_KIND_SUBDIV2D = C.CV_SEQ_KIND_SUBDIV2D
-
-	CV_SEQ_FLAG_SHIFT = C.CV_SEQ_FLAG_SHIFT
-
-	/* flags for curves */
-	CV_SEQ_FLAG_CLOSED = C.CV_SEQ_FLAG_CLOSED
-	CV_SEQ_FLAG_SIMPLE = C.CV_SEQ_FLAG_SIMPLE
-	CV_SEQ_FLAG_CONVEX = C.CV_SEQ_FLAG_CONVEX
-	CV_SEQ_FLAG_HOLE   = C.CV_SEQ_FLAG_HOLE
-)
 
 /*************************************** Set ********************************************/
 
@@ -829,11 +660,6 @@ type Graph C.CvGraph
 
 type Chain C.CvChain
 type Contour C.CvContour
-
-const (
-	CV_CHAIN_SIZE   = C.CV_CHAIN_SIZE
-	CV_CONTOUR_SIZE = C.CV_CONTOUR_SIZE
-)
 
 /****************************************************************************************\
 *                                    Sequence types                                      *

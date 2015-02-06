@@ -18,6 +18,22 @@ import (
 func init() {
 }
 
+const (
+	CV_BGR2GRAY  = C.CV_BGR2GRAY
+	CV_BGR2BGRA  = C.CV_BGR2BGRA
+	CV_RGBA2BGRA = C.CV_RGBA2BGRA
+
+	CV_BLUR = C.CV_BLUR
+
+	CV_8U  = C.CV_8U
+	CV_8S  = C.CV_8S
+	CV_16U = C.CV_16U
+	CV_16S = C.CV_16S
+	CV_32S = C.CV_32S
+	CV_32F = C.CV_32F
+	CV_64F = C.CV_64F
+)
+
 /* Smoothes array (removes noise) */
 func Smooth(src, dst *IplImage, smoothtype,
 	param1, param2 int, param3, param4 float64) {
