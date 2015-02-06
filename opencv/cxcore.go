@@ -347,44 +347,6 @@ func (iter *SparseMatIterator) Next() *SparseNode {
 
 // P290
 
-/*
-Reshape changes shape of the image without copying data. A value of `0` means
-that channels or rows remain unchanged.
-*/
-func Reshape(img unsafe.Pointer, header *Mat, channels, rows int) *Mat {
-	n := C.cvReshape(img, (*C.CvMat)(header), C.int(channels), C.int(rows))
-	return (*Mat)(n)
-}
-
-
-/* Get1D return a specific element from a 1-dimensional matrix. */
-func Get1D(img unsafe.Pointer, x int) Scalar {
-	ret := C.cvGet1D(img, C.int(x))
-	return Scalar(ret)
-}
-/* Get2D return a specific element from a 2-dimensional matrix. */
-func Get2D(img unsafe.Pointer,x, y int) Scalar {
-	ret := C.cvGet2D(img, C.int(y), C.int(x))
-	return Scalar(ret)
-}
-/* Get3D return a specific element from a 3-dimensional matrix. */
-func Get3D(img unsafe.Pointer,x, y, z int) Scalar {
-	ret := C.cvGet3D(img, C.int(z), C.int(y), C.int(x))
-	return Scalar(ret)
-}
-/* Set1D sets a particular element in the image */
-func Set1D(img unsafe.Pointer, x int, value Scalar) {
-	C.cvSet1D(img, C.int(x), (C.CvScalar)(value))
-}
-/* Set2D sets a particular element in the image */
-func Set2D(img unsafe.Pointer, x, y int, value Scalar) {
-	C.cvSet2D(img, C.int(y), C.int(x), (C.CvScalar)(value))
-}
-/* Set3D sets a particular element in the image */
-func Set3D(img unsafe.Pointer, x, y, z int, value Scalar) {
-	C.cvSet3D(img, C.int(z), C.int(y), C.int(x), (C.CvScalar)(value))
-}
-
 
 // 
 //                        
