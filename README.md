@@ -31,11 +31,29 @@ go get code.google.com/p/go-opencv/trunk/opencv
 cd ${GoOpenCVRoot}/trunk/samples && go run hellocv.go
 ```
 
+## Usage
+
+Currently there are no too many readily instruction for usage. At this point, you can always refers to OpenCV's documentation. I'll try to keep all the bindings have the same signature as in OpenCV's C interface. However, please do note that sometimes the signature might slightly differ from the C interface due to Golang's type declaration conventions, for example:
+
+```
+# The original signature in C interface.
+void cvInitIntrinsicParams2D(
+const CvMat* object_points, const CvMat* image_points,
+const CvMat* npoints, CvSize image_size, CvMat* camera_matrix,
+double aspect_ratio=1. )
+
+# We might put all *Mat types together, however
+func InitIntrinsicParams2D(objectPoints, imagePoints, nPoints, cameraMatrix *Mat ...
+
+# Or we might use "explicitly return" instead of C-style's pointer
+func InitIntrinsicParams2D(objectPoints, imagePoints, nPoints, *Mat ...) (cameraMatrix *Mat)
+```
+
 ## TODOs
 
 - [ ] Better documents
 - [ ] Split the big package into sub-packages corresponding to the modules described in [OpenCV API Reference](http://docs.opencv.org/modules/core/doc/intro.html)
-- [ ] Clean up the codes
+- [ ] Clean up the codes with better coding style
 
 ## Example
 
