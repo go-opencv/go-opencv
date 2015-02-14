@@ -18,25 +18,6 @@ private:
         cv::Point3f _data;
 };
 
-class GcvVecPoint3f
-{
-public:
-        GcvVecPoint3f () {};
-        ~GcvVecPoint3f () {};
-
-        void PushBack(cv::Point3f pt) {
-                _data.push_back(pt);
-        }
-
-        void Clear() {
-                _data.clear();
-        }
-
-        std::vector<cv::Point3f> Get() { return _data; }
-private:
-        std::vector<cv::Point3f> _data;
-};
-
 class GcvPoint2f
 {
 public:
@@ -50,23 +31,4 @@ public:
         }
 private:
         cv::Point2f _data;
-};
-
-class GcvVecPoint2f
-{
-public:
-        GcvVecPoint2f () {};
-        ~GcvVecPoint2f () {};
-
-        void PushBack(cv::Point2f pt) {
-                _data.push_back(pt);
-        }
-
-        void Clear() {
-                _data.clear();
-        }
-
-        std::vector<cv::Point2f> Get() { return _data; }
-private:
-        std::vector<cv::Point2f> _data;
 };
