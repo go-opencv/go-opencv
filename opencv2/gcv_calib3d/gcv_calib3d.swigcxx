@@ -1,0 +1,15 @@
+%module gcv_calib3d
+%include "std_vector.i"
+
+%{
+#include "gcv_calib3d.hpp"
+#include "gcv_core.hpp"
+%}
+
+%include "gcv_calib3d.hpp"
+%include "gcv_core.hpp"
+
+namespace std {
+   %template(IntVector) vector<int>;
+   %template(DoubleVector) vector<double>;
+};

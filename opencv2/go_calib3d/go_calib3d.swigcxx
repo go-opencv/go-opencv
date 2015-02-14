@@ -1,7 +1,0 @@
-%module go_calib3d
-
-%{
-#include "go_calib3d.hpp"
-%}
-
-%include "go_calib3d.hpp"
