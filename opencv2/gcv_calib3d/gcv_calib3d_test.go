@@ -17,16 +17,16 @@ import "testing"
 
 func TestGcvInitCameraMatrix2D(t *testing.T) {
 	objPts := NewGcvPoint3fVector(int64(4))
-	objPts.Set(0, NewGcvPoint3f(0, 25, 0).Get())
-	objPts.Set(1, NewGcvPoint3f(0, -25, 0).Get())
-	objPts.Set(2, NewGcvPoint3f(-47, 25, 0).Get())
-	objPts.Set(3, NewGcvPoint3f(-47, -25, 0).Get())
+	objPts.Set(0, GetPoint3f(0, 25, 0))
+	objPts.Set(1, GetPoint3f(0, -25, 0))
+	objPts.Set(2, GetPoint3f(-47, 25, 0))
+	objPts.Set(3, GetPoint3f(-47, -25, 0))
 
 	imgPts := NewGcvPoint2fVector(int64(4))
-	imgPts.Set(0, NewGcvPoint2f(1136.4140625, 1041.89208984).Get())
-	imgPts.Set(1, NewGcvPoint2f(1845.33190918, 671.39581299).Get())
-	imgPts.Set(2, NewGcvPoint2f(302.73373413, 634.79998779).Get())
-	imgPts.Set(3, NewGcvPoint2f(1051.46154785, 352.76107788).Get())
+	imgPts.Set(0, GetPoint2f(1136.4140625, 1041.89208984))
+	imgPts.Set(1, GetPoint2f(1845.33190918, 671.39581299))
+	imgPts.Set(2, GetPoint2f(302.73373413, 634.79998779))
+	imgPts.Set(3, GetPoint2f(1051.46154785, 352.76107788))
 
 	GcvInitCameraMatrix2D(objPts, imgPts)
 }
