@@ -19,7 +19,7 @@ cv::Mat GcvInitCameraMatrix2D(VecPoint3f objPts, VecPoint2f imgPts) {
 }
 
 double GcvCalibrateCamera(VecPoint3f objPts, VecPoint2f imgPts,
-                          std::vector<int> imgSize, cv::Mat cameraMatrix) {
+                          cv::Size imgSize, cv::Mat cameraMatrix) {
         std::vector<VecPoint3f> objPtsArr;
         std::vector<VecPoint2f> imgPtsArr;
         std::vector<cv::Mat> rvecs, tvecs;
@@ -32,8 +32,7 @@ double GcvCalibrateCamera(VecPoint3f objPts, VecPoint2f imgPts,
 
         std::cout << "init Camera" << cameraMatrix << std::endl;
 
-        rtn = cv::calibrateCamera(objPtsArr, imgPtsArr,
-                                  cv::Size2i(imgSize[0], imgSize[1]),
+        rtn = cv::calibrateCamera(objPtsArr, imgPtsArr, imgSize,
                                   cameraMatrix, distCoeffs, rvecs, tvecs);
 
         std::cout << "final Camera" << cameraMatrix << std::endl;
