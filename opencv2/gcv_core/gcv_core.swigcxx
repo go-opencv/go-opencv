@@ -178,18 +178,18 @@ namespace cv {
 
 
    %template(GcvSize2i) Size_<int>;
-   %template(GcvSize2d) Size_<double>;
-   %template(GcvSize2f) Size_<float>;
+   %template(GcvSize2d_) Size_<double>;
+   %template(GcvSize2f_) Size_<float>;
 
    %template(GcvRect) Rect_<int>;
 
    %template(GcvPoint2i) Point_<int>;
-   %template(GcvPoint2f) Point_<float>;
-   %template(GcvPoint2d) Point_<double>;
+   %template(GcvPoint2f_) Point_<float>;
+   %template(GcvPoint2d_) Point_<double>;
 
    %template(GcvPoint3i) Point3_<int>;
-   %template(GcvPoint3f) Point3_<float>;
-   %template(GcvPoint3d) Point3_<double>;
+   %template(GcvPoint3f_) Point3_<float>;
+   %template(GcvPoint3d_) Point3_<double>;
 }
 
 /* Additional STL types */
