@@ -32,3 +32,25 @@ func TestGcvInitCameraMatrix2D(t *testing.T) {
 
 	GcvInitCameraMatrix2D(objPts, imgPts)
 }
+
+func TestGcvCalibrateCamera(t *testing.T) {
+	objPts := gcv_utils.NewGcvPoint3fVector(int64(4))
+	objPts.Set(0, gcv_utils.GetPoint3f(0, 25, 0))
+	objPts.Set(1, gcv_utils.GetPoint3f(0, -25, 0))
+	objPts.Set(2, gcv_utils.GetPoint3f(-47, 25, 0))
+	objPts.Set(3, gcv_utils.GetPoint3f(-47, -25, 0))
+
+	imgPts := gcv_utils.NewGcvPoint2fVector(int64(4))
+	imgPts.Set(0, gcv_utils.GetPoint2f(1136.4140625, 1041.89208984))
+	imgPts.Set(1, gcv_utils.GetPoint2f(1845.33190918, 671.39581299))
+	imgPts.Set(2, gcv_utils.GetPoint2f(302.73373413, 634.79998779))
+	imgPts.Set(3, gcv_utils.GetPoint2f(1051.46154785, 352.76107788))
+
+	imgSize := gcv_utils.NewGcvIntVector(int64(2))
+	imgSize.Set(0, 1920)
+	imgSize.Set(1, 1080)
+
+	camMat := GcvInitCameraMatrix2D(objPts, imgPts)
+
+	GcvCalibrateCamera(objPts, imgPts, imgSize, camMat)
+}
