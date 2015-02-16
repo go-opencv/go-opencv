@@ -1,48 +1,38 @@
 package gocv
 
-import (
-	"testing"
+// #cgo CXXFLAGS: -std=c++11
+// #cgo darwin pkg-config: opencv
+import "C"
+import "github.com/gonum/matrix/mat64"
 
-	"github.com/davecgh/go-spew/spew"
-	"github.com/gonum/matrix/mat64"
-)
+// GcvInitCameraMatrix2D takes one N-by-3 matrix and one
+// N-by-2 Matrix as input.
+// Each row in the input matrix represents a point in real
+// world (objPts) or in image (imgPts).
+// Return: the camera matrix.
+func GcvInitCameraMatrix2D(objPts, imgPts *mat64.Dense) (camMat *mat64.Dense) {
+	nObjPts, objCol := objPts.Dims()
+	nImgPts, imgCol := imgPts.Dims()
 
-func TestNewGcvPoint3f(t *testing.T) {
-	pt := NewGcvPoint3f(3, 1, 2)
-	spew.Dump(pt)
-}
+	if objCol != 3 || imgCol != 2 || nObjPts != nImgPts {
+		panic("Invalid dimensions for objPts and imgPts")
+	}
 
-func TestNewGcvPoint2f(t *testing.T) {
-	pt := NewGcvPoint2f(3, 1)
-	spew.Dump(pt)
-}
+	objPtsVec := NewGcvPoint3fVector(int64(nObjPts))
+	imgPtsVec := NewGcvPoint2fVector(int64(nObjPts))
 
-func TestNewGcvSize2d(t *testing.T) {
-	size := NewGcvSize2d(3, 1)
-	spew.Dump(size)
-}
+	for i := 0; i < nObjPts; i++ {
+		objPtsVec.Set(i, NewGcvPoint3f(
+			objPts.At(i, 0), objPts.At(i, 1), objPts.At(i, 2)))
+	}
 
-func TestMat(t *testing.T) {
-	mat := NewMat()
-	mat2 := NewMat(mat)
-	spew.Dump(mat2)
-}
+	for i := 0; i < nObjPts; i++ {
+		imgPtsVec.Set(i, NewGcvPoint2f(
+			imgPts.At(i, 0), imgPts.At(i, 1)))
+	}
 
-func TestGcvInitCameraMatrix2D(t *testing.T) {
-	objPts := mat64.NewDense(4, 3, []float64{
-		0, 25, 0,
-		0, -25, 0,
-		-47, 25, 0,
-		-47, -25, 0})
-
-	imgPts := mat64.NewDense(4, 2, []float64{
-		1136.4140625, 1041.89208984,
-		1845.33190918, 671.39581299,
-		302.73373413, 634.79998779,
-		1051.46154785, 352.76107788})
-
-	camMat := GcvInitCameraMatrix2D(objPts, imgPts)
-	spew.Dump(camMat)
+	camMat = MatToMat64(GcvInitCameraMatrix2D_(objPtsVec, imgPtsVec))
+	return camMat
 }
 
 // func TestGcvCalibrateCamera(t *testing.T) {

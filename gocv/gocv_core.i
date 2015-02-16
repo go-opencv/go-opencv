@@ -1,8 +1,6 @@
 %include "std_vector.i"
 
 %{
-#include "opencv2/core/types_c.h"
-#include "opencv2/core/version.hpp"
 #include "opencv2/core/core.hpp"
 %}
 
@@ -256,12 +254,39 @@ namespace cv {
       void pop_back(size_t nelems=1);
 
       //! special versions for 2D arrays (especially convenient for referencing image pixels)
+
+      template<typename _Tp> _Tp& at(int i0=0);
+      template<typename _Tp> const _Tp& at(int i0=0) const;
+
+      template<typename _Tp> _Tp& at(int i0, int i1);
+      template<typename _Tp> const _Tp& at(int i0, int i1) const;
+
+      template<typename _Tp> _Tp& at(int i0, int i1, int i2);
+      template<typename _Tp> const _Tp& at(int i0, int i1, int i2) const;
+
+      template<typename _Tp> _Tp& at(const int* idx);
+      template<typename _Tp> const _Tp& at(const int* idx) const;
+
+      template<typename _Tp, int n> _Tp& at(const Vec<int, n>& idx);
+      template<typename _Tp, int n> const _Tp& at(const Vec<int, n>& idx) const;
       template<typename _Tp> _Tp& at(cv::Point pt);
       template<typename _Tp> const _Tp& at(cv::Point pt) const;
-      %template(gcvAtd) at<double>;
-      %template(gcvAtf) at<float>;
-   };
 
+      %template(gcvAtf) at<float>;
+      %template(gcvAtd) at<double>;
+
+      /*! includes several bit-fields:
+            - the magic signature
+            - continuity flag
+            - depth
+            - number of channels
+      */
+      int flags;
+      //! the matrix dimensionality, >= 2
+      int dims;
+      //! the number of rows and columns or (-1, -1) when the matrix has more than 2 dimensions
+      int rows, cols;
+   };
 }
 
 /* Additional STL types */
