@@ -1,8 +1,10 @@
-%include "std_vector.i"
-
 %{
 #include "opencv2/core/core.hpp"
+#include "gocv_core.hpp"
 %}
+
+%include "std_vector.i"
+%include "gocv_core.hpp"
 
 /* Classes defined in core.hpp */
 namespace cv {
@@ -295,5 +297,6 @@ namespace std {
    %template(GcvPoint2f32Vector) vector<cv::Point2f>;
 
    %template(GcvIntVector) vector<int>;
-   %template(GcvFloatVector) vector<float>;
+   %template(GcvFloat32Vector) vector<float>;
+   %template(GcvFloat64Vector) vector<double>;
 };

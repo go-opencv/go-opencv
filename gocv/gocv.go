@@ -29,7 +29,7 @@ func NewGcvSize2f64(x, y float64) GcvSize2f64_ {
 	return NewGcvSize2f64_(float64(x), float64(y))
 }
 
-// Convert Mat, which defined by SWIG, to mat64.Dense.
+// Convert Mat, which defined by SWIG, to *mat64.Dense.
 // The reason is the latter is much easier to handle
 // in Go.
 // GcvMat is assumed to be 2-dimensional matrix.
@@ -51,4 +51,19 @@ func MatToMat64(mat Mat) *mat64.Dense {
 	}
 
 	return mat64.NewDense(row, col, data)
+}
+
+// Convert *mat64.Dense to Mat
+func ToMat(mat *mat64.Dense) Mat {
+	row, col := mat.Dims()
+
+	rawData := NewGcvFloat64Vector(int64(row * col))
+
+	for i := 0; i < row; i++ {
+		for j := 0; j < col; j++ {
+			rawData.Set(i*col+j, mat.At(i, j))
+		}
+	}
+
+	return ToMat_(row, col, rawData)
 }
