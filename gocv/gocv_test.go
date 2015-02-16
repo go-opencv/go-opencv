@@ -64,6 +64,16 @@ func TestGcvCalibrateCamera(t *testing.T) {
 	imgSize := NewGcvSize2i(1920, 1080)
 
 	camMat := GcvInitCameraMatrix2D(objPts, imgPts)
+	spew.Dump(camMat.GcvAtd(NewGcvSize2i(0, 0)))
+	spew.Dump(camMat.GcvAtd(NewGcvSize2i(0, 1)))
+	spew.Dump(camMat.GcvAtd(NewGcvSize2i(1, 1)))
+	spew.Dump(camMat.GcvAtd(NewGcvSize2i(1, 2)))
+	spew.Dump(camMat.GcvAtd(NewGcvSize2i(2, 2)))
 
 	GcvCalibrateCamera(objPts, imgPts, imgSize, camMat)
+	spew.Dump(camMat.GcvAtd(NewGcvSize2i(0, 0)))
+	spew.Dump(camMat.GcvAtd(NewGcvSize2i(0, 1)))
+	spew.Dump(camMat.GcvAtd(NewGcvSize2i(1, 1)))
+	spew.Dump(camMat.GcvAtd(NewGcvSize2i(1, 2)))
+	spew.Dump(camMat.GcvAtd(NewGcvSize2i(2, 2)))
 }
