@@ -3,7 +3,7 @@ Go OpenCV binding
 
 A Golang binding for [OpenCV](http://opencv.org/).
 
-OpenCV 1.x C API bindings through CGO, and OpenCV 2+ C++ API through SWIG.
+OpenCV 1.x C API bindings through CGO, and OpenCV 2+ C++ API ([`GoCV`](gocv/)) through SWIG.
 
 [**DISCLAIMER**](https://github.com/lazywei/go-opencv#disclaimer)
 
@@ -15,7 +15,8 @@ Install Go and OpenCV, you might want to install both of them via `apt-get` or `
 
 ```
 go get github.com/lazywei/go-opencv
-cd ${GoOpenCVRoot}/samples && go run hellocv.go
+cd $GOPATH/src/github.com/lazywei/go-opencv/samples
+go run hellocv.go
 ```
 
 ### Windows
@@ -29,17 +30,17 @@ cd ${GoOpenCVRoot}/samples && go run hellocv.go
 # include\opencv --> ${MinGWRoot}\include\opencv
 # include\opencv2 --> ${MinGWRoot}\include\opencv2
 
-go get code.google.com/p/go-opencv/trunk/opencv
+go get github.com/lazywei/go-opencv
 cd ${GoOpenCVRoot}/trunk/samples && go run hellocv.go
 ```
 
-## [WIP] OpenCV2
+## [WIP] OpenCV2 (GoCV)
 
-After OpenCV 2.x+, the core team no longer develop and maintain C API. Therefore, CGO will not be used in CV2 binding. Instead, we are using SWIG for wrapping. The support for OpenCV2 is currently under development.
+After OpenCV 2.x+, the core team no longer develop and maintain C API. Therefore, CGO will not be used in CV2 binding. Instead, we are using SWIG for wrapping. The support for OpenCV2 is currently under development, and whole code will be placed under `gocv` package.
 
-If you want to use CV2's API, please refer to the code under `opencv2/` directory. There has no too much document for CV2 wrapper yet, but you can still find the usage example in `*_test.go`.
+If you want to use CV2's API, please refer to the code under `gocv/` directory. There is no too many documents for CV2 wrapper yet, but you can still find the example usages in `*_test.go`.
 
-Note that the basic data structures in OpenCV (e.g., `cv::Mat`, `cv::Point3f`) hasn't been wrapped fully yet. For now, we have some specific wrappers. We will try to wrapped those data structures fully as soon as possible.
+Please also note that the basic data structures in OpenCV (e.g., `cv::Mat`, `cv::Point3f`) are wrapped partially for now. For more detail on how to use these types, please refer to [GoCV's README](gocv/README.md).
 
 ## Example
 
@@ -48,23 +49,22 @@ Note that the basic data structures in OpenCV (e.g., `cv::Mat`, `cv::Point3f`) h
 ```go
 package main
 
-import "github.com/lazywei/go-opencv/opencv2/gcv_utils"
-import "github.com/lazywei/go-opencv/opencv2/gcv_calib3d"
+import "github.com/lazywei/go-opencv/gocv"
 
 func main() {
-	objPts := gcv_utils.NewGcvPoint3fVector(int64(4))
-	objPts.Set(0, gcv_utils.GetPoint3f(0, 25, 0))
-	objPts.Set(1, gcv_utils.GetPoint3f(0, -25, 0))
-	objPts.Set(2, gcv_utils.GetPoint3f(-47, 25, 0))
-	objPts.Set(3, gcv_utils.GetPoint3f(-47, -25, 0))
+	objPts := gocv.NewGcvPoint3fVector(int64(4))
+	objPts.Set(0, gocv.NewGcvPoint3f(0, 25, 0))
+	objPts.Set(1, gocv.NewGcvPoint3f(0, -25, 0))
+	objPts.Set(2, gocv.NewGcvPoint3f(-47, 25, 0))
+	objPts.Set(3, gocv.NewGcvPoint3f(-47, -25, 0))
 
-	imgPts := gcv_utils.NewGcvPoint2fVector(int64(4))
-	imgPts.Set(0, gcv_utils.GetPoint2f(1136.4140625, 1041.89208984))
-	imgPts.Set(1, gcv_utils.GetPoint2f(1845.33190918, 671.39581299))
-	imgPts.Set(2, gcv_utils.GetPoint2f(302.73373413, 634.79998779))
-	imgPts.Set(3, gcv_utils.GetPoint2f(1051.46154785, 352.76107788))
+	imgPts := gocv.NewGcvPoint2fVector(int64(4))
+	imgPts.Set(0, gocv.NewGcvPoint2f(1136.4140625, 1041.89208984))
+	imgPts.Set(1, gocv.NewGcvPoint2f(1845.33190918, 671.39581299))
+	imgPts.Set(2, gocv.NewGcvPoint2f(302.73373413, 634.79998779))
+	imgPts.Set(3, gocv.NewGcvPoint2f(1051.46154785, 352.76107788))
 
-	cameraMatrix := GcvInitCameraMatrix2D(objPts, imgPts)
+	gocv.GcvInitCameraMatrix2D(objPts, imgPts)
 }
 ```
 

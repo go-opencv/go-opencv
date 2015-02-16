@@ -8,4 +8,4 @@ typedef std::vector<cv::Point2f> VecPoint2f;
 cv::Mat GcvInitCameraMatrix2D(VecPoint3f objPts, VecPoint2f imgPts);
 
 double GcvCalibrateCamera(VecPoint3f objPts, VecPoint2f imgPts,
-                          std::vector<int> imgSize, cv::Mat cameraMatrix);
+                          cv::Size2i imgSize, cv::Mat cameraMatrix);
