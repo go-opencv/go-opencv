@@ -3,7 +3,7 @@ Go OpenCV binding
 
 A Golang binding for [OpenCV](http://opencv.org/).
 
-OpenCV 1.x C API bindings through CGO, and OpenCV 2+ C++ API ([`gocv/`](gocv/)) through SWIG.
+OpenCV 1.x C API bindings through CGO, and OpenCV 2+ C++ API ([`GoCV`](gocv/)) through SWIG.
 
 [**DISCLAIMER**](https://github.com/lazywei/go-opencv#disclaimer)
 
@@ -34,7 +34,7 @@ go get github.com/lazywei/go-opencv
 cd ${GoOpenCVRoot}/trunk/samples && go run hellocv.go
 ```
 
-## [WIP] OpenCV2
+## [WIP] OpenCV2 (GoCV)
 
 After OpenCV 2.x+, the core team no longer develop and maintain C API. Therefore, CGO will not be used in CV2 binding. Instead, we are using SWIG for wrapping. The support for OpenCV2 is currently under development, and whole code will be placed under `gocv` package.
 
@@ -49,23 +49,22 @@ Please also note that the basic data structures in OpenCV (e.g., `cv::Mat`, `cv:
 ```go
 package main
 
-import "github.com/lazywei/go-opencv/opencv2/gcv_core"
-import "github.com/lazywei/go-opencv/opencv2/gcv_calib3d"
+import "github.com/lazywei/go-opencv/gocv"
 
 func main() {
-	objPts := gcv_core.NewGcvPoint3fVector(int64(4))
-	objPts.Set(0, gcv_core.NewGcvPoint3f(0, 25, 0))
-	objPts.Set(1, gcv_core.NewGcvPoint3f(0, -25, 0))
-	objPts.Set(2, gcv_core.NewGcvPoint3f(-47, 25, 0))
-	objPts.Set(3, gcv_core.NewGcvPoint3f(-47, -25, 0))
+	objPts := gocv.NewGcvPoint3fVector(int64(4))
+	objPts.Set(0, gocv.NewGcvPoint3f(0, 25, 0))
+	objPts.Set(1, gocv.NewGcvPoint3f(0, -25, 0))
+	objPts.Set(2, gocv.NewGcvPoint3f(-47, 25, 0))
+	objPts.Set(3, gocv.NewGcvPoint3f(-47, -25, 0))
 
-	imgPts := gcv_core.NewGcvPoint2fVector(int64(4))
-	imgPts.Set(0, gcv_core.NewGcvPoint2f(1136.4140625, 1041.89208984))
-	imgPts.Set(1, gcv_core.NewGcvPoint2f(1845.33190918, 671.39581299))
-	imgPts.Set(2, gcv_core.NewGcvPoint2f(302.73373413, 634.79998779))
-	imgPts.Set(3, gcv_core.NewGcvPoint2f(1051.46154785, 352.76107788))
+	imgPts := gocv.NewGcvPoint2fVector(int64(4))
+	imgPts.Set(0, gocv.NewGcvPoint2f(1136.4140625, 1041.89208984))
+	imgPts.Set(1, gocv.NewGcvPoint2f(1845.33190918, 671.39581299))
+	imgPts.Set(2, gocv.NewGcvPoint2f(302.73373413, 634.79998779))
+	imgPts.Set(3, gocv.NewGcvPoint2f(1051.46154785, 352.76107788))
 
-	GcvInitCameraMatrix2D(objPts, imgPts)
+	gocv.GcvInitCameraMatrix2D(objPts, imgPts)
 }
 ```
 

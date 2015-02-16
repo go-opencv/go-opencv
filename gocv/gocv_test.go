@@ -26,6 +26,7 @@ func TestMat(t *testing.T) {
 	mat2 := NewMat(mat)
 	spew.Dump(mat2)
 }
+
 func TestGcvInitCameraMatrix2D(t *testing.T) {
 	objPts := NewGcvPoint3fVector(int64(4))
 	objPts.Set(0, NewGcvPoint3f(0, 25, 0))
