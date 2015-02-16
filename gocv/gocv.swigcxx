@@ -1,8 +1,4 @@
 %module gocv
 
-%{
-#include "gocv_calib3d.hpp"
-%}
-
 %include "gocv_core.i"
-%include "gocv_calib3d.hpp"
+%include "gocv_calib3d.i"
