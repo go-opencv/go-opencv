@@ -22,18 +22,55 @@ func GcvInitCameraMatrix2D(objPts, imgPts *mat64.Dense) (camMat *mat64.Dense) {
 	imgPtsVec := NewGcvPoint2f32Vector(int64(nObjPts))
 
 	for i := 0; i < nObjPts; i++ {
-		objPtsVec.Set(i, NewGcvPoint3f32(
-			objPts.At(i, 0), objPts.At(i, 1), objPts.At(i, 2)))
+		objPtsVec.Set(i, NewGcvPoint3f32(objPts.Row(nil, i)...))
 	}
 
 	for i := 0; i < nObjPts; i++ {
-		imgPtsVec.Set(i, NewGcvPoint2f32(
-			imgPts.At(i, 0), imgPts.At(i, 1)))
+		imgPtsVec.Set(i, NewGcvPoint2f32(imgPts.Row(nil, i)...))
 	}
 
 	camMat = GcvMatToMat64(GcvInitCameraMatrix2D_(objPtsVec, imgPtsVec))
 	return camMat
 }
+
+func GcvCalibrateCamera(objPts, imgPts, camMat *mat64.Dense) (calCamMat, rvec, tvec *mat64.Dense) {
+	nObjPts, objCol := objPts.Dims()
+	nImgPts, imgCol := imgPts.Dims()
+
+	if objCol != 3 || imgCol != 2 || nObjPts != nImgPts {
+		panic("Invalid dimensions for objPts and imgPts")
+	}
+
+	objPtsVec := NewGcvPoint3f32Vector(int64(nObjPts))
+	imgPtsVec := NewGcvPoint2f32Vector(int64(nObjPts))
+
+	for i := 0; i < nObjPts; i++ {
+		objPtsVec.Set(i, NewGcvPoint3f32(objPts.Row(nil, i)...))
+	}
+
+	for i := 0; i < nObjPts; i++ {
+		imgPtsVec.Set(i, NewGcvPoint2f32(imgPts.Row(nil, i)...))
+	}
+
+	_camMat := Mat64ToGcvMat(camMat)
+	_rvec := NewGcvMat()
+	_tvec := NewGcvMat()
+	_imgSize := NewGcvSize2i(1920, 1080)
+
+	GcvCalibrateCamera_(
+		objPtsVec, imgPtsVec,
+		_imgSize, _camMat, _rvec, _tvec)
+
+	calCamMat = GcvMatToMat64(_camMat)
+	rvec = GcvMatToMat64(_rvec)
+	tvec = GcvMatToMat64(_tvec)
+
+	return camMat, rvec, tvec
+}
+
+// func mat64ToGcvPoint3f32Vector(mat *mat64.Dense) NewGcvPoint3f32Vector {
+
+// }
 
 // func TestGcvCalibrateCamera(t *testing.T) {
 // 	objPts := NewGcvPoint3fVector(int64(4))

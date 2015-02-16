@@ -5,28 +5,35 @@ package gocv
 import "C"
 import "github.com/gonum/matrix/mat64"
 
-func NewGcvPoint3f32(x, y, z float64) GcvPoint3f32_ {
-	return NewGcvPoint3f32_(float32(x), float32(y), float32(z))
+func NewGcvPoint3f32(pts ...float64) GcvPoint3f32_ {
+	// This make sure we have default values
+	safePts := getSafePts(pts, 3)
+	return NewGcvPoint3f32_(float32(safePts[0]), float32(safePts[1]), float32(safePts[2]))
 }
 
-func NewGcvPoint3f64(x, y, z float64) GcvPoint3f64_ {
-	return NewGcvPoint3f64_(float64(x), float64(y), float64(z))
+func NewGcvPoint3f64(pts ...float64) GcvPoint3f64_ {
+	safePts := getSafePts(pts, 3)
+	return NewGcvPoint3f64_(safePts[0], safePts[1], safePts[2])
 }
 
-func NewGcvPoint2f32(x, y float64) GcvPoint2f32_ {
-	return NewGcvPoint2f32_(float32(x), float32(y))
+func NewGcvPoint2f32(pts ...float64) GcvPoint2f32_ {
+	safePts := getSafePts(pts, 2)
+	return NewGcvPoint2f32_(float32(safePts[0]), float32(safePts[1]))
 }
 
-func NewGcvPoint2f64(x, y float64) GcvPoint2f64_ {
-	return NewGcvPoint2f64_(float64(x), float64(y))
+func NewGcvPoint2f64(pts ...float64) GcvPoint2f64_ {
+	safePts := getSafePts(pts, 2)
+	return NewGcvPoint2f64_(safePts[0], safePts[1])
 }
 
-func NewGcvSize2f32(x, y float64) GcvSize2f32_ {
-	return NewGcvSize2f32_(float32(x), float32(y))
+func NewGcvSize2f32(pts ...float64) GcvSize2f32_ {
+	safePts := getSafePts(pts, 2)
+	return NewGcvSize2f32_(float32(safePts[0]), float32(safePts[1]))
 }
 
-func NewGcvSize2f64(x, y float64) GcvSize2f64_ {
-	return NewGcvSize2f64_(float64(x), float64(y))
+func NewGcvSize2f64(pts ...float64) GcvSize2f64_ {
+	safePts := getSafePts(pts, 2)
+	return NewGcvSize2f64_(safePts[0], safePts[1])
 }
 
 // Convert Mat, which defined by SWIG, to *mat64.Dense.
@@ -66,4 +73,12 @@ func Mat64ToGcvMat(mat *mat64.Dense) GcvMat {
 	}
 
 	return Mat64ToGcvMat_(row, col, rawData)
+}
+
+func getSafePts(pts []float64, size int) []float64 {
+	// This make sure we have default values
+	safePts := make([]float64, size, size)
+	copy(safePts, pts)
+
+	return safePts
 }

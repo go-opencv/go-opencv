@@ -8,7 +8,7 @@ import (
 )
 
 func TestNewGcvPoint3f32(t *testing.T) {
-	pt := NewGcvPoint3f32(3, 1, 2)
+	pt := NewGcvPoint3f32(3, 1)
 	spew.Dump(pt)
 }
 
