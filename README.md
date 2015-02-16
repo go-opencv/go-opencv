@@ -42,6 +42,8 @@ If you want to use CV2's API, please refer to the code under `gocv/` directory. 
 
 Please also note that the basic data structures in OpenCV (e.g., `cv::Mat`, `cv::Point3f`) are wrapped partially for now. For more detail on how to use these types, please refer to [GoCV's README](gocv/README.md).
 
+*Requirement*: we will build the wrappers based on [mat64](https://godoc.org/github.com/gonum/matrix/mat64), given it is much easier to manipulate the underlaying data. In most case, it is not necessary to access the original CV data, e.g., `cv::Mat` can be converted from/to `*mat64.Dense`.
+
 ## Example
 
 ### OpenCV2's initCameraMatrix2D
