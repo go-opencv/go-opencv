@@ -33,7 +33,7 @@ func NewGcvSize2f64(x, y float64) GcvSize2f64_ {
 // The reason is the latter is much easier to handle
 // in Go.
 // GcvMat is assumed to be 2-dimensional matrix.
-func MatToMat64(mat Mat) *mat64.Dense {
+func GcvMatToMat64(mat GcvMat) *mat64.Dense {
 	col := mat.GetCols()
 	row := mat.GetRows()
 
@@ -54,7 +54,7 @@ func MatToMat64(mat Mat) *mat64.Dense {
 }
 
 // Convert *mat64.Dense to Mat
-func ToMat(mat *mat64.Dense) Mat {
+func Mat64ToGcvMat(mat *mat64.Dense) GcvMat {
 	row, col := mat.Dims()
 
 	rawData := NewGcvFloat64Vector(int64(row * col))
@@ -65,5 +65,5 @@ func ToMat(mat *mat64.Dense) Mat {
 		}
 	}
 
-	return ToMat_(row, col, rawData)
+	return Mat64ToGcvMat_(row, col, rawData)
 }

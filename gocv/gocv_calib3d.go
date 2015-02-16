@@ -31,7 +31,7 @@ func GcvInitCameraMatrix2D(objPts, imgPts *mat64.Dense) (camMat *mat64.Dense) {
 			imgPts.At(i, 0), imgPts.At(i, 1)))
 	}
 
-	camMat = MatToMat64(GcvInitCameraMatrix2D_(objPtsVec, imgPtsVec))
+	camMat = GcvMatToMat64(GcvInitCameraMatrix2D_(objPtsVec, imgPtsVec))
 	return camMat
 }
 

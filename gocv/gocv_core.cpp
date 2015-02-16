@@ -5,7 +5,7 @@
 
 #include "gocv_core.hpp"
 
-cv::Mat ToMat_(int row, int col, std::vector<double> data) {
+cv::Mat Mat64ToGcvMat_(int row, int col, std::vector<double> data) {
         assert(row * col == data.size());
 
         cv::Mat mat = cv::Mat(row, col, CV_64F);

@@ -192,6 +192,8 @@ namespace cv {
 
 
    /* ----------------- Mat ----------------- */
+   %rename(GcvMat) Mat;
+
    class Mat
    {
    public:

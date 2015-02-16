@@ -23,16 +23,16 @@ func TestNewGcvSize2f64(t *testing.T) {
 }
 
 func TestMat(t *testing.T) {
-	mat := NewMat()
-	mat2 := NewMat(mat)
+	mat := NewGcvMat()
+	mat2 := NewGcvMat(mat)
 	spew.Dump(mat2)
 }
 
-func TestToMat(t *testing.T) {
+func TestMat64ToGcvMat(t *testing.T) {
 	mat := mat64.NewDense(3, 2, []float64{
 		0, 1,
 		1.23, 4,
 		-12.3, -4,
 	})
-	spew.Dump(ToMat(mat))
+	spew.Dump(Mat64ToGcvMat(mat))
 }

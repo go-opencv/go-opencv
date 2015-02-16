@@ -2,4 +2,4 @@
 #include <vector>
 #include <iostream>
 
-cv::Mat ToMat_(int row, int col, std::vector<double> data);
+cv::Mat Mat64ToGcvMat_(int row, int col, std::vector<double> data);
