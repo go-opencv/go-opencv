@@ -7,18 +7,18 @@ import (
 	"github.com/gonum/matrix/mat64"
 )
 
-func TestNewGcvPoint3f(t *testing.T) {
-	pt := NewGcvPoint3f(3, 1, 2)
+func TestNewGcvPoint3f32(t *testing.T) {
+	pt := NewGcvPoint3f32(3, 1, 2)
 	spew.Dump(pt)
 }
 
-func TestNewGcvPoint2f(t *testing.T) {
-	pt := NewGcvPoint2f(3, 1)
+func TestNewGcvPoint2f32(t *testing.T) {
+	pt := NewGcvPoint2f32(3, 1)
 	spew.Dump(pt)
 }
 
-func TestNewGcvSize2d(t *testing.T) {
-	size := NewGcvSize2d(3, 1)
+func TestNewGcvSize2f64(t *testing.T) {
+	size := NewGcvSize2f64(3, 1)
 	spew.Dump(size)
 }
 

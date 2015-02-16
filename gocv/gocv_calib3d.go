@@ -18,16 +18,16 @@ func GcvInitCameraMatrix2D(objPts, imgPts *mat64.Dense) (camMat *mat64.Dense) {
 		panic("Invalid dimensions for objPts and imgPts")
 	}
 
-	objPtsVec := NewGcvPoint3fVector(int64(nObjPts))
-	imgPtsVec := NewGcvPoint2fVector(int64(nObjPts))
+	objPtsVec := NewGcvPoint3f32Vector(int64(nObjPts))
+	imgPtsVec := NewGcvPoint2f32Vector(int64(nObjPts))
 
 	for i := 0; i < nObjPts; i++ {
-		objPtsVec.Set(i, NewGcvPoint3f(
+		objPtsVec.Set(i, NewGcvPoint3f32(
 			objPts.At(i, 0), objPts.At(i, 1), objPts.At(i, 2)))
 	}
 
 	for i := 0; i < nObjPts; i++ {
-		imgPtsVec.Set(i, NewGcvPoint2f(
+		imgPtsVec.Set(i, NewGcvPoint2f32(
 			imgPts.At(i, 0), imgPts.At(i, 1)))
 	}
 

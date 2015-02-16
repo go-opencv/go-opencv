@@ -175,18 +175,18 @@ namespace cv {
 
 
    %template(GcvSize2i) Size_<int>;
-   %template(GcvSize2d_) Size_<double>;
-   %template(GcvSize2f_) Size_<float>;
+   %template(GcvSize2f32_) Size_<float>;
+   %template(GcvSize2f64_) Size_<double>;
 
    %template(GcvRect) Rect_<int>;
 
    %template(GcvPoint2i) Point_<int>;
-   %template(GcvPoint2f_) Point_<float>;
-   %template(GcvPoint2d_) Point_<double>;
+   %template(GcvPoint2f32_) Point_<float>;
+   %template(GcvPoint2f64_) Point_<double>;
 
    %template(GcvPoint3i) Point3_<int>;
-   %template(GcvPoint3f_) Point3_<float>;
-   %template(GcvPoint3d_) Point3_<double>;
+   %template(GcvPoint3f32_) Point3_<float>;
+   %template(GcvPoint3f64_) Point3_<double>;
 
 
    /* ----------------- Mat ----------------- */
@@ -272,8 +272,8 @@ namespace cv {
       template<typename _Tp> _Tp& at(cv::Point pt);
       template<typename _Tp> const _Tp& at(cv::Point pt) const;
 
-      %template(gcvAtf) at<float>;
-      %template(gcvAtd) at<double>;
+      %template(gcvAtf32) at<float>;
+      %template(gcvAtf64) at<double>;
 
       /*! includes several bit-fields:
             - the magic signature
@@ -291,8 +291,8 @@ namespace cv {
 
 /* Additional STL types */
 namespace std {
-   %template(GcvPoint3fVector) vector<cv::Point3f>;
-   %template(GcvPoint2fVector) vector<cv::Point2f>;
+   %template(GcvPoint3f32Vector) vector<cv::Point3f>;
+   %template(GcvPoint2f32Vector) vector<cv::Point2f>;
 
    %template(GcvIntVector) vector<int>;
    %template(GcvFloatVector) vector<float>;
