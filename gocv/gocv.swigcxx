@@ -1,14 +1,14 @@
-%module gcv_core
+%module gocv
 %include "std_vector.i"
 
 %{
 #include "opencv2/core/types_c.h"
 #include "opencv2/core/version.hpp"
 #include "opencv2/core/core.hpp"
-#include "gcv_core.hpp"
+#include "gocv.hpp"
 %}
 
-%include "gcv_core.hpp"
+%include "gocv.hpp"
 
 /* Classes defined in core.hpp */
 namespace cv {

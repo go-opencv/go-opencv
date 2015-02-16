@@ -3,7 +3,7 @@
 #include <iostream>
 #include <vector>
 
-#include "gcv_core.hpp"
+#include "gocv.hpp"
 
 cv::Mat GcvInitCameraMatrix2D(VecPoint3f objPts, VecPoint2f imgPts) {
         cv::Mat cameraMatrix;

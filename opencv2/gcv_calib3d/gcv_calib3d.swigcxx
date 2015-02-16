@@ -1,7 +1,0 @@
-%module gcv_calib3d
-
-%{
-#include "gcv_calib3d.hpp"
-%}
-
-%include "gcv_calib3d.hpp"

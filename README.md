@@ -3,7 +3,7 @@ Go OpenCV binding
 
 A Golang binding for [OpenCV](http://opencv.org/).
 
-OpenCV 1.x C API bindings through CGO, and OpenCV 2+ C++ API through SWIG.
+OpenCV 1.x C API bindings through CGO, and OpenCV 2+ C++ API ([`gocv/`](gocv/)) through SWIG.
 
 [**DISCLAIMER**](https://github.com/lazywei/go-opencv#disclaimer)
 
@@ -36,11 +36,11 @@ cd ${GoOpenCVRoot}/trunk/samples && go run hellocv.go
 
 ## [WIP] OpenCV2
 
-After OpenCV 2.x+, the core team no longer develop and maintain C API. Therefore, CGO will not be used in CV2 binding. Instead, we are using SWIG for wrapping. The support for OpenCV2 is currently under development.
+After OpenCV 2.x+, the core team no longer develop and maintain C API. Therefore, CGO will not be used in CV2 binding. Instead, we are using SWIG for wrapping. The support for OpenCV2 is currently under development, and whole code will be placed under `gocv` package.
 
-If you want to use CV2's API, please refer to the code under `opencv2/` directory. There has no too much document for CV2 wrapper yet, but you can still find the usage example in `*_test.go`.
+If you want to use CV2's API, please refer to the code under `gocv/` directory. There is no too many documents for CV2 wrapper yet, but you can still find the example usages in `*_test.go`.
 
-Note that the basic data structures in OpenCV (e.g., `cv::Mat`, `cv::Point3f`) are wrapped partially for now. For more detail on how to use these types, please refer to [GcvCore's README](opencv2/gcv_core/README.md).
+Please also note that the basic data structures in OpenCV (e.g., `cv::Mat`, `cv::Point3f`) are wrapped partially for now. For more detail on how to use these types, please refer to [GoCV's README](gocv/README.md).
 
 ## Example
 

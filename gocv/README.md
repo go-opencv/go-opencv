@@ -1,5 +1,5 @@
-Gcv Core
-========
+Go OpenCV (GOlang openCV)
+=======================
 
 Wrap the core types in OpenCV.
 
