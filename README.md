@@ -42,6 +42,8 @@ If you want to use CV2's API, please refer to the code under `gocv/` directory. 
 
 Please also note that the basic data structures in OpenCV (e.g., `cv::Mat`, `cv::Point3f`) are wrapped partially for now. For more detail on how to use these types, please refer to [GoCV's README](gocv/README.md).
 
+*Requirement*: we will build the wrappers based on [mat64](https://godoc.org/github.com/gonum/matrix/mat64), given it is much easier to manipulate the underlaying data. In most case, it is not necessary to access the original CV data, e.g., `cv::Mat` can be converted from/to `*mat64.Dense`.
+
 ## Example
 
 ### OpenCV2's initCameraMatrix2D
@@ -49,22 +51,25 @@ Please also note that the basic data structures in OpenCV (e.g., `cv::Mat`, `cv:
 ```go
 package main
 
-import "github.com/lazywei/go-opencv/gocv"
+import . "github.com/lazywei/go-opencv/gocv"
+import "github.com/gonum/matrix/mat64"
 
 func main() {
-	objPts := gocv.NewGcvPoint3fVector(int64(4))
-	objPts.Set(0, gocv.NewGcvPoint3f(0, 25, 0))
-	objPts.Set(1, gocv.NewGcvPoint3f(0, -25, 0))
-	objPts.Set(2, gocv.NewGcvPoint3f(-47, 25, 0))
-	objPts.Set(3, gocv.NewGcvPoint3f(-47, -25, 0))
 
-	imgPts := gocv.NewGcvPoint2fVector(int64(4))
-	imgPts.Set(0, gocv.NewGcvPoint2f(1136.4140625, 1041.89208984))
-	imgPts.Set(1, gocv.NewGcvPoint2f(1845.33190918, 671.39581299))
-	imgPts.Set(2, gocv.NewGcvPoint2f(302.73373413, 634.79998779))
-	imgPts.Set(3, gocv.NewGcvPoint2f(1051.46154785, 352.76107788))
+	objPts := mat64.NewDense(4, 3, []float64{
+		0, 25, 0,
+		0, -25, 0,
+		-47, 25, 0,
+		-47, -25, 0})
 
-	gocv.GcvInitCameraMatrix2D(objPts, imgPts)
+	imgPts := mat64.NewDense(4, 2, []float64{
+		1136.4140625, 1041.89208984,
+		1845.33190918, 671.39581299,
+		302.73373413, 634.79998779,
+		1051.46154785, 352.76107788})
+
+	camMat := GcvInitCameraMatrix2D(objPts, imgPts)
+	fmt.Println(camMat)
 }
 ```
 
