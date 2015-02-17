@@ -10,3 +10,5 @@ cv::Mat GcvInitCameraMatrix2D_(VecPoint3f objPts, VecPoint2f imgPts);
 double GcvCalibrateCamera_(VecPoint3f objPts, VecPoint2f imgPts,
                            cv::Size2i imgSize, cv::Mat& cameraMatrix,
                            cv::Mat& rvec, cv::Mat& tvec);
+
+void GcvRodrigues_(cv::Mat src, cv::Mat& dst);

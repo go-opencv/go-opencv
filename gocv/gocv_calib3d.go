@@ -65,7 +65,17 @@ func GcvCalibrateCamera(objPts, imgPts, camMat *mat64.Dense) (calCamMat, rvec, t
 	rvec = GcvMatToMat64(_rvec)
 	tvec = GcvMatToMat64(_tvec)
 
-	return camMat, rvec, tvec
+	return calCamMat, rvec, tvec
+}
+
+// Same as cv::Rodrigues
+func GcvRodrigues(src *mat64.Dense) (dst *mat64.Dense) {
+	gcvSrc := Mat64ToGcvMat(src)
+	gcvDst := NewGcvMat()
+	GcvRodrigues_(gcvSrc, gcvDst)
+	dst = GcvMatToMat64(gcvDst)
+
+	return dst
 }
 
 // func mat64ToGcvPoint3f32Vector(mat *mat64.Dense) NewGcvPoint3f32Vector {
