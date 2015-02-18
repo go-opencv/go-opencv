@@ -1,0 +1,26 @@
+{
+	"ImportPath": "github.com/lazywei/go-opencv/gocv",
+	"GoVersion": "go1.4.1",
+	"Deps": [
+		{
+			"ImportPath": "github.com/davecgh/go-spew/spew",
+			"Rev": "1aaf839fb07e099361e445273993ccd9adc21b07"
+		},
+		{
+			"ImportPath": "github.com/gonum/blas",
+			"Rev": "22132bfa8c9d291d8c11a6a817e4da1fa1c35c39"
+		},
+		{
+			"ImportPath": "github.com/gonum/internal/asm",
+			"Rev": "9988c755e4ebb6828adce026d571114b6ee26a6b"
+		},
+		{
+			"ImportPath": "github.com/gonum/matrix/mat64",
+			"Rev": "7c0d216f456e1c5fe498437367134ccdf6b35ded"
+		},
+		{
+			"ImportPath": "github.com/stretchr/testify/assert",
+			"Rev": "f0b02af48e5ee31c78b949e9ed67c37e08d1a897"
+		}
+	]
+}
