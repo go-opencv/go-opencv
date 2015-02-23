@@ -9,7 +9,9 @@ import "github.com/gonum/matrix/mat64"
 // Each column in the input matrix represents a point in real world (objPts) or
 // in image (imgPts).
 // Return: the camera matrix.
-func GcvInitCameraMatrix2D(objPts, imgPts *mat64.Dense) (camMat *mat64.Dense) {
+func GcvInitCameraMatrix2D(objPts, imgPts *mat64.Dense, dims [2]int,
+	aspectRatio float64) (camMat *mat64.Dense) {
+
 	objDim, nObjPts := objPts.Dims()
 	imgDim, nImgPts := imgPts.Dims()
 
@@ -28,12 +30,16 @@ func GcvInitCameraMatrix2D(objPts, imgPts *mat64.Dense) (camMat *mat64.Dense) {
 		imgPtsVec.Set(j, NewGcvPoint2f32(imgPts.Col(nil, j)...))
 	}
 
-	camMat = GcvMatToMat64(GcvInitCameraMatrix2D_(objPtsVec, imgPtsVec))
+	_imgSize := NewGcvSize2i(dims[0], dims[1])
+
+	camMat = GcvMatToMat64(GcvInitCameraMatrix2D_(
+		objPtsVec, imgPtsVec, _imgSize, aspectRatio))
 	return camMat
 }
 
-func GcvCalibrateCamera(objPts, imgPts, camMat *mat64.Dense, dims [2]int) (
-	calCamMat, rvec, tvec *mat64.Dense) {
+func GcvCalibrateCamera(objPts, imgPts, camMat, distCoeffs *mat64.Dense,
+	dims [2]int, flags int) (calCamMat, rvec, tvec *mat64.Dense) {
+
 	objDim, nObjPts := objPts.Dims()
 	imgDim, nImgPts := imgPts.Dims()
 
@@ -53,13 +59,15 @@ func GcvCalibrateCamera(objPts, imgPts, camMat *mat64.Dense, dims [2]int) (
 	}
 
 	_camMat := Mat64ToGcvMat(camMat)
+	_distCoeffs := Mat64ToGcvMat(distCoeffs)
 	_rvec := NewGcvMat()
 	_tvec := NewGcvMat()
 	_imgSize := NewGcvSize2i(dims[0], dims[1])
 
 	GcvCalibrateCamera_(
 		objPtsVec, imgPtsVec,
-		_imgSize, _camMat, _rvec, _tvec)
+		_imgSize, _camMat, _distCoeffs,
+		_rvec, _tvec, flags)
 
 	calCamMat = GcvMatToMat64(_camMat)
 	rvec = GcvMatToMat64(_rvec)

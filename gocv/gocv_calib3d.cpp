@@ -5,7 +5,7 @@
 
 #include "gocv_calib3d.hpp"
 
-cv::Mat GcvInitCameraMatrix2D_(VecPoint3f objPts, VecPoint2f imgPts) {
+cv::Mat GcvInitCameraMatrix2D_(VecPoint3f objPts, VecPoint2f imgPts, cv::Size imgSize, double aspectRatio) {
         cv::Mat cameraMatrix;
 
         std::vector<VecPoint3f> objPtsArr;
@@ -14,17 +14,16 @@ cv::Mat GcvInitCameraMatrix2D_(VecPoint3f objPts, VecPoint2f imgPts) {
         objPtsArr.push_back(objPts);
         imgPtsArr.push_back(imgPts);
 
-        cameraMatrix = cv::initCameraMatrix2D(objPtsArr, imgPtsArr, cv::Size(1920, 1080), 1);
+        cameraMatrix = cv::initCameraMatrix2D(objPtsArr, imgPtsArr, imgSize, aspectRatio);
         return cameraMatrix;
 }
 
 double GcvCalibrateCamera_(VecPoint3f objPts, VecPoint2f imgPts,
-                          cv::Size imgSize, cv::Mat& cameraMatrix,
-                          cv::Mat& rvec, cv::Mat& tvec) {
+                          cv::Size imgSize, cv::Mat& cameraMatrix, cv::Mat distCoeffs,
+                          cv::Mat& rvec, cv::Mat& tvec, int flags) {
         std::vector<VecPoint3f> objPtsArr;
         std::vector<VecPoint2f> imgPtsArr;
         std::vector<cv::Mat> rvecs, tvecs;
-        cv::Mat distCoeffs;
         double rtn;
 
         objPtsArr.push_back(objPts);
@@ -37,7 +36,7 @@ double GcvCalibrateCamera_(VecPoint3f objPts, VecPoint2f imgPts,
 
         rtn = cv::calibrateCamera(objPtsArr, imgPtsArr, imgSize,
                                   cameraMatrix, distCoeffs,
-                                  rvecs, tvecs, 14575);
+                                  rvecs, tvecs, flags);
 
         rvec = rvecs[0];
         tvec = tvecs[0];

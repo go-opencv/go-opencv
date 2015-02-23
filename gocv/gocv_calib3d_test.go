@@ -40,7 +40,7 @@ func TestGcvInitCameraMatrix2D(t *testing.T) {
 	})
 	imgPts.TCopy(imgPts)
 
-	camMat := GcvInitCameraMatrix2D(objPts, imgPts)
+	camMat := GcvInitCameraMatrix2D(objPts, imgPts, [2]int{1920, 1080}, 1)
 	assert.InDeltaSlice(t, []float64{1.47219772e+03, 0.00000000e+00, 9.59500000e+02},
 		camMat.Row(nil, 0), DELTA)
 	assert.InDeltaSlice(t, []float64{0.00000000e+00, 1.47219772e+03, 5.39500000e+02},
@@ -78,10 +78,12 @@ func TestGcvCalibrateCamera(t *testing.T) {
 	})
 	imgPts.TCopy(imgPts)
 
-	camMat := GcvInitCameraMatrix2D(objPts, imgPts)
+	camMat := GcvInitCameraMatrix2D(objPts, imgPts, [2]int{1920, 1080}, 1)
+
+	distCoeffs := mat64.NewDense(5, 1, []float64{0, 0, 0, 0, 0})
 
 	camMat, rvec, tvec := GcvCalibrateCamera(
-		objPts, imgPts, camMat, [2]int{1920, 1080})
+		objPts, imgPts, camMat, distCoeffs, [2]int{1920, 1080}, 14575)
 
 	assert.InDeltaSlice(t, []float64{-46.15296606, 0., 959.5}, camMat.Row(nil, 0), DELTA)
 	assert.InDeltaSlice(t, []float64{0., -46.15296606, 539.5}, camMat.Row(nil, 1), DELTA)
