@@ -5,57 +5,57 @@ package gocv
 import "C"
 import "github.com/gonum/matrix/mat64"
 
-// GcvInitCameraMatrix2D takes one N-by-3 matrix and one
-// N-by-2 Matrix as input.
-// Each row in the input matrix represents a point in real
-// world (objPts) or in image (imgPts).
+// GcvInitCameraMatrix2D takes one 3-by-N matrix and one 2-by-N Matrix as input.
+// Each column in the input matrix represents a point in real world (objPts) or
+// in image (imgPts).
 // Return: the camera matrix.
 func GcvInitCameraMatrix2D(objPts, imgPts *mat64.Dense) (camMat *mat64.Dense) {
-	nObjPts, objCol := objPts.Dims()
-	nImgPts, imgCol := imgPts.Dims()
+	objDim, nObjPts := objPts.Dims()
+	imgDim, nImgPts := imgPts.Dims()
 
-	if objCol != 3 || imgCol != 2 || nObjPts != nImgPts {
+	if objDim != 3 || imgDim != 2 || nObjPts != nImgPts {
 		panic("Invalid dimensions for objPts and imgPts")
 	}
 
 	objPtsVec := NewGcvPoint3f32Vector(int64(nObjPts))
 	imgPtsVec := NewGcvPoint2f32Vector(int64(nObjPts))
 
-	for i := 0; i < nObjPts; i++ {
-		objPtsVec.Set(i, NewGcvPoint3f32(objPts.Row(nil, i)...))
+	for j := 0; j < nObjPts; j++ {
+		objPtsVec.Set(j, NewGcvPoint3f32(objPts.Col(nil, j)...))
 	}
 
-	for i := 0; i < nObjPts; i++ {
-		imgPtsVec.Set(i, NewGcvPoint2f32(imgPts.Row(nil, i)...))
+	for j := 0; j < nObjPts; j++ {
+		imgPtsVec.Set(j, NewGcvPoint2f32(imgPts.Col(nil, j)...))
 	}
 
 	camMat = GcvMatToMat64(GcvInitCameraMatrix2D_(objPtsVec, imgPtsVec))
 	return camMat
 }
 
-func GcvCalibrateCamera(objPts, imgPts, camMat *mat64.Dense) (calCamMat, rvec, tvec *mat64.Dense) {
-	nObjPts, objCol := objPts.Dims()
-	nImgPts, imgCol := imgPts.Dims()
+func GcvCalibrateCamera(objPts, imgPts, camMat *mat64.Dense, dims [2]int) (
+	calCamMat, rvec, tvec *mat64.Dense) {
+	objDim, nObjPts := objPts.Dims()
+	imgDim, nImgPts := imgPts.Dims()
 
-	if objCol != 3 || imgCol != 2 || nObjPts != nImgPts {
+	if objDim != 3 || imgDim != 2 || nObjPts != nImgPts {
 		panic("Invalid dimensions for objPts and imgPts")
 	}
 
 	objPtsVec := NewGcvPoint3f32Vector(int64(nObjPts))
 	imgPtsVec := NewGcvPoint2f32Vector(int64(nObjPts))
 
-	for i := 0; i < nObjPts; i++ {
-		objPtsVec.Set(i, NewGcvPoint3f32(objPts.Row(nil, i)...))
+	for j := 0; j < nObjPts; j++ {
+		objPtsVec.Set(j, NewGcvPoint3f32(objPts.Col(nil, j)...))
 	}
 
-	for i := 0; i < nObjPts; i++ {
-		imgPtsVec.Set(i, NewGcvPoint2f32(imgPts.Row(nil, i)...))
+	for j := 0; j < nObjPts; j++ {
+		imgPtsVec.Set(j, NewGcvPoint2f32(imgPts.Col(nil, j)...))
 	}
 
 	_camMat := Mat64ToGcvMat(camMat)
 	_rvec := NewGcvMat()
 	_tvec := NewGcvMat()
-	_imgSize := NewGcvSize2i(1920, 1080)
+	_imgSize := NewGcvSize2i(dims[0], dims[1])
 
 	GcvCalibrateCamera_(
 		objPtsVec, imgPtsVec,
@@ -68,7 +68,7 @@ func GcvCalibrateCamera(objPts, imgPts, camMat *mat64.Dense) (calCamMat, rvec, t
 	return calCamMat, rvec, tvec
 }
 
-// Same as cv::Rodrigues
+// GcvRodrigues takes a 3D column vector, and apply cv::Rodrigues to it.
 func GcvRodrigues(src *mat64.Dense) (dst *mat64.Dense) {
 	gcvSrc := Mat64ToGcvMat(src)
 	gcvDst := NewGcvMat()
@@ -77,37 +77,3 @@ func GcvRodrigues(src *mat64.Dense) (dst *mat64.Dense) {
 
 	return dst
 }
-
-// func mat64ToGcvPoint3f32Vector(mat *mat64.Dense) NewGcvPoint3f32Vector {
-
-// }
-
-// func TestGcvCalibrateCamera(t *testing.T) {
-// 	objPts := NewGcvPoint3fVector(int64(4))
-// 	objPts.Set(0, NewGcvPoint3f(0, 25, 0))
-// 	objPts.Set(1, NewGcvPoint3f(0, -25, 0))
-// 	objPts.Set(2, NewGcvPoint3f(-47, 25, 0))
-// 	objPts.Set(3, NewGcvPoint3f(-47, -25, 0))
-
-// 	imgPts := NewGcvPoint2fVector(int64(4))
-// 	imgPts.Set(0, NewGcvPoint2f(1136.4140625, 1041.89208984))
-// 	imgPts.Set(1, NewGcvPoint2f(1845.33190918, 671.39581299))
-// 	imgPts.Set(2, NewGcvPoint2f(302.73373413, 634.79998779))
-// 	imgPts.Set(3, NewGcvPoint2f(1051.46154785, 352.76107788))
-
-// 	imgSize := NewGcvSize2i(1920, 1080)
-
-// 	camMat := GcvInitCameraMatrix2D(objPts, imgPts)
-// 	spew.Dump(camMat.GcvAtd(NewGcvSize2i(0, 0)))
-// 	spew.Dump(camMat.GcvAtd(NewGcvSize2i(0, 1)))
-// 	spew.Dump(camMat.GcvAtd(NewGcvSize2i(1, 1)))
-// 	spew.Dump(camMat.GcvAtd(NewGcvSize2i(1, 2)))
-// 	spew.Dump(camMat.GcvAtd(NewGcvSize2i(2, 2)))
-
-// 	rvec := NewMat()
-// 	tvec := NewMat()
-
-// 	GcvCalibrateCamera(objPts, imgPts, imgSize, camMat, rvec, tvec)
-
-// 	MatToMat64(camMat)
-// }

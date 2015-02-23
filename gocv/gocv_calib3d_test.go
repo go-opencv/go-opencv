@@ -24,6 +24,7 @@ func TestGcvInitCameraMatrix2D(t *testing.T) {
 		-0.226950, 0.942377, -0.899869,
 		-1.148912, 0.093725, 0.634745,
 	})
+	objPts.TCopy(objPts)
 
 	imgPts := mat64.NewDense(10, 2, []float64{
 		-0.384281, -0.299055,
@@ -37,6 +38,7 @@ func TestGcvInitCameraMatrix2D(t *testing.T) {
 		0.631444, -0.340257,
 		-0.647580, 0.502113,
 	})
+	imgPts.TCopy(imgPts)
 
 	camMat := GcvInitCameraMatrix2D(objPts, imgPts)
 	assert.InDeltaSlice(t, []float64{1.47219772e+03, 0.00000000e+00, 9.59500000e+02},
@@ -60,6 +62,7 @@ func TestGcvCalibrateCamera(t *testing.T) {
 		-0.226950, 0.942377, -0.899869,
 		-1.148912, 0.093725, 0.634745,
 	})
+	objPts.TCopy(objPts)
 
 	imgPts := mat64.NewDense(10, 2, []float64{
 		-0.384281, -0.299055,
@@ -73,15 +76,12 @@ func TestGcvCalibrateCamera(t *testing.T) {
 		0.631444, -0.340257,
 		-0.647580, 0.502113,
 	})
+	imgPts.TCopy(imgPts)
 
 	camMat := GcvInitCameraMatrix2D(objPts, imgPts)
 
-	camMat, rvec, tvec := GcvCalibrateCamera(objPts, imgPts, camMat)
-
-	// stackedMat := *mat64.NewDense(0, 0, nil)
-	// stackedMat.Augment(GcvRodrigues(rvec), tvec)
-
-	// camMat.Mul(camMat, &stackedMat)
+	camMat, rvec, tvec := GcvCalibrateCamera(
+		objPts, imgPts, camMat, [2]int{1920, 1080})
 
 	assert.InDeltaSlice(t, []float64{-46.15296606, 0., 959.5}, camMat.Row(nil, 0), DELTA)
 	assert.InDeltaSlice(t, []float64{0., -46.15296606, 539.5}, camMat.Row(nil, 1), DELTA)
