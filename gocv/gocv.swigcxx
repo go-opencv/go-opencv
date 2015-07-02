@@ -2,3 +2,4 @@
 
 %include "gocv_core.i"
 %include "gocv_calib3d.i"
+%include "gocv_imgproc.i"
