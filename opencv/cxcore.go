@@ -566,6 +566,48 @@ func Circle(image *IplImage, pt1 Point, radius int, color Scalar, thickness, lin
 	)
 }
 
+const (
+	CV_FONT_HERSHEY_SIMPLEX        = int(C.CV_FONT_HERSHEY_SIMPLEX)
+	CV_FONT_HERSHEY_PLAIN          = int(C.CV_FONT_HERSHEY_PLAIN)
+	CV_FONT_HERSHEY_DUPLEX         = int(C.CV_FONT_HERSHEY_DUPLEX)
+	CV_FONT_HERSHEY_COMPLEX        = int(C.CV_FONT_HERSHEY_COMPLEX)
+	CV_FONT_HERSHEY_TRIPLEX        = int(C.CV_FONT_HERSHEY_TRIPLEX)
+	CV_FONT_HERSHEY_COMPLEX_SMALL  = int(C.CV_FONT_HERSHEY_COMPLEX_SMALL)
+	CV_FONT_HERSHEY_SCRIPT_SIMPLEX = int(C.CV_FONT_HERSHEY_SCRIPT_SIMPLEX)
+	CV_FONT_HERSHEY_SCRIPT_COMPLEX = int(C.CV_FONT_HERSHEY_SCRIPT_COMPLEX)
+	CV_FONT_ITALIC                 = int(C.CV_FONT_ITALIC)
+)
+
+type Font struct {
+	font C.CvFont
+}
+
+//void cvInitFont(CvFont* font, int font_face, double hscale, double vscale, double shear=0, int thickness=1, int line_type=8 )
+func InitFont(fontFace int, hscale, vscale, shear float32, thickness, lineType int) *Font {
+	font := new(Font)
+	C.cvInitFont(
+		&font.font,
+		C.int(fontFace),
+		C.double(hscale),
+		C.double(vscale),
+		C.double(shear),
+		C.int(thickness),
+		C.int(lineType),
+	)
+	return font
+}
+
+// void cvPutText(CvArr* img, const char* text, CvPoint org, const CvFont* font, CvScalar color)
+func (this *Font) PutText(image *IplImage, text string, pt1 Point, color Scalar) {
+	C.cvPutText(
+		unsafe.Pointer(image),
+		C.CString(text),
+		C.cvPoint(C.int(pt1.X), C.int(pt1.Y)),
+		&this.font,
+		(C.CvScalar)(color),
+	)
+}
+
 //CVAPI(void)  cvLine( CvArr* img, CvPoint pt1, CvPoint pt2,
 //                     CvScalar color, int thickness CV_DEFAULT(1),
 //                     int line_type CV_DEFAULT(8), int shift CV_DEFAULT(0) );
