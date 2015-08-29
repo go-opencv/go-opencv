@@ -528,6 +528,11 @@ func (src *IplImage) Avg(mask *IplImage) Scalar {
 	return (Scalar)(C.cvAvg(unsafe.Pointer(src), unsafe.Pointer(mask)))
 }
 
+// cvEqualizeHist(const CvArr* src, CvArr* dst)
+func (src *IplImage) EqualizeHist(dst *IplImage) {
+	C.cvEqualizeHist(unsafe.Pointer(src), unsafe.Pointer(dst))
+}
+
 /****************************************************************************************\
 *                      Discrete Linear Transforms and Related Functions       *
 \****************************************************************************************/
