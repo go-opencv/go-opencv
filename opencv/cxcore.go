@@ -523,6 +523,10 @@ func Not(src, dst *IplImage) {
 /****************************************************************************************\
 *                                    Array Statistics                         *
 \****************************************************************************************/
+// CvScalar cvAvg(const CvArr* arr, const CvArr* mask=NULL )
+func (src *IplImage) Avg(mask *IplImage) Scalar {
+	return (Scalar)(C.cvAvg(unsafe.Pointer(src), unsafe.Pointer(mask)))
+}
 
 /****************************************************************************************\
 *                      Discrete Linear Transforms and Related Functions       *
