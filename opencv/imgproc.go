@@ -52,3 +52,32 @@ func Crop(src *IplImage, x, y, width, height int) *IplImage {
 
 	return dest
 }
+
+func CreateContourType() *ContourType {
+	return &ContourType{CV_RETR_EXTERNAL, CV_CHAIN_APPROX_SIMPLE, Point{0, 0}}
+}
+
+func (this *ContourType) FindContours(image *IplImage) []*Contour {
+	storage := C.cvCreateMemStorage(0)
+	header_size := (C.size_t)(unsafe.Sizeof(C.CvContour{}))
+	var seq *C.CvSeq
+	C.cvFindContours(
+		unsafe.Pointer(image),
+		storage,
+		&seq,
+		C.int(header_size),
+		this.mode,
+		this.method,
+		C.cvPoint(C.int(this.offset.X), C.int(this.offset.Y)))
+
+	var contours []*Contour
+	for i := 0; i < (int)(seq.total); i++ {
+		contour := (*Contour)((*_Ctype_CvContour)(unsafe.Pointer(C.cvGetSeqElem(seq, C.int(i)))))
+		contours = append(contours, contour)
+	}
+
+	storage_c := (*C.CvMemStorage)(storage)
+	C.cvReleaseMemStorage(&storage_c)
+
+	return contours
+}

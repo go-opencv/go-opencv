@@ -1,6 +1,7 @@
 package opencv
 
 import (
+	"log"
 	"path"
 	"runtime"
 	"testing"
@@ -53,5 +54,26 @@ func TestCrop(t *testing.T) {
 
 	if crop.Height() != 200 {
 		t.Fatalf("excepted width is 200, returned %d\n", crop.Height())
+	}
+}
+
+func TestFindContours(t *testing.T) {
+	_, currentfile, _, _ := runtime.Caller(0)
+	filename := path.Join(path.Dir(currentfile), "../images/shapes.png")
+
+	image := LoadImage(filename)
+	if image == nil {
+		t.Fatal("LoadImage fail")
+	}
+	defer image.Release()
+
+	grayscale_image := CreateImage(image.Width(), image.Height(), IPL_DEPTH_8U, 1)
+	CvtColor(image, grayscale_image, CV_BGR2GRAY)
+	defer grayscale_image.Release()
+
+	cType := CreateContourType()
+	contours := cType.FindContours(grayscale_image)
+	for i, c := range contours {
+		log.Printf("Contour[%v] = %v", i, c)
 	}
 }

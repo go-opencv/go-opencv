@@ -661,6 +661,24 @@ type Graph C.CvGraph
 type Chain C.CvChain
 type Contour C.CvContour
 
+type ContourType struct {
+	mode   C.int
+	method C.int
+	offset Point
+}
+
+const (
+	CV_RETR_EXTERNAL = C.CV_RETR_EXTERNAL
+	CV_RETR_LIST     = C.CV_RETR_LIST
+	CV_RETR_CCOMP    = C.CV_RETR_CCOMP
+	CV_RETR_TREE     = C.CV_RETR_TREE
+
+	CV_CHAIN_APPROX_NONE      = C.CV_CHAIN_APPROX_NONE
+	CV_CHAIN_APPROX_SIMPLE    = C.CV_CHAIN_APPROX_SIMPLE
+	CV_CHAIN_APPROX_TC89_L1   = C.CV_CHAIN_APPROX_TC89_L1
+	CV_CHAIN_APPROX_TC89_KCOS = C.CV_CHAIN_APPROX_TC89_KCOS
+)
+
 /****************************************************************************************\
 *                                    Sequence types                                      *
 \****************************************************************************************/
