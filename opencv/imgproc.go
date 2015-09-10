@@ -52,3 +52,34 @@ func Crop(src *IplImage, x, y, width, height int) *IplImage {
 
 	return dest
 }
+
+/* Returns a Seq of countours in an image, detected according to the parameters.
+   Caller must Release() the Seq returned */
+func (image *IplImage) FindContours(mode, method int, offset Point) *Seq {
+	storage := C.cvCreateMemStorage(0)
+	header_size := (C.size_t)(unsafe.Sizeof(C.CvContour{}))
+	var seq *C.CvSeq
+	C.cvFindContours(
+		unsafe.Pointer(image),
+		storage,
+		&seq,
+		C.int(header_size),
+		C.int(mode),
+		C.int(method),
+		C.cvPoint(C.int(offset.X), C.int(offset.Y)))
+
+	return (*Seq)(seq)
+}
+
+//cvDrawContours(CvArr* img, CvSeq* contour, CvScalar externalColor, CvScalar holeColor, int maxLevel, int thickness=1, int lineType=8
+func DrawContours(image *IplImage, contours *Seq, externalColor, holeColor Scalar, maxLevel, thickness, lineType int, offset Point) {
+	C.cvDrawContours(
+		unsafe.Pointer(image),
+		(*C.CvSeq)(contours),
+		(C.CvScalar)(externalColor),
+		(C.CvScalar)(holeColor),
+		C.int(maxLevel),
+		C.int(thickness),
+		C.int(lineType),
+		C.cvPoint(C.int(offset.X), C.int(offset.Y)))
+}

@@ -142,6 +142,11 @@ func (img *IplImage) Get3D(x, y, z int) Scalar {
 	return Scalar(ret)
 }
 
+/* Sets every element of an array to a given value. */
+func (img *IplImage) Set(value Scalar) {
+	C.cvSet(unsafe.Pointer(img), (C.CvScalar)(value), nil)
+}
+
 /* Set1D sets a particular element in the image */
 func (img *IplImage) Set1D(x int, value Scalar) {
 	C.cvSet1D(unsafe.Pointer(img), C.int(x), (C.CvScalar)(value))
@@ -540,6 +545,13 @@ func (src *IplImage) EqualizeHist(dst *IplImage) {
 /****************************************************************************************\
 *                              Dynamic data structures                        *
 \****************************************************************************************/
+func (seq *Seq) Release() {
+	C.cvReleaseMemStorage(&seq.storage)
+}
+
+func (seq *Seq) Total() int {
+	return (int)(seq.total)
+}
 
 /****************************************************************************************\
 *                                     Drawing                                 *
