@@ -113,6 +113,11 @@ func (img *IplImage) GetROI() Rect {
 	return Rect(r)
 }
 
+/* Equalizes the histogram of a grayscale image */
+func (img *IplImage) EqualizeHist(dest *IplImage) {
+	C.cvEqualizeHist(unsafe.Pointer(img), unsafe.Pointer(dest))
+}
+
 /*
 Reshape changes shape of the image without copying data. A value of `0` means
 that channels or rows remain unchanged.
@@ -140,6 +145,11 @@ func (img *IplImage) Get2D(x, y int) Scalar {
 func (img *IplImage) Get3D(x, y, z int) Scalar {
 	ret := C.cvGet3D(unsafe.Pointer(img), C.int(z), C.int(y), C.int(x))
 	return Scalar(ret)
+}
+
+/* Sets every element of an array to a given value. */
+func (img *IplImage) Set(value Scalar) {
+	C.cvSet(unsafe.Pointer(img), (C.CvScalar)(value), nil)
 }
 
 /* Set1D sets a particular element in the image */
@@ -531,6 +541,13 @@ func Not(src, dst *IplImage) {
 /****************************************************************************************\
 *                              Dynamic data structures                        *
 \****************************************************************************************/
+func (seq *Seq) Release() {
+	C.cvReleaseMemStorage(&seq.storage)
+}
+
+func (seq *Seq) Total() int {
+	return (int)(seq.total)
+}
 
 /****************************************************************************************\
 *                                     Drawing                                 *

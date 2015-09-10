@@ -54,10 +54,12 @@ func Crop(src *IplImage, x, y, width, height int) *IplImage {
 }
 
 func CreateContourType() *ContourType {
-	return &ContourType{CV_RETR_EXTERNAL, CV_CHAIN_APPROX_SIMPLE, Point{0, 0}}
+	return &ContourType{mode: CV_RETR_EXTERNAL, method: CV_CHAIN_APPROX_SIMPLE, offset: Point{0, 0}}
 }
 
-func (this *ContourType) FindContours(image *IplImage) []*Contour {
+/* Returns a Seq of countours in an image, detected according to the parameters in ContourType.
+   Caller must Release() the Seq returned */
+func (this *ContourType) FindContours(image *IplImage) *Seq {
 	storage := C.cvCreateMemStorage(0)
 	header_size := (C.size_t)(unsafe.Sizeof(C.CvContour{}))
 	var seq *C.CvSeq
@@ -70,14 +72,18 @@ func (this *ContourType) FindContours(image *IplImage) []*Contour {
 		this.method,
 		C.cvPoint(C.int(this.offset.X), C.int(this.offset.Y)))
 
-	var contours []*Contour
-	for i := 0; i < (int)(seq.total); i++ {
-		contour := (*Contour)((*_Ctype_CvContour)(unsafe.Pointer(C.cvGetSeqElem(seq, C.int(i)))))
-		contours = append(contours, contour)
-	}
+	return (*Seq)(seq)
+}
 
-	storage_c := (*C.CvMemStorage)(storage)
-	C.cvReleaseMemStorage(&storage_c)
-
-	return contours
+//cvDrawContours(CvArr* img, CvSeq* contour, CvScalar externalColor, CvScalar holeColor, int maxLevel, int thickness=1, int lineType=8
+func DrawContours(image *IplImage, contours *Seq, externalColor, holeColor Scalar, maxLevel, thickness, lineType int, offset Point) {
+	C.cvDrawContours(
+		unsafe.Pointer(image),
+		(*C.CvSeq)(contours),
+		(C.CvScalar)(externalColor),
+		(C.CvScalar)(holeColor),
+		C.int(maxLevel),
+		C.int(thickness),
+		C.int(lineType),
+		C.cvPoint(C.int(offset.X), C.int(offset.Y)))
 }

@@ -1,10 +1,11 @@
 package opencv
 
 import (
-	"log"
 	"path"
 	"runtime"
+	"os"
 	"testing"
+	"syscall"
 )
 
 func TestResize(t *testing.T) {
@@ -59,7 +60,7 @@ func TestCrop(t *testing.T) {
 
 func TestFindContours(t *testing.T) {
 	_, currentfile, _, _ := runtime.Caller(0)
-	filename := path.Join(path.Dir(currentfile), "../images/shapes.png")
+	filename := path.Join(path.Dir(currentfile), "../images/pic5.png")
 
 	image := LoadImage(filename)
 	if image == nil {
@@ -67,13 +68,47 @@ func TestFindContours(t *testing.T) {
 	}
 	defer image.Release()
 
-	grayscale_image := CreateImage(image.Width(), image.Height(), IPL_DEPTH_8U, 1)
-	CvtColor(image, grayscale_image, CV_BGR2GRAY)
-	defer grayscale_image.Release()
+	grayscale := CreateImage(image.Width(), image.Height(), IPL_DEPTH_8U, 1)
+	CvtColor(image, grayscale, CV_BGR2GRAY)
+	defer grayscale.Release()
 
-	cType := CreateContourType()
-	contours := cType.FindContours(grayscale_image)
-	for i, c := range contours {
-		log.Printf("Contour[%v] = %v", i, c)
+
+	edges := CreateImage(grayscale.Width(), grayscale.Height(), grayscale.Depth(), grayscale.Channels())
+	defer edges.Release()
+	Canny(grayscale, edges, 50, 200, 3)
+
+	contourType := CreateContourType()
+	seq := contourType.FindContours(edges)
+	defer seq.Release()
+
+	contours := CreateImage(grayscale.Width(), grayscale.Height(), grayscale.Depth(), grayscale.Channels())
+	white := NewScalar(255, 255, 255, 0)
+	contours.Set(white)
+
+	black := NewScalar(0, 0, 0, 0)
+	red := NewScalar(0, 255, 0, 0)
+
+	for ; seq != nil; seq = (*Seq)(seq.h_next) {
+		DrawContours(contours, seq, red, black, 0, 2, 8, Point{0, 0})
 	}
+
+	filename = path.Join(path.Dir(currentfile), "../images/pic5_contours.png")
+	// Uncomment this code to create the test image "../images/shapes_contours.png"
+	// It is part of the repo, and what this test compares against
+	//
+	//SaveImage(filename), contours, 0)
+
+	tempfilename := path.Join(os.TempDir(), "pic5_contours.png")
+	defer syscall.Unlink(tempfilename)
+	SaveImage(tempfilename, contours, 0)
+
+	// Compare actual image with expected image
+	same, err := BinaryCompare(filename, tempfilename)
+	if err != nil {
+		t.Fatal(err)
+	}
+	if !same {
+		t.Error("Expected contour file != actual contour file")
+	}
+
 }
