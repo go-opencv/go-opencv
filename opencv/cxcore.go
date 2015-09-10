@@ -113,11 +113,6 @@ func (img *IplImage) GetROI() Rect {
 	return Rect(r)
 }
 
-/* Equalizes the histogram of a grayscale image */
-func (img *IplImage) EqualizeHist(dest *IplImage) {
-	C.cvEqualizeHist(unsafe.Pointer(img), unsafe.Pointer(dest))
-}
-
 /*
 Reshape changes shape of the image without copying data. A value of `0` means
 that channels or rows remain unchanged.
