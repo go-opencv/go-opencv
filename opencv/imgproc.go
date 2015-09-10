@@ -53,13 +53,9 @@ func Crop(src *IplImage, x, y, width, height int) *IplImage {
 	return dest
 }
 
-func CreateContourType() *ContourType {
-	return &ContourType{mode: CV_RETR_EXTERNAL, method: CV_CHAIN_APPROX_SIMPLE, offset: Point{0, 0}}
-}
-
-/* Returns a Seq of countours in an image, detected according to the parameters in ContourType.
+/* Returns a Seq of countours in an image, detected according to the parameters.
    Caller must Release() the Seq returned */
-func (this *ContourType) FindContours(image *IplImage) *Seq {
+func (image *IplImage) FindContours(mode, method int, offset Point) *Seq {
 	storage := C.cvCreateMemStorage(0)
 	header_size := (C.size_t)(unsafe.Sizeof(C.CvContour{}))
 	var seq *C.CvSeq
@@ -68,9 +64,9 @@ func (this *ContourType) FindContours(image *IplImage) *Seq {
 		storage,
 		&seq,
 		C.int(header_size),
-		this.mode,
-		this.method,
-		C.cvPoint(C.int(this.offset.X), C.int(this.offset.Y)))
+		C.int(mode),
+		C.int(method),
+		C.cvPoint(C.int(offset.X), C.int(offset.Y)))
 
 	return (*Seq)(seq)
 }

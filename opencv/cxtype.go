@@ -661,12 +661,6 @@ type Graph C.CvGraph
 type Chain C.CvChain
 type Contour C.CvContour
 
-type ContourType struct {
-	mode   C.int
-	method C.int
-	offset Point
-}
-
 const (
 	CV_RETR_EXTERNAL = C.CV_RETR_EXTERNAL
 	CV_RETR_LIST     = C.CV_RETR_LIST

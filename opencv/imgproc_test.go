@@ -77,8 +77,7 @@ func TestFindContours(t *testing.T) {
 	defer edges.Release()
 	Canny(grayscale, edges, 50, 200, 3)
 
-	contourType := CreateContourType()
-	seq := contourType.FindContours(edges)
+	seq := edges.FindContours(CV_RETR_EXTERNAL, CV_CHAIN_APPROX_SIMPLE, Point{0, 0})
 	defer seq.Release()
 
 	contours := CreateImage(grayscale.Width(), grayscale.Height(), grayscale.Depth(), grayscale.Channels())
