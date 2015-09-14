@@ -595,6 +595,18 @@ type Box2D struct {
 	angle  float32
 }
 
+func (box *Box2D) Size() Size2D32f {
+	return box.size
+}
+
+func (box *Box2D) Center() Point2D32f {
+	return box.center
+}
+
+func (box *Box2D) Angle() float32 {
+	return box.angle
+}
+
 type LineIterator C.CvLineIterator
 
 /************************************* CvSlice ******************************************/
@@ -604,6 +616,12 @@ type Slice C.CvSlice
 const (
 	CV_WHOLE_SEQ_END_INDEX = C.CV_WHOLE_SEQ_END_INDEX
 )
+
+/* Equivalent to the C constant CV_WHOLE_SEQ */
+func WholeSeq() Slice {
+	slice := C.cvSlice(C.int(0), C.CV_WHOLE_SEQ_END_INDEX)
+	return (Slice)(slice)
+}
 
 /************************************* CvScalar *****************************************/
 
@@ -705,6 +723,15 @@ const (
 )
 
 type AttrList C.CvAttrList
+
+/****************************************************************************************/
+/*                  Structural Analysis and Shape Descriptors                           */
+/****************************************************************************************/
+
+/* For use in ApproxPoly */
+const (
+	CV_POLY_APPROX_DP = C.CV_POLY_APPROX_DP
+)
 
 /*****************************************************************************\
 *                                 --- END ---                                 *

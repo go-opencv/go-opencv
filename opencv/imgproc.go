@@ -83,3 +83,47 @@ func DrawContours(image *IplImage, contours *Seq, externalColor, holeColor Scala
 		C.int(lineType),
 		C.cvPoint(C.int(offset.X), C.int(offset.Y)))
 }
+
+// CvSeq* cvApproxPoly(const void* src_seq, int header_size, CvMemStorage* storage, int method, double eps, int recursive=0 )
+func ApproxPoly(src *Seq, header_size int, storage *MemStorage, method int, eps float64, recursive int) *Seq {
+	seq := C.cvApproxPoly(
+		unsafe.Pointer(src),
+		C.int(header_size),
+		(*C.CvMemStorage)(storage),
+		C.int(method),
+		C.double(eps),
+		C.int(recursive))
+	return (*Seq)(seq)
+}
+
+// cvArcLength(const void* curve, CvSlice slice=CV_WHOLE_SEQ, int is_closed=-1 )
+func ArcLength(curve *Seq, slice Slice, is_closed bool) float64 {
+	is_closed_int := 0
+	if is_closed {
+		is_closed_int = 1
+	}
+	return float64(C.cvArcLength(unsafe.Pointer(curve),
+		(C.CvSlice)(slice),
+		C.int(is_closed_int)))
+}
+
+func ContourPerimeter(curve *Seq) float64 {
+	return ArcLength(curve, WholeSeq(), true)
+}
+
+// double cvContourArea(const CvArr* contour, CvSlice slice=CV_WHOLE_SEQ, int oriented=0 )
+func ContourArea(contour *Seq, slice Slice, oriented int) float64 {
+	return float64(C.cvContourArea(
+		unsafe.Pointer(contour),
+		(C.CvSlice)(slice),
+		C.int(oriented)))
+}
+
+/* points can be either CvSeq* or CvMat* */
+func FitEllipse2(points unsafe.Pointer) Box2D {
+	box := C.cvFitEllipse2(points)
+	center := Point2D32f{float32(box.center.x), float32(box.center.y)}
+	size := Size2D32f{float32(box.size.width), float32(box.size.height)}
+	angle := float32(box.angle)
+	return Box2D{center, size, angle}
+}

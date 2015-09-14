@@ -553,6 +553,18 @@ func (seq *Seq) Total() int {
 	return (int)(seq.total)
 }
 
+func (seq *Seq) HNext() *Seq {
+	return (*Seq)(seq.h_next)
+}
+
+func (seq *Seq) VNext() *Seq {
+	return (*Seq)(seq.v_next)
+}
+
+func (seq *Seq) Storage() *MemStorage {
+	return (*MemStorage)(seq.storage)
+}
+
 /****************************************************************************************\
 *                                     Drawing                                 *
 \****************************************************************************************/
