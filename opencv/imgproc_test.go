@@ -1,11 +1,11 @@
 package opencv
 
 import (
+	"os"
 	"path"
 	"runtime"
-	"os"
-	"testing"
 	"syscall"
+	"testing"
 )
 
 func TestResize(t *testing.T) {
@@ -72,7 +72,6 @@ func TestFindContours(t *testing.T) {
 	CvtColor(image, grayscale, CV_BGR2GRAY)
 	defer grayscale.Release()
 
-
 	edges := CreateImage(grayscale.Width(), grayscale.Height(), grayscale.Depth(), grayscale.Channels())
 	defer edges.Release()
 	Canny(grayscale, edges, 50, 200, 3)
@@ -87,7 +86,7 @@ func TestFindContours(t *testing.T) {
 	black := NewScalar(0, 0, 0, 0)
 	red := NewScalar(0, 255, 0, 0)
 
-	for ; seq != nil; seq = (*Seq)(seq.h_next) {
+	for ; seq != nil; seq = seq.HNext() {
 		DrawContours(contours, seq, red, black, 0, 2, 8, Point{0, 0})
 	}
 
