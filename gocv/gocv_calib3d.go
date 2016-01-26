@@ -24,11 +24,11 @@ func GcvInitCameraMatrix2D(objPts, imgPts *mat64.Dense, dims [2]int,
 	imgPtsVec := NewGcvPoint2f32Vector(int64(nObjPts))
 
 	for j := 0; j < nObjPts; j++ {
-		objPtsVec.Set(j, NewGcvPoint3f32(mat64.Col(nil,j,objPts.ColView(j))...))
+		objPtsVec.Set(j, NewGcvPoint3f32(mat64.Col(nil, j, objPts)...))
 	}
 
 	for j := 0; j < nObjPts; j++ {
-		imgPtsVec.Set(j, NewGcvPoint2f32( mat64.Col(nil,j,imgPts.ColView(j))...))
+		imgPtsVec.Set(j, NewGcvPoint2f32(mat64.Col(nil, j, imgPts)...))
 	}
 
 	_imgSize := NewGcvSize2i(dims[0], dims[1])
@@ -52,11 +52,11 @@ func GcvCalibrateCamera(objPts, imgPts, camMat, distCoeffs *mat64.Dense,
 	imgPtsVec := NewGcvPoint2f32Vector(int64(nObjPts))
 
 	for j := 0; j < nObjPts; j++ {
-		objPtsVec.Set(j, NewGcvPoint3f32(mat64.Col(nil,j,objPts.ColView(j))...))
+		objPtsVec.Set(j, NewGcvPoint3f32(mat64.Col(nil, j, objPts)...))
 	}
 
 	for j := 0; j < nObjPts; j++ {
-		imgPtsVec.Set(j, NewGcvPoint2f32(mat64.Col(nil,j,imgPts.ColView(j))...))
+		imgPtsVec.Set(j, NewGcvPoint2f32(mat64.Col(nil, j, imgPts)...))
 	}
 
 	_camMat := Mat64ToGcvMat(camMat)
