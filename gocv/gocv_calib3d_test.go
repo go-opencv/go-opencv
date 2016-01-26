@@ -24,7 +24,7 @@ func TestGcvInitCameraMatrix2D(t *testing.T) {
 		-0.226950, 0.942377, -0.899869,
 		-1.148912, 0.093725, 0.634745,
 	})
-	objPts.TCopy(objPts)
+	objPts.Clone(objPts.T())
 
 	imgPts := mat64.NewDense(10, 2, []float64{
 		-0.384281, -0.299055,
@@ -38,15 +38,15 @@ func TestGcvInitCameraMatrix2D(t *testing.T) {
 		0.631444, -0.340257,
 		-0.647580, 0.502113,
 	})
-	imgPts.TCopy(imgPts)
+	imgPts.Clone(imgPts.T())
 
 	camMat := GcvInitCameraMatrix2D(objPts, imgPts, [2]int{1920, 1080}, 1)
 	assert.InDeltaSlice(t, []float64{1.47219772e+03, 0.00000000e+00, 9.59500000e+02},
-		camMat.Row(nil, 0), DELTA)
+		mat64.Row(nil, 0, camMat), DELTA)
 	assert.InDeltaSlice(t, []float64{0.00000000e+00, 1.47219772e+03, 5.39500000e+02},
-		camMat.Row(nil, 1), DELTA)
+		mat64.Row(nil, 1, camMat), DELTA)
 	assert.InDeltaSlice(t, []float64{0.00000000e+00, 0.00000000e+00, 1.00000000e+00},
-		camMat.Row(nil, 2), DELTA)
+		mat64.Row(nil, 2, camMat), DELTA)
 }
 
 func TestGcvCalibrateCamera(t *testing.T) {
@@ -62,7 +62,7 @@ func TestGcvCalibrateCamera(t *testing.T) {
 		-0.226950, 0.942377, -0.899869,
 		-1.148912, 0.093725, 0.634745,
 	})
-	objPts.TCopy(objPts)
+	objPts.Clone(objPts.T())
 
 	imgPts := mat64.NewDense(10, 2, []float64{
 		-0.384281, -0.299055,
@@ -76,7 +76,7 @@ func TestGcvCalibrateCamera(t *testing.T) {
 		0.631444, -0.340257,
 		-0.647580, 0.502113,
 	})
-	imgPts.TCopy(imgPts)
+	imgPts.Clone(imgPts.T())
 
 	camMat := GcvInitCameraMatrix2D(objPts, imgPts, [2]int{1920, 1080}, 1)
 
@@ -85,12 +85,12 @@ func TestGcvCalibrateCamera(t *testing.T) {
 	camMat, rvec, tvec := GcvCalibrateCamera(
 		objPts, imgPts, camMat, distCoeffs, [2]int{1920, 1080}, 14575)
 
-	assert.InDeltaSlice(t, []float64{-46.15296606, 0., 959.5}, camMat.Row(nil, 0), DELTA)
-	assert.InDeltaSlice(t, []float64{0., -46.15296606, 539.5}, camMat.Row(nil, 1), DELTA)
-	assert.InDeltaSlice(t, []float64{0., 0., 1.}, camMat.Row(nil, 2), DELTA)
+	assert.InDeltaSlice(t, []float64{-46.15296606, 0., 959.5}, mat64.Row(nil, 0, camMat), DELTA)
+	assert.InDeltaSlice(t, []float64{0., -46.15296606, 539.5}, mat64.Row(nil, 1, camMat), DELTA)
+	assert.InDeltaSlice(t, []float64{0., 0., 1.}, mat64.Row(nil, 2, camMat), DELTA)
 
-	assert.InDeltaSlice(t, []float64{-0.98405029, -0.93443411, -0.26304667}, rvec.Col(nil, 0), DELTA)
-	assert.InDeltaSlice(t, []float64{0.6804739, 0.47530207, -0.04833094}, tvec.Col(nil, 0), DELTA)
+	assert.InDeltaSlice(t, []float64{-0.98405029, -0.93443411, -0.26304667}, mat64.Col(nil, 0, rvec), DELTA)
+	assert.InDeltaSlice(t, []float64{0.6804739, 0.47530207, -0.04833094}, mat64.Col(nil, 0, tvec), DELTA)
 }
 
 func TestGcvRodrigues(t *testing.T) {
@@ -101,7 +101,7 @@ func TestGcvRodrigues(t *testing.T) {
 	})
 	rmat := GcvRodrigues(rvec)
 
-	assert.InDeltaSlice(t, []float64{0.59922526, 0.57799222, -0.55394411}, rmat.Row(nil, 0), DELTA)
-	assert.InDeltaSlice(t, []float64{0.20413818, 0.558743, 0.80382452}, rmat.Row(nil, 1), DELTA)
-	assert.InDeltaSlice(t, []float64{0.77411672, -0.5947531, 0.21682264}, rmat.Row(nil, 2), DELTA)
+	assert.InDeltaSlice(t, []float64{0.59922526, 0.57799222, -0.55394411}, mat64.Row(nil, 0, rmat), DELTA)
+	assert.InDeltaSlice(t, []float64{0.20413818, 0.558743, 0.80382452}, mat64.Row(nil, 1, rmat), DELTA)
+	assert.InDeltaSlice(t, []float64{0.77411672, -0.5947531, 0.21682264}, mat64.Row(nil, 2, rmat), DELTA)
 }
