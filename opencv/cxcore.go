@@ -517,6 +517,11 @@ func Not(src, dst *IplImage) {
 
 //CVAPI(void) cvNot( const CvArr* src, CvArr* dst );
 
+// cvAbsDiff(const CvArr* src1, const CvArr* src2, CvArr* dst)
+func AbsDiff(src1, src2, dst *IplImage) {
+	C.cvAbsDiff(unsafe.Pointer(src1), unsafe.Pointer(src2), unsafe.Pointer(dst))
+}
+
 /****************************************************************************************\
 *                                Math operations                              *
 \****************************************************************************************/
