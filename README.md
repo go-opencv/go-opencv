@@ -1,6 +1,8 @@
 Go OpenCV binding
 ==================
 
+[![Join the chat at https://gitter.im/lazywei/go-opencv](https://badges.gitter.im/lazywei/go-opencv.svg)](https://gitter.im/lazywei/go-opencv?utm_source=badge&utm_medium=badge&utm_campaign=pr-badge&utm_content=badge)
+
 A Golang binding for [OpenCV](http://opencv.org/).
 
 OpenCV 1.x C API bindings through CGO, and OpenCV 2+ C++ API ([`GoCV`](gocv/)) through SWIG.
