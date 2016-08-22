@@ -7,7 +7,13 @@ A Golang binding for [OpenCV](http://opencv.org/).
 
 OpenCV 1.x C API bindings through CGO, and OpenCV 2+ C++ API ([`GoCV`](gocv/)) through SWIG.
 
-[**DISCLAIMER**](https://github.com/lazywei/go-opencv#disclaimer)
+-------------------
+
+## Disclaimer
+
+This is a fork of [chai's go-opencv](https://github.com/chai2010/opencv), which has only OpenCV1 support through CGO, and all credits for OpenCV1 wrapper (except files in `gocv/` folder) should mainly go to Chai. At the time of the fork (Dec 9, 2013) the original project was inactive and was hosted on Google Code, which was a little inconvenient for community contribution. Hence, I decided to host a fork on Github so people can contribute to this project easily. Since then, some patches were added by community, and some experimental OpenCV 2 wrappers were added as well. That means this fork went on a little bit divergent way comparing to the origin project. However, now the origin project seems to be active again and be moved to GitHub starting from Aug 25, 2014. Efforts to merge the two projects are very welcome.
+
+-------------------
 
 ## Install
 
@@ -138,10 +144,4 @@ You can find more samples at: https://github.com/lazywei/go-opencv/tree/master/s
   ```
 
 - Open a pull request!
-
--------------------
-
-## Disclaimer
-
-This is a fork of [chai's go-opencv](https://github.com/chai2010/opencv), which has only OpenCV1 support through CGO. At the time of the fork (Dec 9, 2013) the original project was inactive, and hence I decide to host a fork on Github so people can contribute to this project easily. However, now it seems to be active again starting from Aug 25, 2014. Efforts to merge the two projects are very welcome.
 
