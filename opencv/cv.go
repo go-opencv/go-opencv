@@ -112,3 +112,83 @@ func Inpaint(src, inpaint_mask, dst *IplImage, inpaintRange float64, flags int) 
 
 //CVAPI(void) cvInpaint( const CvArr* src, const CvArr* inpaint_mask,
 //                       CvArr* dst, double inpaintRange, int flags );
+
+const (
+	CV_MORPH_RECT    = 0
+	CV_MORPH_ELLIPSE = 1
+	CV_MORPH_CROSS   = 2
+	//CV_SHAPE_CUSTOM  = 3 // TODO: currently we don't support a fully custom kernel
+)
+
+/* Returns a structuring element of the specified size and shape for morphological operations. */
+func CreateStructuringElement(cols, rows, anchor_x, anchor_y, shape int) *IplConvKernel {
+	return (*IplConvKernel)(C.cvCreateStructuringElementEx(
+		C.int(cols),
+		C.int(rows),
+		C.int(anchor_x),
+		C.int(anchor_y),
+		C.int(shape),
+		nil, // TODO: currently we don't support a fully custom kernel
+	))
+}
+
+//CVAPI(IplConvKernel*) cvCreateStructuringElementEx( int cols, int rows, int anchor_x,
+//                                                    int anchor_y, int shape, int* values=NULL )
+
+/* Releases the structuring element */
+func (k *IplConvKernel) ReleaseElement() {
+	C.cvReleaseStructuringElement(
+		(**C.IplConvKernel)(unsafe.Pointer(&k)),
+	)
+}
+
+//CVAPI(void) cvReleaseStructuringElement( IplConvKernel** element );
+
+/* Dilates an image by using a specific structuring element. */
+func Dilate(src, dst *IplImage, element *IplConvKernel, iterations int) {
+	C.cvDilate(
+		unsafe.Pointer(src),
+		unsafe.Pointer(dst),
+		(*C.IplConvKernel)(unsafe.Pointer(element)),
+		C.int(iterations),
+	)
+}
+
+//CVAPI(void) cvDilate( const CvArr* src, CvArr* dst, IplConvKernel* element=NULL,
+//                      int iterations=1 );
+
+/* Erodes an image by using a specific structuring element. */
+func Erode(src, dst *IplImage, element *IplConvKernel, iterations int) {
+	C.cvErode(
+		unsafe.Pointer(src),
+		unsafe.Pointer(dst),
+		(*C.IplConvKernel)(unsafe.Pointer(element)),
+		C.int(iterations),
+	)
+}
+
+//CVAPI(void) cvErode( const CvArr* src, CvArr* dst, IplConvKernel* element=NULL,
+//                     int iterations=1 );
+
+const (
+	CV_MORPH_OPEN     = C.CV_MOP_OPEN
+	CV_MORPH_CLOSE    = C.CV_MOP_CLOSE
+	CV_MORPH_GRADIENT = C.CV_MOP_GRADIENT
+	CV_MORPH_TOPHAT   = C.CV_MOP_TOPHAT
+	CV_MORPH_BLACKHAT = C.CV_MOP_BLACKHAT
+)
+
+/* Performs advanced morphological transformations. */
+func MorphologyEx(src, dst, temp *IplImage, element *IplConvKernel, operation int, iterations int) {
+	C.cvMorphologyEx(
+		unsafe.Pointer(src),
+		unsafe.Pointer(dst),
+		unsafe.Pointer(temp),
+		(*C.IplConvKernel)(unsafe.Pointer(element)),
+		C.int(operation),
+		C.int(iterations),
+	)
+}
+
+//CVAPI(void) cvMorphologyEx( const CvArr* src, CvArr* dst, CvArr* temp,
+//                            IplConvKernel* element, int operation, int iterations=1 );
