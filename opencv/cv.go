@@ -112,3 +112,49 @@ func Inpaint(src, inpaint_mask, dst *IplImage, inpaintRange float64, flags int) 
 
 //CVAPI(void) cvInpaint( const CvArr* src, const CvArr* inpaint_mask,
 //                       CvArr* dst, double inpaintRange, int flags );
+
+const (
+	CV_THRESH_BINARY     = C.CV_THRESH_BINARY
+	CV_THRESH_BINARY_INV = C.CV_THRESH_BINARY_INV
+	CV_THRESH_TRUNC      = C.CV_THRESH_TRUNC
+	CV_THRESH_TOZERO     = C.CV_THRESH_TOZERO
+	CV_THRESH_TOZERO_INV = C.CV_THRESH_TOZERO_INV
+)
+
+/* Applies a fixed-level threshold to each array element. */
+func Threshold(src, dst *IplImage, threshold, max_value float64, threshold_type int) {
+	C.cvThreshold(
+		unsafe.Pointer(src),
+		unsafe.Pointer(dst),
+		C.double(threshold),
+		C.double(max_value),
+		C.int(threshold_type),
+	)
+}
+
+//CVAPI(double) cvThreshold( const CvArr* src, CvArr* dst, double threshold,
+//                           double max_value, int threshold_type );
+
+const (
+	CV_ADAPTIVE_THRESH_MEAN_C     = C.CV_ADAPTIVE_THRESH_MEAN_C
+	CV_ADAPTIVE_THRESH_GAUSSIAN_C = C.CV_ADAPTIVE_THRESH_GAUSSIAN_C
+)
+
+/* Applies an adaptive threshold to an array. */
+func AdaptiveThreshold(src, dst *IplImage, max_value float64, adaptive_method,
+	threshold_type, block_size int, thresh_C float64) {
+	C.cvAdaptiveThreshold(
+		unsafe.Pointer(src),
+		unsafe.Pointer(dst),
+		C.double(max_value),
+		C.int(adaptive_method),
+		C.int(threshold_type),
+		C.int(block_size),
+		C.double(thresh_C),
+	)
+}
+
+//CVAPI(void) cvAdaptiveThreshold( const CvArr* src, CvArr* dst, double max_value,
+//                                 int adaptive_method=CV_ADAPTIVE_THRESH_MEAN_C,
+//                                 int threshold_type=CV_THRESH_BINARY,
+//                                 int block_size=3, double param1=5 );
