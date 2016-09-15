@@ -118,3 +118,54 @@ func TestAbsDiff(t *testing.T) {
 		t.Error("Unexpected result for AbsDiff")
 	}
 }
+
+func TestAddSub(t *testing.T) {
+
+	checkVals := func(img *IplImage, val float64, debug string) {
+	loop:
+		for j := 0; j < img.Height(); j++ {
+			for i := 0; i < img.Width(); i++ {
+				pix := img.Get2D(i, j).Val()
+				if pix[0] != val || pix[1] != val || pix[2] != val {
+					t.Errorf("Unexpeted value for %s: %.1f, %.1f, %.1f. Expected %.1fs",
+						debug, pix[0], pix[1], pix[2], val)
+					break loop
+				}
+			}
+		}
+	}
+
+	zeroImg := CreateImage(50, 50, IPL_DEPTH_8U, 3)
+	zeroImg.Zero()
+
+	twosImg := zeroImg.Clone()
+	foursImg := zeroImg.Clone()
+	negTwosImg := zeroImg.Clone()
+	defer zeroImg.Release()
+	defer twosImg.Release()
+	defer foursImg.Release()
+	defer negTwosImg.Release()
+
+	two := NewScalar(2, 2, 2, 2)
+
+	// 0 + 2 = 2
+	AddScalar(zeroImg, two, twosImg)
+	checkVals(twosImg, 2, "AddScalar()")
+
+	// 2 + 2 = 4
+	Add(twosImg, twosImg, foursImg)
+	checkVals(foursImg, 4, "Add()")
+
+	// 4 - 2 = 2
+	Subtract(foursImg, twosImg, twosImg)
+	checkVals(twosImg, 2, "Sub()")
+
+	// 2 - 2 = 0
+	SubScalar(twosImg, two, zeroImg)
+	checkVals(zeroImg, 0, "SubScalar()")
+
+	// 2 - 4 = 0 != -2 because it clips
+	SubScalarRev(two, foursImg, negTwosImg)
+	checkVals(negTwosImg, 0, "SubScalarRev()")
+
+}
