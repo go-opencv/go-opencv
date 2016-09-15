@@ -526,6 +526,91 @@ func AbsDiff(src1, src2, dst *IplImage) {
 *                                Math operations                              *
 \****************************************************************************************/
 
+// Calculates the per-element sum of two arrays.
+//   dst = src1 + src2
+func Add(src1, src2, dst *IplImage) {
+	AddWithMask(src1, src2, dst, nil)
+}
+
+// Calculates the per-element sum of two arrays with a mask.
+//   dst = src1 + src2
+func AddWithMask(src1, src2, dst, mask *IplImage) {
+	C.cvAdd(
+		unsafe.Pointer(src1),
+		unsafe.Pointer(src2),
+		unsafe.Pointer(dst),
+		unsafe.Pointer(mask),
+	)
+}
+
+// Calculates the per-element sum of an array and a scalar.
+//   dst = src + value
+func AddScalar(src *IplImage, value Scalar, dst *IplImage) {
+	AddScalarWithMask(src, value, dst, nil)
+}
+
+// Calculates the per-element sum of an array and a scalar with a mask.
+//   dst = src + value
+func AddScalarWithMask(src *IplImage, value Scalar, dst, mask *IplImage) {
+	C.cvAddS(
+		unsafe.Pointer(src),
+		(C.CvScalar)(value),
+		unsafe.Pointer(dst),
+		unsafe.Pointer(mask),
+	)
+}
+
+// Calculates the per-element difference between two arrays.
+//   dst = src1 - src2
+func Subtract(src1, src2, dst *IplImage) {
+	SubtractWithMask(src1, src2, dst, nil)
+}
+
+// Calculates the per-element difference between two arrays with a mask.
+//   dst = src1 - src2
+func SubtractWithMask(src1, src2, dst, mask *IplImage) {
+	C.cvSub(
+		unsafe.Pointer(src1),
+		unsafe.Pointer(src2),
+		unsafe.Pointer(dst),
+		unsafe.Pointer(mask),
+	)
+}
+
+// Calculates the per-element difference between an array and a scalar.
+//   dst = src - value
+func SubScalar(src *IplImage, value Scalar, dst *IplImage) {
+	SubScalarWithMask(src, value, dst, nil)
+}
+
+// Calculates the per-element difference between an array and a scalar with a mask.
+//   dst = src - value
+func SubScalarWithMask(src *IplImage, value Scalar, dst, mask *IplImage) {
+	C.cvSubS(
+		unsafe.Pointer(src),
+		(C.CvScalar)(value),
+		unsafe.Pointer(dst),
+		unsafe.Pointer(mask),
+	)
+}
+
+// Calculates the per-element difference between a scalar and an array.
+//   dst = value - src
+func SubScalarRev(value Scalar, src, dst *IplImage) {
+	SubScalarWithMaskRev(value, src, dst, nil)
+}
+
+// Calculates the per-element difference between a scalar and an array with a mask.
+//   dst = value - src
+func SubScalarWithMaskRev(value Scalar, src, dst, mask *IplImage) {
+	C.cvSubRS(
+		unsafe.Pointer(src),
+		(C.CvScalar)(value),
+		unsafe.Pointer(dst),
+		unsafe.Pointer(mask),
+	)
+}
+
 /****************************************************************************************\
 *                                Matrix operations                            *
 \****************************************************************************************/

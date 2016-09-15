@@ -3,12 +3,20 @@ package opencv
 import (
 	"bytes"
 	"io/ioutil"
+	"math/rand"
 	"os"
 	"path"
 	"runtime"
 	"syscall"
 	"testing"
+	"time"
 )
+
+func init() {
+	// seed random number generator for
+	// creating random mask for TestAddSubWithMask below
+	rand.Seed(time.Now().Unix())
+}
 
 func TestLoadImage2(t *testing.T) {
 	// t.Errorf("aaa")
@@ -117,4 +125,125 @@ func TestAbsDiff(t *testing.T) {
 	if black_pixels != 260766 {
 		t.Error("Unexpected result for AbsDiff")
 	}
+}
+
+func TestAddSub(t *testing.T) {
+	w, h := 50, 50
+	checkVals := func(img *IplImage, val float64, debug string) {
+		for i := 0; i < w*h; i++ {
+			pix := img.Get1D(i).Val()
+			if pix[0] != val || pix[1] != val || pix[2] != val {
+				t.Errorf("Unexpeted value for %s: %.1f, %.1f, %.1f. Expected %.1fs",
+					debug, pix[0], pix[1], pix[2], val)
+				break
+			}
+		}
+	}
+
+	zeroImg := CreateImage(w, h, IPL_DEPTH_8U, 3)
+	zeroImg.Zero()
+
+	hundredImg := zeroImg.Clone()
+	twoHundredImg := zeroImg.Clone()
+	negImage := zeroImg.Clone()
+	defer zeroImg.Release()
+	defer hundredImg.Release()
+	defer twoHundredImg.Release()
+	defer negImage.Release()
+
+	hundred := NewScalar(100, 100, 100, 0)
+
+	// 0 + 100 = 100
+	AddScalar(zeroImg, hundred, hundredImg)
+	checkVals(hundredImg, 100, "AddScalar()")
+
+	// 100 + 100 = 200
+	Add(hundredImg, hundredImg, twoHundredImg)
+	checkVals(twoHundredImg, 200, "Add()")
+
+	// 200 - 100 = 100
+	Subtract(twoHundredImg, hundredImg, hundredImg)
+	checkVals(hundredImg, 100, "Sub()")
+
+	// 100 - 100 = 0
+	SubScalar(hundredImg, hundred, zeroImg)
+	checkVals(zeroImg, 0, "SubScalar()")
+
+	// 100 - 200 = 0 != -100 because it clips
+	SubScalarRev(hundred, twoHundredImg, negImage)
+	checkVals(negImage, 0, "SubScalarRev()")
+
+	// Uncomment to save these images to disk
+	// SaveImage("zeroImg.png", zeroImg, CV_IMWRITE_PNG_COMPRESSION)
+	// SaveImage("hundredImg.png", hundredImg, CV_IMWRITE_PNG_COMPRESSION)
+	// SaveImage("twoHundredImg.png", twoHundredImg, CV_IMWRITE_PNG_COMPRESSION)
+	// SaveImage("negImage.png", negImage, CV_IMWRITE_PNG_COMPRESSION)
+
+}
+
+func TestAddSubWithMask(t *testing.T) {
+	w, h := 50, 50
+	checkValsWMask := func(img, mask *IplImage, val float64, debug string) {
+		for i := 0; i < w*h; i++ {
+			pix := img.Get1D(i).Val()
+			tst := val
+			if mask.Get1D(i).Val()[0] == 0 {
+				tst = 0
+			}
+			if pix[0] != tst || pix[1] != tst || pix[2] != tst {
+				t.Errorf("Unexpeted value for %s: %.1f, %.1f, %.1f. Expected %.1fs",
+					debug, pix[0], pix[1], pix[2], val)
+				break
+			}
+		}
+	}
+
+	zeroImg := CreateImage(w, h, IPL_DEPTH_8U, 3)
+	zeroImg.Zero()
+
+	hundredImg := zeroImg.Clone()
+	twoHundredImg := zeroImg.Clone()
+	negImage := zeroImg.Clone()
+	defer zeroImg.Release()
+	defer hundredImg.Release()
+	defer twoHundredImg.Release()
+	defer negImage.Release()
+
+	// generate a random mask
+	maskImg := CreateImage(w, h, IPL_DEPTH_8U, 1)
+	defer maskImg.Release()
+	for i := 0; i < w*h; i++ {
+		oneOrZero := float64(rand.Intn(2)) // random number either 1 or 0
+		maskImg.Set1D(i, NewScalar(oneOrZero*255, 0, 0, 0))
+	}
+
+	hundred := NewScalar(100, 100, 100, 0)
+
+	// 0 + 100 = 100
+	AddScalarWithMask(zeroImg, hundred, hundredImg, maskImg)
+	checkValsWMask(hundredImg, maskImg, 100, "AddScalarWithMask()")
+
+	// 100 + 100 = 200
+	AddWithMask(hundredImg, hundredImg, twoHundredImg, maskImg)
+	checkValsWMask(twoHundredImg, maskImg, 200, "AddWithMask()")
+
+	// 200 - 100 = 100
+	SubtractWithMask(twoHundredImg, hundredImg, hundredImg, maskImg)
+	checkValsWMask(hundredImg, maskImg, 100, "SubtractWithMask()")
+
+	// 100 - 100 = 0
+	SubScalarWithMask(hundredImg, hundred, zeroImg, maskImg)
+	checkValsWMask(zeroImg, maskImg, 0, "SubScalarWithMask()")
+
+	// 100 - 200 = 0 != -100 because it clips
+	SubScalarWithMaskRev(hundred, twoHundredImg, negImage, maskImg)
+	checkValsWMask(negImage, maskImg, 0, "SubScalarWithMaskRev()")
+
+	// Uncomment to save these images to disk
+	// SaveImage("zeroImgMask.png", zeroImg, CV_IMWRITE_PNG_COMPRESSION)
+	// SaveImage("hundredImgMask.png", hundredImg, CV_IMWRITE_PNG_COMPRESSION)
+	// SaveImage("twoHundredImgMask.png", twoHundredImg, CV_IMWRITE_PNG_COMPRESSION)
+	// SaveImage("negImageMask.png", negImage, CV_IMWRITE_PNG_COMPRESSION)
+	// SaveImage("MaskImg.png", maskImg, CV_IMWRITE_PNG_COMPRESSION)
+
 }
