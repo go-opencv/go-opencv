@@ -58,7 +58,6 @@ static int myGetTermCriteriaType(const CvTermCriteria* x) {
 */
 import "C"
 import (
-	"math"
 	"unsafe"
 )
 
@@ -608,35 +607,30 @@ func (box *Box2D) Angle() float32 {
 	return box.angle
 }
 
+// Returns a CvBox2D
+func (box *Box2D) CVBox() C.CvBox2D {
+	var cvBox C.CvBox2D
+	cvBox.angle = C.float(box.angle)
+	cvBox.center.x = C.float(box.center.X)
+	cvBox.center.y = C.float(box.center.Y)
+	cvBox.size.width = C.float(box.size.Width)
+	cvBox.size.height = C.float(box.size.Height)
+	return cvBox
+}
+
+// Finds box vertices
 func (box *Box2D) Points() []Point2D32f {
-	pts := make([]Point2D32f, 4)
-
-	angleRad := float64(box.angle * math.Pi / 180.0)
-
-	b := float32(math.Cos(angleRad)) * 0.5
-	a := float32(math.Sin(angleRad)) * 0.5
-
-	pts[0] = Point2D32f{
-		box.center.X - a*box.size.Height - b*box.size.Width,
-		box.center.Y + b*box.size.Height - a*box.size.Width,
+	var pts [4]C.CvPoint2D32f
+	C.cvBoxPoints(
+		box.CVBox(),
+		(*C.CvPoint2D32f)(unsafe.Pointer(&pts[0])),
+	)
+	outPts := make([]Point2D32f, 4)
+	for i, p := range pts {
+		outPts[i].X = float32(p.x)
+		outPts[i].Y = float32(p.y)
 	}
-
-	pts[1] = Point2D32f{
-		box.center.X + a*box.size.Height - b*box.size.Width,
-		box.center.Y - b*box.size.Height - a*box.size.Width,
-	}
-
-	pts[2] = Point2D32f{
-		2*box.center.X - pts[0].X,
-		2*box.center.Y - pts[0].Y,
-	}
-
-	pts[3] = Point2D32f{
-		2*box.center.X - pts[1].X,
-		2*box.center.Y - pts[1].Y,
-	}
-
-	return pts
+	return outPts
 }
 
 type LineIterator C.CvLineIterator
