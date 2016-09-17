@@ -3,6 +3,7 @@ package opencv
 import (
 	"bytes"
 	"io/ioutil"
+	"math"
 	"math/rand"
 	"os"
 	"path"
@@ -345,5 +346,82 @@ func TestLogic(t *testing.T) {
 	// 0 = 1 ^ 1
 	XorScalarWithMask(oneImg, one, outImg, maskImg)
 	checkValsWMask(outImg, maskImg, 0, "XorScalarWithMask()")
+}
 
+func TestPointRadiusAngleHelpers(t *testing.T) {
+
+	// test Point
+	testPoint := func(p PointIntrfc, rad, az, inc float64) {
+		if p.Radius() != rad {
+			t.Errorf("%v, Radius() Fail: Expected: %f, Received: %f", p, rad, p.Radius())
+		}
+		if p.Angle() != az {
+			t.Errorf("%v, Angle() Fail: Expected: %f, Received: %f", p, az, p.Angle())
+		}
+		if p.IncAngle() != inc {
+			t.Errorf("%v, IncAngle() Fail: Expected: %f, Received: %f", p, inc, p.IncAngle())
+		}
+	}
+
+	zeroOneTests := []PointIntrfc{
+		Point{0, 1},
+		Point2D32f{0, 1},
+		Point2D64f{0, 1},
+		Point3D32f{0, 1, 0},
+		Point3D64f{0, 1, 0},
+	}
+
+	for _, zeroOne := range zeroOneTests {
+		testPoint(
+			zeroOne,
+			1,         // radius should be 1
+			math.Pi/2, // angle should be pi/2
+			math.Pi/2, // inc angle should also be pi/2
+		)
+	}
+
+	fiveFiveTests := []PointIntrfc{
+		Point{5, 5},
+		Point2D32f{5, 5},
+		Point2D64f{5, 5},
+		Point3D32f{5, 5, 0},
+		Point3D64f{5, 5, 0},
+	}
+	for _, fiveFive := range fiveFiveTests {
+		testPoint(
+			fiveFive,
+			math.Sqrt(50), // radius
+			math.Pi/4,     // angle
+			math.Pi/2,     // inc angle
+		)
+	}
+
+	negThreeFourTests := []PointIntrfc{
+		Point{-3, 4},
+		Point2D32f{-3, 4},
+		Point2D64f{-3, 4},
+		Point3D32f{-3, 4, 0},
+		Point3D64f{-3, 4, 0},
+	}
+	for _, negThreeFour := range negThreeFourTests {
+		testPoint(
+			negThreeFour,
+			5, // radius
+			math.Pi-math.Atan(4.0/3.0), // az angle
+			math.Pi/2,                  // inc angle
+		)
+	}
+
+	oneOneOneTests := []PointIntrfc{
+		Point3D32f{1, 1, 1},
+		Point3D64f{1, 1, 1},
+	}
+	for _, oneoneone := range oneOneOneTests {
+		testPoint(
+			oneoneone,
+			math.Sqrt(3),              // radius
+			math.Pi/4,                 // az angle
+			math.Acos(1/math.Sqrt(3)), // inc angle
+		)
+	}
 }
