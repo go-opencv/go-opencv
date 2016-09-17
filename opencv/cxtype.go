@@ -58,6 +58,7 @@ static int myGetTermCriteriaType(const CvTermCriteria* x) {
 */
 import "C"
 import (
+	"math"
 	"unsafe"
 )
 
@@ -605,6 +606,37 @@ func (box *Box2D) Center() Point2D32f {
 
 func (box *Box2D) Angle() float32 {
 	return box.angle
+}
+
+func (box *Box2D) Points() []Point2D32f {
+	pts := make([]Point2D32f, 4)
+
+	angleRad := float64(box.angle * math.Pi / 180.0)
+
+	b := float32(math.Cos(angleRad)) * 0.5
+	a := float32(math.Sin(angleRad)) * 0.5
+
+	pts[0] = Point2D32f{
+		box.center.X - a*box.size.Height - b*box.size.Width,
+		box.center.Y + b*box.size.Height - a*box.size.Width,
+	}
+
+	pts[1] = Point2D32f{
+		box.center.X + a*box.size.Height - b*box.size.Width,
+		box.center.Y - b*box.size.Height - a*box.size.Width,
+	}
+
+	pts[2] = Point2D32f{
+		2*box.center.X - pts[0].X,
+		2*box.center.Y - pts[0].Y,
+	}
+
+	pts[3] = Point2D32f{
+		2*box.center.X - pts[1].X,
+		2*box.center.Y - pts[1].Y,
+	}
+
+	return pts
 }
 
 type LineIterator C.CvLineIterator
