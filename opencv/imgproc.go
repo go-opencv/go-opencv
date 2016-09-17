@@ -127,3 +127,13 @@ func FitEllipse2(points unsafe.Pointer) Box2D {
 	angle := float32(box.angle)
 	return Box2D{center, size, angle}
 }
+
+// Finds a rotated rectangle of the minimum area enclosing the input 2D point set
+// points can be either CvSeq* or CvMat*
+func MinAreaRect(points unsafe.Pointer) Box2D {
+	box := C.cvMinAreaRect2(points, nil)
+	center := Point2D32f{float32(box.center.x), float32(box.center.y)}
+	size := Size2D32f{float32(box.size.width), float32(box.size.height)}
+	angle := float32(box.angle)
+	return Box2D{center, size, angle}
+}
