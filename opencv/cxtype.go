@@ -607,6 +607,32 @@ func (box *Box2D) Angle() float32 {
 	return box.angle
 }
 
+// Returns a CvBox2D
+func (box *Box2D) CVBox() C.CvBox2D {
+	var cvBox C.CvBox2D
+	cvBox.angle = C.float(box.angle)
+	cvBox.center.x = C.float(box.center.X)
+	cvBox.center.y = C.float(box.center.Y)
+	cvBox.size.width = C.float(box.size.Width)
+	cvBox.size.height = C.float(box.size.Height)
+	return cvBox
+}
+
+// Finds box vertices
+func (box *Box2D) Points() []Point2D32f {
+	var pts [4]C.CvPoint2D32f
+	C.cvBoxPoints(
+		box.CVBox(),
+		(*C.CvPoint2D32f)(unsafe.Pointer(&pts[0])),
+	)
+	outPts := make([]Point2D32f, 4)
+	for i, p := range pts {
+		outPts[i].X = float32(p.x)
+		outPts[i].Y = float32(p.y)
+	}
+	return outPts
+}
+
 type LineIterator C.CvLineIterator
 
 /************************************* CvSlice ******************************************/
