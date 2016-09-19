@@ -425,3 +425,76 @@ func TestPointRadiusAngleHelpers(t *testing.T) {
 		)
 	}
 }
+
+func TestPointAddSub(t *testing.T) {
+
+	// test Point.Add
+	p1 := Point{0, 1}
+	p1.Add(Point{1, 1})
+	if p1.X != 1 || p1.Y != 2 {
+		t.Error("Unexpected result from Point.Add()")
+	}
+
+	// test Point.Sub
+	p2 := Point{0, 1}
+	p2.Sub(Point{1, 1})
+	if p2.X != -1 || p2.Y != 0 {
+		t.Error("Unexpected result from Point.Sub()")
+	}
+
+	// test Point2D32f.Add
+	p3 := Point2D32f{0, 1}
+	p3.Add(Point2D32f{1, 1})
+	if p3.X != 1 || p3.Y != 2 {
+		t.Error("Unexpected result from Point2D32f.Add()")
+	}
+
+	// test Point2D32f.Sub
+	p4 := Point2D32f{0, 1}
+	p4.Sub(Point2D32f{1, 1})
+	if p4.X != -1 || p4.Y != 0 {
+		t.Error("Unexpected result from Point2D32f.Sub()")
+	}
+
+	// test Point2D64f.Add
+	p5 := Point2D64f{0, 1}
+	p5.Add(Point2D64f{1, 1})
+	if p5.X != 1 || p5.Y != 2 {
+		t.Error("Unexpected result from Point2D64f.Add()")
+	}
+
+	// test Point2D64f.Sub
+	p6 := Point2D64f{0, 1}
+	p6.Sub(Point2D64f{1, 1})
+	if p6.X != -1 || p6.Y != 0 {
+		t.Error("Unexpected result from Point2D64f.Sub()")
+	}
+
+	// test Point3D32f.Add
+	p7 := Point3D32f{0, 1, 2}
+	p7.Add(Point3D32f{1, 1, 3})
+	if p7.X != 1 || p7.Y != 2 || p7.Z != 5 {
+		t.Error("Unexpected result from Point3D32f.Add()")
+	}
+
+	// test Point3D32f.Sub
+	p8 := Point3D32f{0, 1, 2}
+	p8.Sub(Point3D32f{1, 1, 3})
+	if p8.X != -1 || p8.Y != 0 || p8.Z != -1 {
+		t.Error("Unexpected result from Point3D32f.Sub()")
+	}
+
+	// test Point3D64f.Add
+	p9 := Point3D64f{0, 1, 2}
+	p9.Add(Point3D64f{1, 1, 3})
+	if p9.X != 1 || p9.Y != 2 || p9.Z != 5 {
+		t.Error("Unexpected result from Point3D64f.Add()")
+	}
+
+	// test Point3D64f.Sub
+	p10 := Point3D64f{0, 1, 2}
+	p10.Sub(Point3D64f{1, 1, 3})
+	if p10.X != -1 || p10.Y != 0 || p10.Z != -1 {
+		t.Error("Unexpected result from Point3D64f.Sub()")
+	}
+}
