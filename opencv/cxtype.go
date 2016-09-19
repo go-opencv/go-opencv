@@ -553,14 +553,20 @@ func (x *TermCriteria) Epsilon() float64 {
 
 /******************************* CvPoint and variants ***********************************/
 
-/********************************* Point Interface **************************************/
+/********************************* Point Interfaces *************************************/
 
-type PointIntrfc interface {
+type Point2D interface {
 	Radius() float64   // the radius to the point
 	RadiusSq() float64 // the radius to the point squared
 	Angle() float64    // the azmuith angle
+	ToPoint() Point    // An conversion to an integer Point type
+}
+
+type Point3D interface {
+	Radius() float64   // the radius to the point
+	RadiusSq() float64 // the radius to the point squared
+	AzAngle() float64  // the azmuith angle
 	IncAngle() float64 // the inclination angle from the z direction
-	ToPoint() Point    // An conversion to a 2D integer Point
 }
 
 /************************************* Point *******************************************/
@@ -596,8 +602,6 @@ func (p Point) Angle() float64 {
 	return math.Atan2(float64(p.Y), float64(p.X))
 }
 
-func (p Point) IncAngle() float64 { return math.Pi / 2 }
-
 /************************************* Point2D32f **************************************/
 
 type Point2D32f struct {
@@ -631,18 +635,12 @@ func (p Point2D32f) Angle() float64 {
 	return math.Atan2(float64(p.Y), float64(p.X))
 }
 
-func (p Point2D32f) IncAngle() float64 { return math.Pi / 2 }
-
 /************************************* Point3D32f **************************************/
 
 type Point3D32f struct {
 	X float32
 	Y float32
 	Z float32
-}
-
-func (p Point3D32f) ToPoint() Point {
-	return Point{int(p.X), int(p.Y)} // ignores Z
 }
 
 func (p *Point3D32f) Add(p2 Point3D32f) {
@@ -665,7 +663,7 @@ func (p Point3D32f) RadiusSq() float64 {
 	return float64(p.X*p.X + p.Y*p.Y + p.Z*p.Z)
 }
 
-func (p Point3D32f) Angle() float64 {
+func (p Point3D32f) AzAngle() float64 {
 	return math.Atan2(float64(p.Y), float64(p.X))
 }
 
@@ -709,18 +707,12 @@ func (p Point2D64f) Angle() float64 {
 	return math.Atan2(p.Y, p.X)
 }
 
-func (p Point2D64f) IncAngle() float64 { return math.Pi / 2 }
-
 /************************************* Point3D64f **************************************/
 
 type Point3D64f struct {
 	X float64
 	Y float64
 	Z float64
-}
-
-func (p Point3D64f) ToPoint() Point {
-	return Point{int(p.X), int(p.Y)} // ignores Z
 }
 
 func (p *Point3D64f) Add(p2 Point3D64f) {
@@ -743,7 +735,7 @@ func (p Point3D64f) RadiusSq() float64 {
 	return p.X*p.X + p.Y*p.Y + p.Z*p.Z
 }
 
-func (p Point3D64f) Angle() float64 {
+func (p Point3D64f) AzAngle() float64 {
 	return math.Atan2(p.Y, p.X)
 }
 

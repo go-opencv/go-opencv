@@ -351,78 +351,85 @@ func TestLogic(t *testing.T) {
 func TestPointRadiusAngleHelpers(t *testing.T) {
 
 	// test Point
-	testPoint := func(p PointIntrfc, rad, az, inc float64) {
+	test2D := func(p Point2D, rad, az float64) {
 		if p.Radius() != rad {
 			t.Errorf("%v, Radius() Fail: Expected: %f, Received: %f", p, rad, p.Radius())
 		}
 		if p.Angle() != az {
 			t.Errorf("%v, Angle() Fail: Expected: %f, Received: %f", p, az, p.Angle())
 		}
+	}
+
+	test3D := func(p Point3D, rad, az, inc float64) {
+		if p.Radius() != rad {
+			t.Errorf("%v, Radius() Fail: Expected: %f, Received: %f", p, rad, p.Radius())
+		}
+		if p.AzAngle() != az {
+			t.Errorf("%v, Angle() Fail: Expected: %f, Received: %f", p, az, p.AzAngle())
+		}
 		if p.IncAngle() != inc {
 			t.Errorf("%v, IncAngle() Fail: Expected: %f, Received: %f", p, inc, p.IncAngle())
 		}
 	}
 
-	zeroOneTests := []PointIntrfc{
+	// Test Point: {0,1,0}
+	zeroOne2DTests := []Point2D{
 		Point{0, 1},
 		Point2D32f{0, 1},
 		Point2D64f{0, 1},
+	}
+	zeroOne3DTests := []Point3D{
 		Point3D32f{0, 1, 0},
 		Point3D64f{0, 1, 0},
 	}
-
-	for _, zeroOne := range zeroOneTests {
-		testPoint(
-			zeroOne,
-			1,         // radius should be 1
-			math.Pi/2, // angle should be pi/2
-			math.Pi/2, // inc angle should also be pi/2
-		)
+	for _, zeroOne := range zeroOne2DTests {
+		test2D(zeroOne, 1, math.Pi/2)
+	}
+	for _, zeroOne := range zeroOne3DTests {
+		test3D(zeroOne, 1, math.Pi/2, math.Pi/2)
 	}
 
-	fiveFiveTests := []PointIntrfc{
+	// Test Point: {5,5,0}
+	fiveFive2DTests := []Point2D{
 		Point{5, 5},
 		Point2D32f{5, 5},
 		Point2D64f{5, 5},
+	}
+	fiveFive3DTests := []Point3D{
 		Point3D32f{5, 5, 0},
 		Point3D64f{5, 5, 0},
 	}
-	for _, fiveFive := range fiveFiveTests {
-		testPoint(
-			fiveFive,
-			math.Sqrt(50), // radius
-			math.Pi/4,     // angle
-			math.Pi/2,     // inc angle
-		)
+	for _, fiveFive := range fiveFive2DTests {
+		test2D(fiveFive, math.Sqrt(50), math.Pi/4)
+	}
+	for _, fiveFive := range fiveFive3DTests {
+		test3D(fiveFive, math.Sqrt(50), math.Pi/4, math.Pi/2)
 	}
 
-	negThreeFourTests := []PointIntrfc{
+	// Test Point: {-3,4,0}
+	negThreeFour2DTests := []Point2D{
 		Point{-3, 4},
 		Point2D32f{-3, 4},
 		Point2D64f{-3, 4},
+	}
+	negThreeFour3DTests := []Point3D{
 		Point3D32f{-3, 4, 0},
 		Point3D64f{-3, 4, 0},
 	}
-	for _, negThreeFour := range negThreeFourTests {
-		testPoint(
-			negThreeFour,
-			5, // radius
-			math.Pi-math.Atan(4.0/3.0), // az angle
-			math.Pi/2,                  // inc angle
-		)
+	for _, negThreeFour := range negThreeFour2DTests {
+		test2D(negThreeFour, 5, math.Pi-math.Atan(4.0/3.0))
+	}
+	for _, negThreeFour := range negThreeFour3DTests {
+		test3D(negThreeFour, 5, math.Pi-math.Atan(4.0/3.0), math.Pi/2)
 	}
 
-	oneOneOneTests := []PointIntrfc{
+	// Test Point: {1,1,1}
+	oneOneOneTests := []Point3D{
 		Point3D32f{1, 1, 1},
 		Point3D64f{1, 1, 1},
 	}
 	for _, oneoneone := range oneOneOneTests {
-		testPoint(
-			oneoneone,
-			math.Sqrt(3),              // radius
-			math.Pi/4,                 // az angle
-			math.Acos(1/math.Sqrt(3)), // inc angle
-		)
+		test3D(oneoneone, math.Sqrt(3), math.Pi/4, math.Acos(1/math.Sqrt(3)))
 	}
 }
 
