@@ -128,18 +128,23 @@ func TestAbsDiff(t *testing.T) {
 	}
 }
 
-func TestAddSub(t *testing.T) {
-	w, h := 50, 50
-	checkVals := func(img *IplImage, val float64, debug string) {
-		for i := 0; i < w*h; i++ {
-			pix := img.Get1D(i).Val()
-			if pix[0] != val || pix[1] != val || pix[2] != val {
-				t.Errorf("Unexpeted value for %s: %.1f, %.1f, %.1f. Expected %.1fs",
-					debug, pix[0], pix[1], pix[2], val)
-				break
-			}
+func checkValsWMask(t *testing.T, img, mask *IplImage, val float64, debug string) {
+	for i := 0; i < img.Width()*img.Height(); i++ {
+		pix := img.Get1D(i).Val()
+		tst := val
+		if mask != nil && mask.Get1D(i).Val()[0] == 0 {
+			tst = 0
+		}
+		if pix[0] != tst || pix[1] != tst || pix[2] != tst {
+			t.Errorf("Unexpeted value for %s: %f, %f, %f. Expected %fs",
+				debug, pix[0], pix[1], pix[2], val)
+			break
 		}
 	}
+}
+
+func TestAddSub(t *testing.T) {
+	w, h := 50, 50
 
 	zeroImg := CreateImage(w, h, IPL_DEPTH_8U, 3)
 	zeroImg.Zero()
@@ -156,23 +161,23 @@ func TestAddSub(t *testing.T) {
 
 	// 0 + 100 = 100
 	AddScalar(zeroImg, hundred, hundredImg)
-	checkVals(hundredImg, 100, "AddScalar()")
+	checkValsWMask(t, hundredImg, nil, 100, "AddScalar()")
 
 	// 100 + 100 = 200
 	Add(hundredImg, hundredImg, twoHundredImg)
-	checkVals(twoHundredImg, 200, "Add()")
+	checkValsWMask(t, twoHundredImg, nil, 200, "Add()")
 
 	// 200 - 100 = 100
 	Subtract(twoHundredImg, hundredImg, hundredImg)
-	checkVals(hundredImg, 100, "Sub()")
+	checkValsWMask(t, hundredImg, nil, 100, "Sub()")
 
 	// 100 - 100 = 0
 	SubScalar(hundredImg, hundred, zeroImg)
-	checkVals(zeroImg, 0, "SubScalar()")
+	checkValsWMask(t, zeroImg, nil, 0, "SubScalar()")
 
 	// 100 - 200 = 0 != -100 because it clips
 	SubScalarRev(hundred, twoHundredImg, negImage)
-	checkVals(negImage, 0, "SubScalarRev()")
+	checkValsWMask(t, negImage, nil, 0, "SubScalarRev()")
 
 	// Uncomment to save these images to disk
 	// SaveImage("zeroImg.png", zeroImg, CV_IMWRITE_PNG_COMPRESSION)
@@ -184,21 +189,6 @@ func TestAddSub(t *testing.T) {
 
 func TestAddSubWithMask(t *testing.T) {
 	w, h := 50, 50
-	checkValsWMask := func(img, mask *IplImage, val float64, debug string) {
-		for i := 0; i < w*h; i++ {
-			pix := img.Get1D(i).Val()
-			tst := val
-			if mask.Get1D(i).Val()[0] == 0 {
-				tst = 0
-			}
-			if pix[0] != tst || pix[1] != tst || pix[2] != tst {
-				t.Errorf("Unexpeted value for %s: %.1f, %.1f, %.1f. Expected %.1fs",
-					debug, pix[0], pix[1], pix[2], val)
-				break
-			}
-		}
-	}
-
 	zeroImg := CreateImage(w, h, IPL_DEPTH_8U, 3)
 	zeroImg.Zero()
 
@@ -222,23 +212,23 @@ func TestAddSubWithMask(t *testing.T) {
 
 	// 0 + 100 = 100
 	AddScalarWithMask(zeroImg, hundred, hundredImg, maskImg)
-	checkValsWMask(hundredImg, maskImg, 100, "AddScalarWithMask()")
+	checkValsWMask(t, hundredImg, maskImg, 100, "AddScalarWithMask()")
 
 	// 100 + 100 = 200
 	AddWithMask(hundredImg, hundredImg, twoHundredImg, maskImg)
-	checkValsWMask(twoHundredImg, maskImg, 200, "AddWithMask()")
+	checkValsWMask(t, twoHundredImg, maskImg, 200, "AddWithMask()")
 
 	// 200 - 100 = 100
 	SubtractWithMask(twoHundredImg, hundredImg, hundredImg, maskImg)
-	checkValsWMask(hundredImg, maskImg, 100, "SubtractWithMask()")
+	checkValsWMask(t, hundredImg, maskImg, 100, "SubtractWithMask()")
 
 	// 100 - 100 = 0
 	SubScalarWithMask(hundredImg, hundred, zeroImg, maskImg)
-	checkValsWMask(zeroImg, maskImg, 0, "SubScalarWithMask()")
+	checkValsWMask(t, zeroImg, maskImg, 0, "SubScalarWithMask()")
 
 	// 100 - 200 = 0 != -100 because it clips
 	SubScalarWithMaskRev(hundred, twoHundredImg, negImage, maskImg)
-	checkValsWMask(negImage, maskImg, 0, "SubScalarWithMaskRev()")
+	checkValsWMask(t, negImage, maskImg, 0, "SubScalarWithMaskRev()")
 
 	// Uncomment to save these images to disk
 	// SaveImage("zeroImgMask.png", zeroImg, CV_IMWRITE_PNG_COMPRESSION)
@@ -249,22 +239,8 @@ func TestAddSubWithMask(t *testing.T) {
 
 }
 
-func TestLogic(t *testing.T) {
+func TestLogicAndAbsDiff(t *testing.T) {
 	w, h := 50, 50
-	checkValsWMask := func(img, mask *IplImage, val float64, debug string) {
-		for i := 0; i < w*h; i++ {
-			pix := img.Get1D(i).Val()
-			tst := val
-			if mask.Get1D(i).Val()[0] == 0 {
-				tst = 0
-			}
-			if pix[0] != tst || pix[1] != tst || pix[2] != tst {
-				t.Errorf("Unexpeted value for %s: %f, %f, %f. Expected %fs",
-					debug, pix[0], pix[1], pix[2], val)
-				break
-			}
-		}
-	}
 
 	zero := NewScalar(0, 0, 0, 0)
 	one := NewScalar(1, 1, 1, 0)
@@ -289,63 +265,80 @@ func TestLogic(t *testing.T) {
 
 	// 0 = 0 & 0
 	AndWithMask(zeroImg, zeroImg, outImg, maskImg)
-	checkValsWMask(outImg, maskImg, 0, "AndWithMask()")
+	checkValsWMask(t, outImg, maskImg, 0, "AndWithMask()")
 	// 0 = 1 & 0
 	AndWithMask(oneImg, zeroImg, outImg, maskImg)
-	checkValsWMask(outImg, maskImg, 0, "AndWithMask()")
+	checkValsWMask(t, outImg, maskImg, 0, "AndWithMask()")
 	// 1 = 1 & 1
 	AndWithMask(oneImg, oneImg, outImg, maskImg)
-	checkValsWMask(outImg, maskImg, 1, "AndWithMask()")
+	checkValsWMask(t, outImg, maskImg, 1, "AndWithMask()")
 
 	// 0 = 0 | 0
 	OrWithMask(zeroImg, zeroImg, outImg, maskImg)
-	checkValsWMask(outImg, maskImg, 0, "OrWithMask()")
+	checkValsWMask(t, outImg, maskImg, 0, "OrWithMask()")
 	// 1 = 1 | 0
 	OrWithMask(oneImg, zeroImg, outImg, maskImg)
-	checkValsWMask(outImg, maskImg, 1, "OrWithMask()")
+	checkValsWMask(t, outImg, maskImg, 1, "OrWithMask()")
 	// 1 = 1 | 1
 	OrWithMask(oneImg, oneImg, outImg, maskImg)
-	checkValsWMask(outImg, maskImg, 1, "OrWithMask()")
+	checkValsWMask(t, outImg, maskImg, 1, "OrWithMask()")
 
 	// 0 = 0 ^ 0
 	XorWithMask(zeroImg, zeroImg, outImg, maskImg)
-	checkValsWMask(outImg, maskImg, 0, "XOrWithMask()")
+	checkValsWMask(t, outImg, maskImg, 0, "XOrWithMask()")
 	// 1 = 1 ^ 0
 	XorWithMask(oneImg, zeroImg, outImg, maskImg)
-	checkValsWMask(outImg, maskImg, 1, "XOrWithMask()")
+	checkValsWMask(t, outImg, maskImg, 1, "XOrWithMask()")
 	// 0 = 1 ^ 1
 	XorWithMask(oneImg, oneImg, outImg, maskImg)
-	checkValsWMask(outImg, maskImg, 0, "XOrWithMask()")
+	checkValsWMask(t, outImg, maskImg, 0, "XOrWithMask()")
 
 	// 0 = 0 & 0
 	AndScalarWithMask(zeroImg, zero, outImg, maskImg)
-	checkValsWMask(outImg, maskImg, 0, "AndScalarWithMask()")
+	checkValsWMask(t, outImg, maskImg, 0, "AndScalarWithMask()")
 	// 0 = 1 & 0
 	AndScalarWithMask(oneImg, zero, outImg, maskImg)
-	checkValsWMask(outImg, maskImg, 0, "AndScalarWithMask()")
+	checkValsWMask(t, outImg, maskImg, 0, "AndScalarWithMask()")
 	// 1 = 1 & 1
 	AndScalarWithMask(oneImg, one, outImg, maskImg)
-	checkValsWMask(outImg, maskImg, 1, "AndScalarWithMask()")
+	checkValsWMask(t, outImg, maskImg, 1, "AndScalarWithMask()")
 
 	// 0 = 0 | 0
 	OrScalarWithMask(zeroImg, zero, outImg, maskImg)
-	checkValsWMask(outImg, maskImg, 0, "OrScalarWithMask()")
+	checkValsWMask(t, outImg, maskImg, 0, "OrScalarWithMask()")
 	// 1 = 1 | 0
 	OrScalarWithMask(oneImg, zero, outImg, maskImg)
-	checkValsWMask(outImg, maskImg, 1, "OrScalarWithMask()")
+	checkValsWMask(t, outImg, maskImg, 1, "OrScalarWithMask()")
 	// 1 = 1 | 1
 	OrScalarWithMask(oneImg, one, outImg, maskImg)
-	checkValsWMask(outImg, maskImg, 1, "OrScalarWithMask()")
+	checkValsWMask(t, outImg, maskImg, 1, "OrScalarWithMask()")
 
 	// 0 = 0 ^ 0
 	XorScalarWithMask(zeroImg, zero, outImg, maskImg)
-	checkValsWMask(outImg, maskImg, 0, "XorScalarWithMask()")
+	checkValsWMask(t, outImg, maskImg, 0, "XorScalarWithMask()")
 	// 1 = 1 ^ 0
 	XorScalarWithMask(oneImg, zero, outImg, maskImg)
-	checkValsWMask(outImg, maskImg, 1, "XorScalarWithMask()")
+	checkValsWMask(t, outImg, maskImg, 1, "XorScalarWithMask()")
 	// 0 = 1 ^ 1
 	XorScalarWithMask(oneImg, one, outImg, maskImg)
-	checkValsWMask(outImg, maskImg, 0, "XorScalarWithMask()")
+	checkValsWMask(t, outImg, maskImg, 0, "XorScalarWithMask()")
+
+	// 1 = |1-0|
+	AbsDiff(oneImg, zeroImg, outImg)
+	checkValsWMask(t, outImg, nil, 1, "AbsDiff")
+
+	// 1 = |0-1|
+	AbsDiff(zeroImg, oneImg, outImg)
+	checkValsWMask(t, outImg, nil, 1, "AbsDiff")
+
+	// 1 = |1-0|
+	AbsDiffScalar(oneImg, zero, outImg)
+	checkValsWMask(t, outImg, nil, 1, "AbsDiffScalar")
+
+	// 1 = |0-1|
+	AbsDiffScalar(zeroImg, one, outImg)
+	checkValsWMask(t, outImg, nil, 1, "AbsDiffScalar")
+
 }
 
 func TestPointRadiusAngleHelpers(t *testing.T) {
