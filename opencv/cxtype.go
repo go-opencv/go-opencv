@@ -58,6 +58,7 @@ static int myGetTermCriteriaType(const CvTermCriteria* x) {
 */
 import "C"
 import (
+	"math"
 	"unsafe"
 )
 
@@ -552,29 +553,197 @@ func (x *TermCriteria) Epsilon() float64 {
 
 /******************************* CvPoint and variants ***********************************/
 
+/********************************* Point Interfaces *************************************/
+
+type Point2D interface {
+	Radius() float64   // the radius to the point
+	RadiusSq() float64 // the radius to the point squared
+	Angle() float64    // the azmuith angle
+	ToPoint() Point    // An conversion to an integer Point type
+}
+
+type Point3D interface {
+	Radius() float64   // the radius to the point
+	RadiusSq() float64 // the radius to the point squared
+	AzAngle() float64  // the azmuith angle
+	IncAngle() float64 // the inclination angle from the z direction
+}
+
+/************************************* Point *******************************************/
+
 type Point struct {
 	X int
 	Y int
 }
 
+func (p Point) ToPoint() Point {
+	return p
+}
+
+func (p *Point) Add(p2 Point) {
+	p.X += p2.X
+	p.Y += p2.Y
+}
+
+func (p *Point) Sub(p2 Point) {
+	p.X -= p2.X
+	p.Y -= p2.Y
+}
+
+func (p Point) Radius() float64 {
+	return math.Sqrt(p.RadiusSq())
+}
+
+func (p Point) RadiusSq() float64 {
+	return float64(p.X*p.X + p.Y*p.Y)
+}
+
+func (p Point) Angle() float64 {
+	return math.Atan2(float64(p.Y), float64(p.X))
+}
+
+/************************************* Point2D32f **************************************/
+
 type Point2D32f struct {
 	X float32
 	Y float32
 }
+
+func (p Point2D32f) ToPoint() Point {
+	return Point{int(p.X), int(p.Y)}
+}
+
+func (p *Point2D32f) Add(p2 Point2D32f) {
+	p.X += p2.X
+	p.Y += p2.Y
+}
+
+func (p *Point2D32f) Sub(p2 Point2D32f) {
+	p.X -= p2.X
+	p.Y -= p2.Y
+}
+
+func (p Point2D32f) Radius() float64 {
+	return math.Sqrt(p.RadiusSq())
+}
+
+func (p Point2D32f) RadiusSq() float64 {
+	return float64(p.X*p.X + p.Y*p.Y)
+}
+
+func (p Point2D32f) Angle() float64 {
+	return math.Atan2(float64(p.Y), float64(p.X))
+}
+
+/************************************* Point3D32f **************************************/
+
 type Point3D32f struct {
 	X float32
 	Y float32
 	Z float32
 }
 
+func (p *Point3D32f) Add(p2 Point3D32f) {
+	p.X += p2.X
+	p.Y += p2.Y
+	p.Z += p2.Z
+}
+
+func (p *Point3D32f) Sub(p2 Point3D32f) {
+	p.X -= p2.X
+	p.Y -= p2.Y
+	p.Z -= p2.Z
+}
+
+func (p Point3D32f) Radius() float64 {
+	return math.Sqrt(p.RadiusSq())
+}
+
+func (p Point3D32f) RadiusSq() float64 {
+	return float64(p.X*p.X + p.Y*p.Y + p.Z*p.Z)
+}
+
+func (p Point3D32f) AzAngle() float64 {
+	return math.Atan2(float64(p.Y), float64(p.X))
+}
+
+func (p Point3D32f) IncAngle() float64 {
+	if p.Radius() == 0 {
+		return 0
+	}
+	return math.Acos(float64(p.Z) / p.Radius())
+}
+
+/************************************* Point2D64f **************************************/
+
 type Point2D64f struct {
 	X float64
 	Y float64
 }
+
+func (p Point2D64f) ToPoint() Point {
+	return Point{int(p.X), int(p.Y)}
+}
+
+func (p *Point2D64f) Add(p2 Point2D64f) {
+	p.X += p2.X
+	p.Y += p2.Y
+}
+
+func (p *Point2D64f) Sub(p2 Point2D64f) {
+	p.X -= p2.X
+	p.Y -= p2.Y
+}
+
+func (p Point2D64f) Radius() float64 {
+	return math.Sqrt(p.RadiusSq())
+}
+
+func (p Point2D64f) RadiusSq() float64 {
+	return p.X*p.X + p.Y*p.Y
+}
+
+func (p Point2D64f) Angle() float64 {
+	return math.Atan2(p.Y, p.X)
+}
+
+/************************************* Point3D64f **************************************/
+
 type Point3D64f struct {
 	X float64
 	Y float64
 	Z float64
+}
+
+func (p *Point3D64f) Add(p2 Point3D64f) {
+	p.X += p2.X
+	p.Y += p2.Y
+	p.Z += p2.Z
+}
+
+func (p *Point3D64f) Sub(p2 Point3D64f) {
+	p.X -= p2.X
+	p.Y -= p2.Y
+	p.Z -= p2.Z
+}
+
+func (p Point3D64f) Radius() float64 {
+	return math.Sqrt(p.RadiusSq())
+}
+
+func (p Point3D64f) RadiusSq() float64 {
+	return p.X*p.X + p.Y*p.Y + p.Z*p.Z
+}
+
+func (p Point3D64f) AzAngle() float64 {
+	return math.Atan2(p.Y, p.X)
+}
+
+func (p Point3D64f) IncAngle() float64 {
+	if p.Radius() == 0 {
+		return 0
+	}
+	return math.Acos(p.Z / p.Radius())
 }
 
 /******************************** CvSize's & CvBox **************************************/

@@ -3,6 +3,7 @@ package opencv
 import (
 	"bytes"
 	"io/ioutil"
+	"math"
 	"math/rand"
 	"os"
 	"path"
@@ -345,5 +346,162 @@ func TestLogic(t *testing.T) {
 	// 0 = 1 ^ 1
 	XorScalarWithMask(oneImg, one, outImg, maskImg)
 	checkValsWMask(outImg, maskImg, 0, "XorScalarWithMask()")
+}
 
+func TestPointRadiusAngleHelpers(t *testing.T) {
+
+	// test Point
+	test2D := func(p Point2D, rad, az float64) {
+		if p.Radius() != rad {
+			t.Errorf("%v, Radius() Fail: Expected: %f, Received: %f", p, rad, p.Radius())
+		}
+		if p.Angle() != az {
+			t.Errorf("%v, Angle() Fail: Expected: %f, Received: %f", p, az, p.Angle())
+		}
+	}
+
+	test3D := func(p Point3D, rad, az, inc float64) {
+		if p.Radius() != rad {
+			t.Errorf("%v, Radius() Fail: Expected: %f, Received: %f", p, rad, p.Radius())
+		}
+		if p.AzAngle() != az {
+			t.Errorf("%v, Angle() Fail: Expected: %f, Received: %f", p, az, p.AzAngle())
+		}
+		if p.IncAngle() != inc {
+			t.Errorf("%v, IncAngle() Fail: Expected: %f, Received: %f", p, inc, p.IncAngle())
+		}
+	}
+
+	// Test Point: {0,1,0}
+	zeroOne2DTests := []Point2D{
+		Point{0, 1},
+		Point2D32f{0, 1},
+		Point2D64f{0, 1},
+	}
+	zeroOne3DTests := []Point3D{
+		Point3D32f{0, 1, 0},
+		Point3D64f{0, 1, 0},
+	}
+	for _, zeroOne := range zeroOne2DTests {
+		test2D(zeroOne, 1, math.Pi/2)
+	}
+	for _, zeroOne := range zeroOne3DTests {
+		test3D(zeroOne, 1, math.Pi/2, math.Pi/2)
+	}
+
+	// Test Point: {5,5,0}
+	fiveFive2DTests := []Point2D{
+		Point{5, 5},
+		Point2D32f{5, 5},
+		Point2D64f{5, 5},
+	}
+	fiveFive3DTests := []Point3D{
+		Point3D32f{5, 5, 0},
+		Point3D64f{5, 5, 0},
+	}
+	for _, fiveFive := range fiveFive2DTests {
+		test2D(fiveFive, math.Sqrt(50), math.Pi/4)
+	}
+	for _, fiveFive := range fiveFive3DTests {
+		test3D(fiveFive, math.Sqrt(50), math.Pi/4, math.Pi/2)
+	}
+
+	// Test Point: {-3,4,0}
+	negThreeFour2DTests := []Point2D{
+		Point{-3, 4},
+		Point2D32f{-3, 4},
+		Point2D64f{-3, 4},
+	}
+	negThreeFour3DTests := []Point3D{
+		Point3D32f{-3, 4, 0},
+		Point3D64f{-3, 4, 0},
+	}
+	for _, negThreeFour := range negThreeFour2DTests {
+		test2D(negThreeFour, 5, math.Pi-math.Atan(4.0/3.0))
+	}
+	for _, negThreeFour := range negThreeFour3DTests {
+		test3D(negThreeFour, 5, math.Pi-math.Atan(4.0/3.0), math.Pi/2)
+	}
+
+	// Test Point: {1,1,1}
+	oneOneOneTests := []Point3D{
+		Point3D32f{1, 1, 1},
+		Point3D64f{1, 1, 1},
+	}
+	for _, oneoneone := range oneOneOneTests {
+		test3D(oneoneone, math.Sqrt(3), math.Pi/4, math.Acos(1/math.Sqrt(3)))
+	}
+}
+
+func TestPointAddSub(t *testing.T) {
+
+	// test Point.Add
+	p1 := Point{0, 1}
+	p1.Add(Point{1, 1})
+	if p1.X != 1 || p1.Y != 2 {
+		t.Error("Unexpected result from Point.Add()")
+	}
+
+	// test Point.Sub
+	p2 := Point{0, 1}
+	p2.Sub(Point{1, 1})
+	if p2.X != -1 || p2.Y != 0 {
+		t.Error("Unexpected result from Point.Sub()")
+	}
+
+	// test Point2D32f.Add
+	p3 := Point2D32f{0, 1}
+	p3.Add(Point2D32f{1, 1})
+	if p3.X != 1 || p3.Y != 2 {
+		t.Error("Unexpected result from Point2D32f.Add()")
+	}
+
+	// test Point2D32f.Sub
+	p4 := Point2D32f{0, 1}
+	p4.Sub(Point2D32f{1, 1})
+	if p4.X != -1 || p4.Y != 0 {
+		t.Error("Unexpected result from Point2D32f.Sub()")
+	}
+
+	// test Point2D64f.Add
+	p5 := Point2D64f{0, 1}
+	p5.Add(Point2D64f{1, 1})
+	if p5.X != 1 || p5.Y != 2 {
+		t.Error("Unexpected result from Point2D64f.Add()")
+	}
+
+	// test Point2D64f.Sub
+	p6 := Point2D64f{0, 1}
+	p6.Sub(Point2D64f{1, 1})
+	if p6.X != -1 || p6.Y != 0 {
+		t.Error("Unexpected result from Point2D64f.Sub()")
+	}
+
+	// test Point3D32f.Add
+	p7 := Point3D32f{0, 1, 2}
+	p7.Add(Point3D32f{1, 1, 3})
+	if p7.X != 1 || p7.Y != 2 || p7.Z != 5 {
+		t.Error("Unexpected result from Point3D32f.Add()")
+	}
+
+	// test Point3D32f.Sub
+	p8 := Point3D32f{0, 1, 2}
+	p8.Sub(Point3D32f{1, 1, 3})
+	if p8.X != -1 || p8.Y != 0 || p8.Z != -1 {
+		t.Error("Unexpected result from Point3D32f.Sub()")
+	}
+
+	// test Point3D64f.Add
+	p9 := Point3D64f{0, 1, 2}
+	p9.Add(Point3D64f{1, 1, 3})
+	if p9.X != 1 || p9.Y != 2 || p9.Z != 5 {
+		t.Error("Unexpected result from Point3D64f.Add()")
+	}
+
+	// test Point3D64f.Sub
+	p10 := Point3D64f{0, 1, 2}
+	p10.Sub(Point3D64f{1, 1, 3})
+	if p10.X != -1 || p10.Y != 0 || p10.Z != -1 {
+		t.Error("Unexpected result from Point3D64f.Sub()")
+	}
 }
