@@ -247,3 +247,103 @@ func TestAddSubWithMask(t *testing.T) {
 	// SaveImage("MaskImg.png", maskImg, CV_IMWRITE_PNG_COMPRESSION)
 
 }
+
+func TestLogic(t *testing.T) {
+	w, h := 50, 50
+	checkValsWMask := func(img, mask *IplImage, val float64, debug string) {
+		for i := 0; i < w*h; i++ {
+			pix := img.Get1D(i).Val()
+			tst := val
+			if mask.Get1D(i).Val()[0] == 0 {
+				tst = 0
+			}
+			if pix[0] != tst || pix[1] != tst || pix[2] != tst {
+				t.Errorf("Unexpeted value for %s: %f, %f, %f. Expected %fs",
+					debug, pix[0], pix[1], pix[2], val)
+				break
+			}
+		}
+	}
+
+	zero := NewScalar(0, 0, 0, 0)
+	one := NewScalar(1, 1, 1, 0)
+
+	zeroImg := CreateImage(w, h, IPL_DEPTH_8U, 3)
+	zeroImg.Set(zero)
+	oneImg := CreateImage(w, h, IPL_DEPTH_8U, 3)
+	oneImg.Set(one)
+	outImg := zeroImg.Clone()
+
+	defer zeroImg.Release()
+	defer oneImg.Release()
+	defer outImg.Release()
+
+	// generate a random mask
+	maskImg := CreateImage(w, h, IPL_DEPTH_8U, 1)
+	defer maskImg.Release()
+	for i := 0; i < w*h; i++ {
+		oneOrZero := float64(rand.Intn(2)) // random number either 1 or 0
+		maskImg.Set1D(i, NewScalar(oneOrZero*255, 0, 0, 0))
+	}
+
+	// 0 = 0 & 0
+	AndWithMask(zeroImg, zeroImg, outImg, maskImg)
+	checkValsWMask(outImg, maskImg, 0, "AndWithMask()")
+	// 0 = 1 & 0
+	AndWithMask(oneImg, zeroImg, outImg, maskImg)
+	checkValsWMask(outImg, maskImg, 0, "AndWithMask()")
+	// 1 = 1 & 1
+	AndWithMask(oneImg, oneImg, outImg, maskImg)
+	checkValsWMask(outImg, maskImg, 1, "AndWithMask()")
+
+	// 0 = 0 | 0
+	OrWithMask(zeroImg, zeroImg, outImg, maskImg)
+	checkValsWMask(outImg, maskImg, 0, "OrWithMask()")
+	// 1 = 1 | 0
+	OrWithMask(oneImg, zeroImg, outImg, maskImg)
+	checkValsWMask(outImg, maskImg, 1, "OrWithMask()")
+	// 1 = 1 | 1
+	OrWithMask(oneImg, oneImg, outImg, maskImg)
+	checkValsWMask(outImg, maskImg, 1, "OrWithMask()")
+
+	// 0 = 0 ^ 0
+	XorWithMask(zeroImg, zeroImg, outImg, maskImg)
+	checkValsWMask(outImg, maskImg, 0, "XOrWithMask()")
+	// 1 = 1 ^ 0
+	XorWithMask(oneImg, zeroImg, outImg, maskImg)
+	checkValsWMask(outImg, maskImg, 1, "XOrWithMask()")
+	// 0 = 1 ^ 1
+	XorWithMask(oneImg, oneImg, outImg, maskImg)
+	checkValsWMask(outImg, maskImg, 0, "XOrWithMask()")
+
+	// 0 = 0 & 0
+	AndScalarWithMask(zeroImg, zero, outImg, maskImg)
+	checkValsWMask(outImg, maskImg, 0, "AndScalarWithMask()")
+	// 0 = 1 & 0
+	AndScalarWithMask(oneImg, zero, outImg, maskImg)
+	checkValsWMask(outImg, maskImg, 0, "AndScalarWithMask()")
+	// 1 = 1 & 1
+	AndScalarWithMask(oneImg, one, outImg, maskImg)
+	checkValsWMask(outImg, maskImg, 1, "AndScalarWithMask()")
+
+	// 0 = 0 | 0
+	OrScalarWithMask(zeroImg, zero, outImg, maskImg)
+	checkValsWMask(outImg, maskImg, 0, "OrScalarWithMask()")
+	// 1 = 1 | 0
+	OrScalarWithMask(oneImg, zero, outImg, maskImg)
+	checkValsWMask(outImg, maskImg, 1, "OrScalarWithMask()")
+	// 1 = 1 | 1
+	OrScalarWithMask(oneImg, one, outImg, maskImg)
+	checkValsWMask(outImg, maskImg, 1, "OrScalarWithMask()")
+
+	// 0 = 0 ^ 0
+	XorScalarWithMask(zeroImg, zero, outImg, maskImg)
+	checkValsWMask(outImg, maskImg, 0, "XorScalarWithMask()")
+	// 1 = 1 ^ 0
+	XorScalarWithMask(oneImg, zero, outImg, maskImg)
+	checkValsWMask(outImg, maskImg, 1, "XorScalarWithMask()")
+	// 0 = 1 ^ 1
+	XorScalarWithMask(oneImg, one, outImg, maskImg)
+	checkValsWMask(outImg, maskImg, 0, "XorScalarWithMask()")
+
+}

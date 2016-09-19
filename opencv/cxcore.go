@@ -510,16 +510,111 @@ func Zero(img *IplImage) {
 *                   Arithmetic, logic and comparison operations               *
 \****************************************************************************************/
 
-/* dst(idx) = ~src(idx) */
-func Not(src, dst *IplImage) {
-	C.cvNot(unsafe.Pointer(src), unsafe.Pointer(dst))
-}
-
-//CVAPI(void) cvNot( const CvArr* src, CvArr* dst );
-
 // cvAbsDiff(const CvArr* src1, const CvArr* src2, CvArr* dst)
 func AbsDiff(src1, src2, dst *IplImage) {
 	C.cvAbsDiff(unsafe.Pointer(src1), unsafe.Pointer(src2), unsafe.Pointer(dst))
+}
+
+/****************************************************************************************\
+*                                Logic operations                             *
+\****************************************************************************************/
+
+// Inverts every bit of an array.
+func Not(src, dst *IplImage) {
+	C.cvNot(
+		unsafe.Pointer(src),
+		unsafe.Pointer(dst),
+	)
+}
+
+// Calculates the per-element bit-wise conjunction of two arrays.
+func And(src1, src2, dst *IplImage) {
+	AndWithMask(src1, src2, dst, nil)
+}
+
+// Calculates the per-element bit-wise conjunction of two arrays with a mask.
+func AndWithMask(src1, src2, dst, mask *IplImage) {
+	C.cvAnd(
+		unsafe.Pointer(src1),
+		unsafe.Pointer(src2),
+		unsafe.Pointer(dst),
+		unsafe.Pointer(mask),
+	)
+}
+
+// Calculates the per-element bit-wise conjunction of an array and a scalar.
+func AndScalar(src *IplImage, value Scalar, dst *IplImage) {
+	AndScalarWithMask(src, value, dst, nil)
+}
+
+// Calculates the per-element bit-wise conjunction of an array and a scalar with a mask.
+func AndScalarWithMask(src *IplImage, value Scalar, dst, mask *IplImage) {
+	C.cvAndS(
+		unsafe.Pointer(src),
+		(C.CvScalar)(value),
+		unsafe.Pointer(dst),
+		unsafe.Pointer(mask),
+	)
+}
+
+// Calculates the per-element bit-wise disjunction of two arrays.
+func Or(src1, src2, dst *IplImage) {
+	OrWithMask(src1, src2, dst, nil)
+}
+
+// Calculates the per-element bit-wise disjunction of two arrays with a mask.
+func OrWithMask(src1, src2, dst, mask *IplImage) {
+	C.cvOr(
+		unsafe.Pointer(src1),
+		unsafe.Pointer(src2),
+		unsafe.Pointer(dst),
+		unsafe.Pointer(mask),
+	)
+}
+
+// Calculates the per-element bit-wise disjunction of an array and a scalar.
+func OrScalar(src *IplImage, value Scalar, dst *IplImage) {
+	OrScalarWithMask(src, value, dst, nil)
+}
+
+// Calculates the per-element bit-wise disjunction of an array and a scalar with a mask.
+func OrScalarWithMask(src *IplImage, value Scalar, dst, mask *IplImage) {
+	C.cvOrS(
+		unsafe.Pointer(src),
+		(C.CvScalar)(value),
+		unsafe.Pointer(dst),
+		unsafe.Pointer(mask),
+	)
+}
+
+// Calculates the per-element bit-wise “exclusive or” operation on two arrays.
+func Xor(src1, src2, dst *IplImage) {
+	XorWithMask(src1, src2, dst, nil)
+}
+
+// Calculates the per-element bit-wise “exclusive or” operation on two arrays with a mask.
+func XorWithMask(src1, src2, dst, mask *IplImage) {
+	C.cvXor(
+		unsafe.Pointer(src1),
+		unsafe.Pointer(src2),
+		unsafe.Pointer(dst),
+		unsafe.Pointer(mask),
+	)
+}
+
+// Calculates the per-element bit-wise “exclusive or” operation on an array and a scalar.
+func XorScalar(src *IplImage, value Scalar, dst *IplImage) {
+	XorScalarWithMask(src, value, dst, nil)
+}
+
+// Calculates the per-element bit-wise “exclusive or” operation on an array and a scalar with a mask.
+func XorScalarWithMask(src *IplImage, value Scalar, dst, mask *IplImage) {
+	C.cvXorS(
+		unsafe.Pointer(src),
+		(C.CvScalar)(value),
+		unsafe.Pointer(dst),
+		unsafe.Pointer(mask),
+	)
 }
 
 /****************************************************************************************\
