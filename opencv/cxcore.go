@@ -510,11 +510,6 @@ func Zero(img *IplImage) {
 *                   Arithmetic, logic and comparison operations               *
 \****************************************************************************************/
 
-// cvAbsDiff(const CvArr* src1, const CvArr* src2, CvArr* dst)
-func AbsDiff(src1, src2, dst *IplImage) {
-	C.cvAbsDiff(unsafe.Pointer(src1), unsafe.Pointer(src2), unsafe.Pointer(dst))
-}
-
 /****************************************************************************************\
 *                                Logic operations                             *
 \****************************************************************************************/
@@ -703,6 +698,24 @@ func SubScalarWithMaskRev(value Scalar, src, dst, mask *IplImage) {
 		(C.CvScalar)(value),
 		unsafe.Pointer(dst),
 		unsafe.Pointer(mask),
+	)
+}
+
+// Calculates the per-element absolute difference between two arrays.
+func AbsDiff(src1, src2, dst *IplImage) {
+	C.cvAbsDiff(
+		unsafe.Pointer(src1),
+		unsafe.Pointer(src2),
+		unsafe.Pointer(dst),
+	)
+}
+
+// Calculates the per-element absolute difference between an array and a scalar.
+func AbsDiffScalar(src *IplImage, value Scalar, dst *IplImage) {
+	C.cvAbsDiffS(
+		unsafe.Pointer(src),
+		unsafe.Pointer(dst),
+		(C.CvScalar)(value),
 	)
 }
 
