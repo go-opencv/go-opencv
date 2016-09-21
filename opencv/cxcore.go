@@ -736,6 +736,21 @@ func (src *IplImage) EqualizeHist(dst *IplImage) {
 	C.cvEqualizeHist(unsafe.Pointer(src), unsafe.Pointer(dst))
 }
 
+// MeanStdDev alculates mean and standard deviation of pixel values
+func MeanStdDev(src *Mat, mean, stdDev *Scalar) {
+	MeanStdDevWithMask(src, nil, mean, stdDev)
+}
+
+// MeanStdDevWithMask calculates mean and standard deviation of pixel values with mask
+func MeanStdDevWithMask(src, mask *Mat, mean, stdDev *Scalar) {
+	C.cvAvgSdv(
+		unsafe.Pointer(src),
+		(*C.CvScalar)(mean),
+		(*C.CvScalar)(stdDev),
+		unsafe.Pointer(mask),
+	)
+}
+
 /****************************************************************************************\
 *                      Discrete Linear Transforms and Related Functions       *
 \****************************************************************************************/
