@@ -31,7 +31,7 @@ func TestInitFont(t *testing.T) {
 
 func TestPutText(t *testing.T) {
 	_, currentfile, _, _ := runtime.Caller(0)
-	filename := path.Join(path.Dir(currentfile), "../images/lena.jpg")
+	filename := path.Join(path.Dir(currentfile), "../images/pic3.png")
 
 	image := LoadImage(filename)
 	if image == nil {
@@ -41,20 +41,20 @@ func TestPutText(t *testing.T) {
 
 	// Write 'Hello' on the image
 	font := InitFont(CV_FONT_HERSHEY_DUPLEX, 1, 1, 0, 1, 8)
-	color := NewScalar(255, 255, 255, 0)
+	color := NewScalar(0, 0, 0, 0)
 
 	pos := Point{image.Width() / 2, image.Height() / 2}
 	font.PutText(image, "Hello", pos, color)
 
-	filename = path.Join(path.Dir(currentfile), "../images/lena_with_text.jpg")
+	filename = path.Join(path.Dir(currentfile), "../images/pic3_with_text.png")
 
-	// Uncomment this code to create the test image "../images/lena_with_text.jpg"
+	// Uncomment this code to create the test image "../images/pic3_with_text.jpg"
 	// It is part of the repo, and what this test compares against
 	//
 	// SaveImage(filename, image, 0)
 	// println("Saved file", filename)
 
-	tempfilename := path.Join(os.TempDir(), "lena_with_text.jpg")
+	tempfilename := path.Join(os.TempDir(), "pic3_with_text.png")
 	defer syscall.Unlink(tempfilename)
 
 	SaveImage(tempfilename, image, 0)
