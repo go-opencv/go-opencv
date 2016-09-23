@@ -137,3 +137,9 @@ func MinAreaRect(points unsafe.Pointer) Box2D {
 	angle := float32(box.angle)
 	return Box2D{center, size, angle}
 }
+
+// Calculates up-right bounding rectangle of point set
+// points can be either CvSeq* or CvMat*
+func BoundingRect(points unsafe.Pointer) Rect {
+	return (Rect)(C.cvBoundingRect(points, C.int(0)))
+}
