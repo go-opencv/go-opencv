@@ -485,6 +485,10 @@ func CV_HIST_HAS_RANGES() bool {
 
 type Rect C.CvRect
 
+func NewRect(x, y, w, h int) Rect {
+	return Rect{C.int(x), C.int(y), C.int(w), C.int(h)}
+}
+
 func (r *Rect) Init(x, y, w, h int) {
 	r.x = C.int(x)
 	r.y = C.int(y)
@@ -569,6 +573,32 @@ type Point3D interface {
 	IncAngle() float64 // the inclination angle from the z direction
 }
 
+/************************************* CvPoint Structs *********************************/
+
+type CvPoint C.CvPoint
+
+// returns a new CvPoint
+func NewCvPoint(x, y int) CvPoint {
+	return CvPoint{C.int(x), C.int(y)}
+}
+
+// Returns a Point
+func (p CvPoint) ToPoint() Point {
+	return Point{int(p.x), int(p.y)}
+}
+
+type CvPoint2D32f C.CvPoint2D32f
+
+// returns a new CvPoint
+func NewCvPoint2D32f(x, y float32) CvPoint2D32f {
+	return CvPoint2D32f{C.float(x), C.float(y)}
+}
+
+// Returns a Point
+func (p CvPoint2D32f) ToPoint() Point2D32f {
+	return Point2D32f{float32(p.x), float32(p.y)}
+}
+
 /************************************* Point *******************************************/
 
 type Point struct {
@@ -576,18 +606,24 @@ type Point struct {
 	Y int
 }
 
+func (p Point) ToCvPoint() CvPoint {
+	return NewCvPoint(p.X, p.Y)
+}
+
 func (p Point) ToPoint() Point {
 	return p
 }
 
-func (p *Point) Add(p2 Point) {
+func (p Point) Add(p2 Point) Point {
 	p.X += p2.X
 	p.Y += p2.Y
+	return p
 }
 
-func (p *Point) Sub(p2 Point) {
+func (p Point) Sub(p2 Point) Point {
 	p.X -= p2.X
 	p.Y -= p2.Y
+	return p
 }
 
 func (p Point) Radius() float64 {
@@ -613,14 +649,20 @@ func (p Point2D32f) ToPoint() Point {
 	return Point{int(p.X), int(p.Y)}
 }
 
-func (p *Point2D32f) Add(p2 Point2D32f) {
-	p.X += p2.X
-	p.Y += p2.Y
+func (p Point2D32f) ToCvPoint() CvPoint2D32f {
+	return NewCvPoint2D32f(p.X, p.Y)
 }
 
-func (p *Point2D32f) Sub(p2 Point2D32f) {
+func (p Point2D32f) Add(p2 Point2D32f) Point2D32f {
+	p.X += p2.X
+	p.Y += p2.Y
+	return p
+}
+
+func (p Point2D32f) Sub(p2 Point2D32f) Point2D32f {
 	p.X -= p2.X
 	p.Y -= p2.Y
+	return p
 }
 
 func (p Point2D32f) Radius() float64 {
@@ -643,16 +685,18 @@ type Point3D32f struct {
 	Z float32
 }
 
-func (p *Point3D32f) Add(p2 Point3D32f) {
+func (p Point3D32f) Add(p2 Point3D32f) Point3D32f {
 	p.X += p2.X
 	p.Y += p2.Y
 	p.Z += p2.Z
+	return p
 }
 
-func (p *Point3D32f) Sub(p2 Point3D32f) {
+func (p Point3D32f) Sub(p2 Point3D32f) Point3D32f {
 	p.X -= p2.X
 	p.Y -= p2.Y
 	p.Z -= p2.Z
+	return p
 }
 
 func (p Point3D32f) Radius() float64 {
@@ -685,14 +729,16 @@ func (p Point2D64f) ToPoint() Point {
 	return Point{int(p.X), int(p.Y)}
 }
 
-func (p *Point2D64f) Add(p2 Point2D64f) {
+func (p Point2D64f) Add(p2 Point2D64f) Point2D64f {
 	p.X += p2.X
 	p.Y += p2.Y
+	return p
 }
 
-func (p *Point2D64f) Sub(p2 Point2D64f) {
+func (p Point2D64f) Sub(p2 Point2D64f) Point2D64f {
 	p.X -= p2.X
 	p.Y -= p2.Y
+	return p
 }
 
 func (p Point2D64f) Radius() float64 {
@@ -715,16 +761,18 @@ type Point3D64f struct {
 	Z float64
 }
 
-func (p *Point3D64f) Add(p2 Point3D64f) {
+func (p Point3D64f) Add(p2 Point3D64f) Point3D64f {
 	p.X += p2.X
 	p.Y += p2.Y
 	p.Z += p2.Z
+	return p
 }
 
-func (p *Point3D64f) Sub(p2 Point3D64f) {
+func (p Point3D64f) Sub(p2 Point3D64f) Point3D64f {
 	p.X -= p2.X
 	p.Y -= p2.Y
 	p.Z -= p2.Z
+	return p
 }
 
 func (p Point3D64f) Radius() float64 {
