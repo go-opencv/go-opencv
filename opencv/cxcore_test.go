@@ -11,6 +11,7 @@ import (
 	"syscall"
 	"testing"
 	"time"
+	"unsafe"
 )
 
 func init() {
@@ -496,5 +497,199 @@ func TestPointAddSub(t *testing.T) {
 	out10 := p10.Sub(Point3D64f{1, 1, 3})
 	if out10.X != -1 || out10.Y != 0 || out10.Z != -1 {
 		t.Error("Unexpected result from Point3D64f.Sub()")
+	}
+}
+
+func TestSeq(t *testing.T) {
+	// tests the following functions and methods:
+	//		NewCvPoint()
+	//		CreateSeq()
+	//		Seq.Push()
+	//		Seq.PushFront()
+	//		Seq.Pop()
+	//		Seq.PopFront()
+	//		Seq.Total()
+	//		Seq.GetElemAt()
+	//		Seq.RemoveAt()
+
+	// create an empty sequence of points
+	seqOfPoints := CreateSeq(
+		CV_SEQ_ELTYPE_POINT,
+		int(unsafe.Sizeof(CvPoint{})),
+	)
+	defer seqOfPoints.Release()
+
+	// push some points onto the sequence.
+	zerozero := NewCvPoint(0, 0)
+	zeroone := NewCvPoint(0, 1)
+	onezero := NewCvPoint(1, 0)
+	oneone := NewCvPoint(1, 1)
+	seqOfPoints.Push(unsafe.Pointer(&zerozero))
+	seqOfPoints.Push(unsafe.Pointer(&zeroone))
+	seqOfPoints.Push(unsafe.Pointer(&onezero))     // this will be the last element
+	seqOfPoints.PushFront(unsafe.Pointer(&oneone)) // this will be the first element
+
+	// the sequence total should be 4
+	if seqOfPoints.Total() != 4 {
+		t.Error("seq Total() should be 4!")
+	}
+
+	testPtVal := func(result, expected CvPoint, debug string) {
+		if result.x != expected.x || result.y != expected.y {
+			t.Errorf("%s: Result: %v.  Expected: %v", debug, result, expected)
+		}
+	}
+
+	// test the access to points:
+	elem := (*CvPoint)(seqOfPoints.GetElemAt(0))
+	testPtVal(*elem, oneone, "GetElemAt(0)")
+	elem = (*CvPoint)(seqOfPoints.GetElemAt(1))
+	testPtVal(*elem, zerozero, "GetElemAt(1)")
+	elem = (*CvPoint)(seqOfPoints.GetElemAt(2))
+	testPtVal(*elem, zeroone, "GetElemAt(2)")
+	elem = (*CvPoint)(seqOfPoints.GetElemAt(3))
+	testPtVal(*elem, onezero, "GetElemAt(3)")
+
+	// pop some points off from the front and back of the sequence
+	var firstPt, lastPt CvPoint
+	seqOfPoints.PopFront(unsafe.Pointer(&firstPt))
+	seqOfPoints.Pop(unsafe.Pointer(&lastPt))
+
+	// check the values of the popped points
+	testPtVal(firstPt, oneone, "PopFront()")
+	testPtVal(lastPt, onezero, "Pop()")
+
+	// the sequence total should only be two now.
+	if seqOfPoints.Total() != 2 {
+		t.Error("seq Total() should be 2!")
+	}
+
+	// push the last point again...
+	seqOfPoints.Push(unsafe.Pointer(&lastPt))
+
+	// remove the middle element
+	seqOfPoints.RemoveAt(1)
+
+	// the sequence total should be back at 2
+	if seqOfPoints.Total() != 2 {
+		t.Error("seq Total() should be 2!")
+	}
+
+	// verify that the middle was removed by
+	// looking at the two values that are left:
+	elem = (*CvPoint)(seqOfPoints.GetElemAt(0))
+	testPtVal(*elem, zerozero, "GetElemAt(0)")
+	elem = (*CvPoint)(seqOfPoints.GetElemAt(1))
+	testPtVal(*elem, onezero, "GetElemAt(1)")
+
+}
+
+func TestBoundingRectInt(t *testing.T) {
+
+	nTests := 20        // number of tests to run
+	nPointsInSeq := 15  // number of points in each tests
+	maxXYAllowed := 100 // the max X and Y value of each random point generated
+
+	// create an empty sequence of points
+	seqOfPoints := CreateSeq(
+		CV_SEQ_ELTYPE_POINT,
+		int(unsafe.Sizeof(CvPoint{})),
+	)
+	defer seqOfPoints.Release()
+
+	for iTest := 0; iTest < nTests; iTest++ {
+
+		seqOfPoints.Clear()
+
+		minP := Point{maxXYAllowed + 1, maxXYAllowed + 1}
+		maxP := Point{-1, -1}
+
+		// fill the sequence with random points
+		for i := 0; i < nPointsInSeq; i++ {
+			x, y := rand.Intn(maxXYAllowed), rand.Intn(maxXYAllowed)
+			cvP := NewCvPoint(x, y)
+			seqOfPoints.Push(unsafe.Pointer(&cvP))
+			// keep track of minimum and maximum values
+			if x < minP.X {
+				minP.X = x
+			}
+			if y < minP.Y {
+				minP.Y = y
+			}
+			if x > maxP.X {
+				maxP.X = x
+			}
+			if y > maxP.Y {
+				maxP.Y = y
+			}
+		}
+
+		// get the bounding rectangle:
+		b := BoundingRect(unsafe.Pointer(seqOfPoints))
+
+		// calculate expected rectangle:
+		e := NewRect(minP.X, minP.Y, maxP.X-minP.X+1, maxP.Y-minP.Y+1)
+
+		// verify rectangle:
+		if b.X() != e.X() || b.Y() != e.Y() ||
+			b.Width() != e.Width() || b.Height() != e.Height() {
+			t.Errorf("BoundingRect (%d): %v doesn't match expected rect: %v", iTest, b, e)
+		}
+	}
+}
+
+func TestBoundingRectFloat32(t *testing.T) {
+
+	nTests := 20        // number of tests to run
+	nPointsInSeq := 15  // number of points in each test
+	maxXYAllowed := 100 // the max X and y value of each random point generated
+
+	// create an empty sequence of CvPoint2D32f's
+	seqOfPoints := CreateSeq(
+		CV_32FC2,
+		int(unsafe.Sizeof(CvPoint2D32f{})),
+	)
+	defer seqOfPoints.Release()
+
+	for iTest := 0; iTest < nTests; iTest++ {
+
+		seqOfPoints.Clear()
+
+		minP := Point2D32f{float32(maxXYAllowed + 1), float32(maxXYAllowed + 1)}
+		maxP := Point2D32f{-1, -1}
+
+		// fill the sequence with random points, keep track of minimum and maximum values
+		for i := 0; i < nPointsInSeq; i++ {
+			x := rand.Float32() * float32(maxXYAllowed)
+			y := rand.Float32() * float32(maxXYAllowed)
+
+			cvP := NewCvPoint2D32f(x, y)
+			seqOfPoints.Push(unsafe.Pointer(&cvP))
+
+			if x < minP.X {
+				minP.X = x
+			}
+			if y < minP.Y {
+				minP.Y = y
+			}
+			if x > maxP.X {
+				maxP.X = x
+			}
+			if y > maxP.Y {
+				maxP.Y = y
+			}
+		}
+
+		// get the bounding rectangle:
+		b := BoundingRect(unsafe.Pointer(seqOfPoints))
+
+		// calculate expected rectangle:
+		e := NewRect(int(minP.X), int(minP.Y), int(maxP.X)-int(minP.X)+1, int(maxP.Y)-int(minP.Y)+1)
+
+		// verify rectangle:
+		if b.X() != e.X() || b.Y() != e.Y() ||
+			b.Width() != e.Width() || b.Height() != e.Height() {
+			t.Errorf("BoundingRectFloat32 (%d): %v doesn't match expected rect: %v", iTest, b, e)
+		}
 	}
 }
