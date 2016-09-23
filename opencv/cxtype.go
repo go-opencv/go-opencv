@@ -485,6 +485,10 @@ func CV_HIST_HAS_RANGES() bool {
 
 type Rect C.CvRect
 
+func NewRect(x, y, w, h int) Rect {
+	return Rect{C.int(x), C.int(y), C.int(w), C.int(h)}
+}
+
 func (r *Rect) Init(x, y, w, h int) {
 	r.x = C.int(x)
 	r.y = C.int(y)
@@ -571,9 +575,25 @@ type Point3D interface {
 
 /************************************* Point *******************************************/
 
+type CvPoint C.CvPoint
+
+// returns a new CvPoint
+func NewCvPoint(x, y int) CvPoint {
+	return CvPoint{C.int(x), C.int(y)}
+}
+
+// Returns a Point
+func (p CvPoint) ToPoint() Point {
+	return Point{int(p.x), int(p.y)}
+}
+
 type Point struct {
 	X int
 	Y int
+}
+
+func (p Point) ToCvPoint() CvPoint {
+	return NewCvPoint(p.X, p.Y)
 }
 
 func (p Point) ToPoint() Point {
@@ -604,6 +624,18 @@ func (p Point) Angle() float64 {
 
 /************************************* Point2D32f **************************************/
 
+type CvPoint2D32f C.CvPoint2D32f
+
+// returns a new CvPoint
+func NewCvPoint2D32f(x, y float32) CvPoint2D32f {
+	return CvPoint2D32f{C.float(x), C.float(y)}
+}
+
+// Returns a Point
+func (p CvPoint2D32f) ToPoint() Point2D32f {
+	return Point2D32f{float32(p.x), float32(p.y)}
+}
+
 type Point2D32f struct {
 	X float32
 	Y float32
@@ -611,6 +643,10 @@ type Point2D32f struct {
 
 func (p Point2D32f) ToPoint() Point {
 	return Point{int(p.X), int(p.Y)}
+}
+
+func (p Point2D32f) ToCvPoint() CvPoint2D32f {
+	return NewCvPoint2D32f(p.X, p.Y)
 }
 
 func (p *Point2D32f) Add(p2 Point2D32f) {
