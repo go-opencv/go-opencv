@@ -527,6 +527,16 @@ func (roi *IplROI) ToRect() Rect {
 	return Rect(r)
 }
 
+// Returns the Top-Left Point of the rectangle
+func (r *Rect) TL() Point {
+	return Point{int(r.x), int(r.y)}
+}
+
+// Returns the Bottom-Right Point of the rectangle
+func (r *Rect) BR() Point {
+	return Point{int(r.x) + int(r.width), int(r.y) + int(r.height)}
+}
+
 /*********************************** CvTermCriteria *************************************/
 
 const (
