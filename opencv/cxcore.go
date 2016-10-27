@@ -764,25 +764,25 @@ func CreateSeq(seq_flags, elem_size int) *Seq {
 // Adds an element to the sequence end.
 // Returns a pointer to the element added.
 func (seq *Seq) Push(element unsafe.Pointer) unsafe.Pointer {
-	return unsafe.Pointer(C.cvSeqPush(seq, element))
+	return unsafe.Pointer(C.cvSeqPush((*C.struct_CvSeq)(seq), element))
 }
 
 // Removes element from the sequence end.
 // Copies the element into the paramter element.
 func (seq *Seq) Pop(element unsafe.Pointer) {
-	C.cvSeqPop(seq, element)
+	C.cvSeqPop((*C.struct_CvSeq)(seq), element)
 }
 
 // Adds an element to the sequence beginning.
 // Returns a pointer to the element added.
 func (seq *Seq) PushFront(element unsafe.Pointer) unsafe.Pointer {
-	return unsafe.Pointer((C.cvSeqPushFront(seq, element)))
+	return unsafe.Pointer((C.cvSeqPushFront((*C.struct_CvSeq)(seq), element)))
 }
 
 // Removes element from the sequence beginning.
 // Copies the element into the paramter element.
 func (seq *Seq) PopFront(element unsafe.Pointer) {
-	C.cvSeqPopFront(seq, element)
+	C.cvSeqPopFront((*C.struct_CvSeq)(seq), element)
 }
 
 // Releases the sequence storage.
@@ -818,20 +818,20 @@ func (seq *Seq) VPrev() *Seq {
 // Gets a pointer to the element at the index
 func (seq *Seq) GetElemAt(index int) unsafe.Pointer {
 	return (unsafe.Pointer)(C.cvGetSeqElem(
-		seq,
+		(*C.struct_CvSeq)(seq),
 		C.int(index),
 	))
 }
 
 // Removes an element from the middle of a sequence.
 func (seq *Seq) RemoveAt(index int) {
-	C.cvSeqRemove(seq, C.int(index))
+	C.cvSeqRemove((*C.struct_CvSeq)(seq), C.int(index))
 }
 
 // Removes all elements from the sequence.
 // Does not release storage, do that by calling Release().
 func (seq *Seq) Clear() {
-	C.cvClearSeq(seq)
+	C.cvClearSeq((*C.struct_CvSeq)(seq))
 }
 
 // Gets a pointer to the storage
