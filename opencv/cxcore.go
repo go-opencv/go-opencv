@@ -761,22 +761,98 @@ func MeanStdDevWithMask(src, mask *IplImage) (Scalar, Scalar) {
 /****************************************************************************************\
 *                              Dynamic data structures                        *
 \****************************************************************************************/
+
+const (
+	// different sequence flags to use in CreateSeq()
+	CV_SEQ_ELTYPE_POINT   = C.CV_SEQ_ELTYPE_POINT
+	CV_32FC2              = C.CV_32FC2
+	CV_SEQ_ELTYPE_POINT3D = C.CV_SEQ_ELTYPE_POINT3D
+)
+
+// Creates a new sequence.
+func CreateSeq(seq_flags, elem_size int) *Seq {
+	return (*Seq)(C.cvCreateSeq(
+		C.int(seq_flags),
+		C.size_t(unsafe.Sizeof(Seq{})),
+		C.size_t(elem_size),
+		C.cvCreateMemStorage(C.int(0)),
+	))
+}
+
+// Adds an element to the sequence end.
+// Returns a pointer to the element added.
+func (seq *Seq) Push(element unsafe.Pointer) unsafe.Pointer {
+	return unsafe.Pointer(C.cvSeqPush(seq, element))
+}
+
+// Removes element from the sequence end.
+// Copies the element into the paramter element.
+func (seq *Seq) Pop(element unsafe.Pointer) {
+	C.cvSeqPop(seq, element)
+}
+
+// Adds an element to the sequence beginning.
+// Returns a pointer to the element added.
+func (seq *Seq) PushFront(element unsafe.Pointer) unsafe.Pointer {
+	return unsafe.Pointer((C.cvSeqPushFront(seq, element)))
+}
+
+// Removes element from the sequence beginning.
+// Copies the element into the paramter element.
+func (seq *Seq) PopFront(element unsafe.Pointer) {
+	C.cvSeqPopFront(seq, element)
+}
+
+// Releases the sequence storage.
 func (seq *Seq) Release() {
 	C.cvReleaseMemStorage(&seq.storage)
 }
 
+// Gets the total number of elements in the sequence
 func (seq *Seq) Total() int {
 	return (int)(seq.total)
 }
 
+// Gets a pointer to the next sequence
 func (seq *Seq) HNext() *Seq {
 	return (*Seq)(seq.h_next)
 }
 
+// Gets a pointer to the previous sequence
+func (seq *Seq) HPrev() *Seq {
+	return (*Seq)(seq.h_prev)
+}
+
+// Gets a pointer to the 2nd next sequence
 func (seq *Seq) VNext() *Seq {
 	return (*Seq)(seq.v_next)
 }
 
+// Gets a pointer to the 2nd previous sequence
+func (seq *Seq) VPrev() *Seq {
+	return (*Seq)(seq.v_prev)
+}
+
+// Gets a pointer to the element at the index
+func (seq *Seq) GetElemAt(index int) unsafe.Pointer {
+	return (unsafe.Pointer)(C.cvGetSeqElem(
+		seq,
+		C.int(index),
+	))
+}
+
+// Removes an element from the middle of a sequence.
+func (seq *Seq) RemoveAt(index int) {
+	C.cvSeqRemove(seq, C.int(index))
+}
+
+// Removes all elements from the sequence.
+// Does not release storage, do that by calling Release().
+func (seq *Seq) Clear() {
+	C.cvClearSeq(seq)
+}
+
+// Gets a pointer to the storage
 func (seq *Seq) Storage() *MemStorage {
 	return (*MemStorage)(seq.storage)
 }
