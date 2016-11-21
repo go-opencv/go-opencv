@@ -6,6 +6,11 @@ package opencv
 
 /*
 #cgo linux  pkg-config: opencv
+// Add the math library link on arm, as opencv is built without gl support on
+// debian and ubuntu. This one is thus using lrint which is in the math library.
+// The pkg-config arm file doesn't add it though.
+// Workaround it here until fixed in the distros.
+#cgo linux,arm linux,arm64 LDFLAGS: -lm
 #cgo darwin pkg-config: opencv
 #cgo freebsd pkg-config: opencv
 #cgo windows LDFLAGS: -lopencv_core242.dll -lopencv_imgproc242.dll -lopencv_photo242.dll -lopencv_highgui242.dll -lstdc++
