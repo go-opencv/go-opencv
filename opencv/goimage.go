@@ -59,19 +59,27 @@ func FromImageUnsafe(img *image.RGBA) *IplImage {
 
 /* ToImage converts a opencv.IplImage to an go image.Image */
 func (img *IplImage) ToImage() image.Image {
-	out := image.NewNRGBA(image.Rect(0, 0, img.Width(), img.Height()))
+	var height, width, channels, step int = img.Height(), img.Width(), img.Channels(), img.WidthStep()
+	out := image.NewNRGBA(image.Rect(0, 0, width, height))
 	if img.Depth() != IPL_DEPTH_8U {
 		return nil // TODO return error
 	}
+	// Turn opencv.Iplimage.imageData(*char) to slice
+	var limg *C.char = img.imageData
+	var limg_ptr unsafe.Pointer = unsafe.Pointer(limg)
+	var data []C.char = (*[1 << 30]C.char)(limg_ptr)[:height*step : height*step]
 
-	for y := 0; y < img.Height(); y++ {
-		for x := 0; x < img.Width(); x++ {
-			s := img.Get2D(x, y).Val()
-
-			b, g, r := s[0], s[1], s[2]
-
-			c := color.NRGBA{R: uint8(r), G: uint8(g), B: uint8(b), A: uint8(255)}
-			out.Set(x, y, c)
+	c := color.NRGBA{R: uint8(0), G: uint8(0), B: uint8(0), A: uint8(255)}
+	// Iteratively assign imageData's color to Go's image
+	for y := 0; y < height; y++ {
+		for x := 0; x < step; x = x + 3 {
+			c.B = uint8(data[y*step+x])
+			c.G = uint8(data[y*step+x+1])
+			c.R = uint8(data[y*step+x+2])
+			if channels == 4 {
+				c.A = uint8(data[y*step+x+3])
+			}
+			out.SetNRGBA(int(x/3), y, c)
 		}
 	}
 
