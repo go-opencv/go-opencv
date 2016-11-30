@@ -1,5 +1,6 @@
 package opencv
 
+import "C"
 import (
 	"image"
 	"image/color"
