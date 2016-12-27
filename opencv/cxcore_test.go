@@ -693,3 +693,56 @@ func TestBoundingRectFloat32(t *testing.T) {
 		}
 	}
 }
+
+func TestMeanStdDev(t *testing.T) {
+	_, currentfile, _, _ := runtime.Caller(0)
+	filename := path.Join(path.Dir(currentfile), "../images/lena.jpg")
+	if len(os.Args) == 2 {
+		filename = os.Args[1]
+	}
+
+	image := LoadImage(filename)
+	if image == nil {
+		t.Fatal("LoadImage fail")
+	}
+	defer image.Release()
+
+	mean, stdDev := image.MeanStdDev()
+
+	width := image.Width()
+	height := image.Height()
+
+	// Calculated mean and standard deviation
+	for i := 0; i < 3; i++ {
+
+		total := 0.0
+		for x := 0; x < width; x++ {
+			for y := 0; y < height; y++ {
+				total += image.Get2D(x, y).Val()[i]
+			}
+		}
+
+		average := total / float64(width*height)
+
+		total = 0.0
+		for x := 0; x < width; x++ {
+			for y := 0; y < height; y++ {
+				deviation := image.Get2D(x, y).Val()[i] - average
+				total += math.Pow(deviation, 2)
+			}
+		}
+
+		variance := total / float64(width*height)
+		stdDevCalculated := math.Sqrt(variance)
+
+		stdDevPass := stdDevCalculated-stdDev.Val()[i] < 0.0000000001
+		meanPass := average-mean.Val()[i] < 0.0000000001
+		if !stdDevPass {
+			t.Error("Standard deviation calculation fail")
+		}
+		if !meanPass {
+			t.Error("Mean calculation fail")
+		}
+	}
+
+}
