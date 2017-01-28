@@ -71,8 +71,8 @@ func (this *HaarCascade) DetectObjects(image *IplImage) []*Rect {
 		faces = append(faces, rect)
 	}
 
-	storage_c := (*C.CvMemStorage)(storage)
-	C.cvReleaseMemStorage(&storage_c)
+	//storage_c := (*C.CvMemStorage)(storage)
+	//C.cvReleaseMemStorage(&storage_c)
 
 	return faces
 }
