@@ -68,11 +68,12 @@ func (this *HaarCascade) DetectObjects(image *IplImage) []*Rect {
 	var faces []*Rect
 	for i := 0; i < (int)(seq.total); i++ {
 		rect := (*Rect)((*_Ctype_CvRect)(unsafe.Pointer(C.cvGetSeqElem(seq, C.int(i)))))
-		faces = append(faces, rect)
+		rectgc := NewRect(rect.X(),rect.Y(),rect.Width(),rect.Height())
+		faces = append(faces, &rectgc)
 	}
 
-	//storage_c := (*C.CvMemStorage)(storage)
-	//C.cvReleaseMemStorage(&storage_c)
+	storage_c := (*C.CvMemStorage)(storage)
+	C.cvReleaseMemStorage(&storage_c)
 
 	return faces
 }
