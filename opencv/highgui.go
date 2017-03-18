@@ -391,11 +391,14 @@ const (
 )
 
 /* save image to file */
-func SaveImage(filename string, image *IplImage, params int) int {
+func SaveImage(filename string, image *IplImage, params []int) int {
 	name_c := C.CString(filename)
 	defer C.free(unsafe.Pointer(name_c))
-	params_c := C.int(params)
-	rv := C.cvSaveImage(name_c, unsafe.Pointer(image), &params_c)
+	params_c := make([]C.int, 0)
+	for _, param := range params {
+		params_c = append(params_c, C.int(param))
+	}
+	rv := C.cvSaveImage(name_c, unsafe.Pointer(image), &params_c[0])
 	return int(rv)
 }
 
@@ -410,12 +413,15 @@ func DecodeImageM(buf unsafe.Pointer, iscolor int) *Mat {
 }
 
 /* encode image and store the result as a byte vector (single-row 8uC1 matrix) */
-func EncodeImage(ext string, image unsafe.Pointer, params int) *Mat {
-	params_c := C.int(params)
+func EncodeImage(ext string, image unsafe.Pointer, params []int) *Mat {
+	params_c := make([]C.int, 0)
+	for _, param := range params {
+		params_c = append(params_c, C.int(param))
+	}
 	ext_c := C.CString(ext)
 	defer C.free(unsafe.Pointer(ext_c))
 
-	rv := C.cvEncodeImage(ext_c, (image), &params_c)
+	rv := C.cvEncodeImage(ext_c, (image), &params_c[0])
 	return (*Mat)(rv)
 }
 
