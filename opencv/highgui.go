@@ -394,11 +394,15 @@ const (
 func SaveImage(filename string, image *IplImage, params []int) int {
 	name_c := C.CString(filename)
 	defer C.free(unsafe.Pointer(name_c))
-	params_c := make([]C.int, 0)
-	for _, param := range params {
-		params_c = append(params_c, C.int(param))
+	var firstParam *C.int
+	if len(params) > 0 {
+		var params_c []C.int
+		for _, param := range params {
+			params_c = append(params_c, C.int(param))
+		}
+		firstParam = &params_c[0]
 	}
-	rv := C.cvSaveImage(name_c, unsafe.Pointer(image), &params_c[0])
+	rv := C.cvSaveImage(name_c, unsafe.Pointer(image), firstParam)
 	return int(rv)
 }
 
@@ -414,14 +418,18 @@ func DecodeImageM(buf unsafe.Pointer, iscolor int) *Mat {
 
 /* encode image and store the result as a byte vector (single-row 8uC1 matrix) */
 func EncodeImage(ext string, image unsafe.Pointer, params []int) *Mat {
-	params_c := make([]C.int, 0)
-	for _, param := range params {
-		params_c = append(params_c, C.int(param))
+	var firstParam *C.int
+	if len(params) > 0 {
+		var params_c []C.int
+		for _, param := range params {
+			params_c = append(params_c, C.int(param))
+		}
+		firstParam = &params_c[0]
 	}
 	ext_c := C.CString(ext)
 	defer C.free(unsafe.Pointer(ext_c))
 
-	rv := C.cvEncodeImage(ext_c, (image), &params_c[0])
+	rv := C.cvEncodeImage(ext_c, (image), firstParam)
 	return (*Mat)(rv)
 }
 
