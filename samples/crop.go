@@ -22,7 +22,7 @@ func main() {
 	defer image.Release()
 
 	crop := opencv.Crop(image, 0, 0, 50, 50)
-	opencv.SaveImage("/tmp/crop.jpg", crop, 0)
+	opencv.SaveImage("/tmp/crop.jpg", crop, nil)
 	crop.Release()
 
 	os.Exit(0)
