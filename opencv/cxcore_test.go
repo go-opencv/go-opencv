@@ -51,13 +51,13 @@ func TestPutText(t *testing.T) {
 	// Uncomment this code to create the test image "../images/pic3_with_text.jpg"
 	// It is part of the repo, and what this test compares against
 	//
-	// SaveImage(filename, image, 0)
+	// SaveImage(filename, image, nil)
 	// println("Saved file", filename)
 
 	tempfilename := path.Join(os.TempDir(), "pic3_with_text.png")
 	defer syscall.Unlink(tempfilename)
 
-	SaveImage(tempfilename, image, 0)
+	SaveImage(tempfilename, image, nil)
 
 	// Compare actual image with expected image
 	same, err := BinaryCompare(filename, tempfilename)
@@ -181,10 +181,10 @@ func TestAddSub(t *testing.T) {
 	checkValsWMask(t, negImage, nil, 0, "SubScalarRev()")
 
 	// Uncomment to save these images to disk
-	// SaveImage("zeroImg.png", zeroImg, CV_IMWRITE_PNG_COMPRESSION)
-	// SaveImage("hundredImg.png", hundredImg, CV_IMWRITE_PNG_COMPRESSION)
-	// SaveImage("twoHundredImg.png", twoHundredImg, CV_IMWRITE_PNG_COMPRESSION)
-	// SaveImage("negImage.png", negImage, CV_IMWRITE_PNG_COMPRESSION)
+	// SaveImage("zeroImg.png", zeroImg, []int{CV_IMWRITE_PNG_COMPRESSION, 3})
+	// SaveImage("hundredImg.png", hundredImg, []int{CV_IMWRITE_PNG_COMPRESSION, 3})
+	// SaveImage("twoHundredImg.png", twoHundredImg, []int{CV_IMWRITE_PNG_COMPRESSION, 3})
+	// SaveImage("negImage.png", negImage, []int{CV_IMWRITE_PNG_COMPRESSION, 3})
 
 }
 
@@ -232,11 +232,11 @@ func TestAddSubWithMask(t *testing.T) {
 	checkValsWMask(t, negImage, maskImg, 0, "SubScalarWithMaskRev()")
 
 	// Uncomment to save these images to disk
-	// SaveImage("zeroImgMask.png", zeroImg, CV_IMWRITE_PNG_COMPRESSION)
-	// SaveImage("hundredImgMask.png", hundredImg, CV_IMWRITE_PNG_COMPRESSION)
-	// SaveImage("twoHundredImgMask.png", twoHundredImg, CV_IMWRITE_PNG_COMPRESSION)
-	// SaveImage("negImageMask.png", negImage, CV_IMWRITE_PNG_COMPRESSION)
-	// SaveImage("MaskImg.png", maskImg, CV_IMWRITE_PNG_COMPRESSION)
+	// SaveImage("zeroImgMask.png", zeroImg, []int{CV_IMWRITE_PNG_COMPRESSION, 3})
+	// SaveImage("hundredImgMask.png", hundredImg, []int{CV_IMWRITE_PNG_COMPRESSION, 3})
+	// SaveImage("twoHundredImgMask.png", twoHundredImg, []int{CV_IMWRITE_PNG_COMPRESSION, 3})
+	// SaveImage("negImageMask.png", negImage, []int{CV_IMWRITE_PNG_COMPRESSION, 3})
+	// SaveImage("MaskImg.png", maskImg, []int{CV_IMWRITE_PNG_COMPRESSION, 3})
 
 }
 

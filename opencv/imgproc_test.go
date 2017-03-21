@@ -94,11 +94,11 @@ func TestFindContours(t *testing.T) {
 	// Uncomment this code to create the test image "../images/shapes_contours.png"
 	// It is part of the repo, and what this test compares against
 	//
-	//SaveImage(filename), contours, 0)
+	//SaveImage(filename), contours, nil)
 
 	tempfilename := path.Join(os.TempDir(), "pic5_contours.png")
 	defer syscall.Unlink(tempfilename)
-	SaveImage(tempfilename, contours, 0)
+	SaveImage(tempfilename, contours, nil)
 
 	// Compare actual image with expected image
 	same, err := BinaryCompare(filename, tempfilename)
