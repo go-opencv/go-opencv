@@ -24,6 +24,44 @@ const (
 	CV_INTER_LANCZOS4 = int(C.CV_INTER_LANCZOS4)
 )
 
+// For use with WarpPerspective
+const (
+	CV_WARP_FILL_OUTLIERS = int(C.CV_WARP_FILL_OUTLIERS)
+	CV_WARP_INVERSE_MAP   = int(C.CV_WARP_INVERSE_MAP)
+)
+
+// GetPerspectiveTransform calculates a perspective transform from four pairs of the corresponding points.
+//
+// Parameters:
+// 	src – Coordinates of quadrangle vertices in the source image.
+// 	dst – Coordinates of the corresponding quadrangle vertices in the destination image.
+// 	Returns the computed matrix
+func GetPerspectiveTransform(rect, dst []CvPoint2D32f) *Mat {
+	mat := CreateMat(3, 3, CV_64F)
+	result := C.cvGetPerspectiveTransform(
+		(*C.CvPoint2D32f)(&rect[0]),
+		(*C.CvPoint2D32f)(&dst[0]),
+		(*C.struct_CvMat)(mat))
+	return (*Mat)(result)
+}
+
+// WarpPerspective applies a perspective transformation to an image.
+//
+// Parameters:
+// 	src - input image
+// 	dst – output image
+// 	mapMatrix – 3x3 transformation matrix
+// 	flags – combination of interpolation methods. In the C version, it is `flags=CV_INTER_LINEAR+CV_WARP_FILL_OUTLIERS` by default
+// 	fillVal - In the C version, it is `fillval=(0, 0, 0, 0)` by default
+func WarpPerspective(src, dst *IplImage, mapMatrix *Mat, flags int, fillVal Scalar) {
+	C.cvWarpPerspective(
+		unsafe.Pointer(src),
+		unsafe.Pointer(dst),
+		(*C.struct_CvMat)(mapMatrix),
+		C.int(flags),
+		(C.CvScalar)(fillVal))
+}
+
 func Resize(src *IplImage, width, height, interpolation int) *IplImage {
 	if width == 0 && height == 0 {
 		panic("Width and Height cannot be 0 at the same time")

@@ -8,6 +8,85 @@ import (
 	"testing"
 )
 
+func TestGetPerspectiveTransform(t *testing.T) {
+	rect := []CvPoint2D32f{
+		CvPoint2D32f{265, 284},
+		CvPoint2D32f{853, 284},
+		CvPoint2D32f{862, 693},
+		CvPoint2D32f{264, 708},
+	}
+	dst := []CvPoint2D32f{
+		CvPoint2D32f{0, 0},
+		CvPoint2D32f{597, 0},
+		CvPoint2D32f{597, 423},
+		CvPoint2D32f{0, 423},
+	}
+
+	res := GetPerspectiveTransform(rect, dst)
+
+	expectedzerozero := 0.9761296668351994
+	zerozero := res.Get(0, 0)
+	if zerozero != expectedzerozero {
+		t.Fatalf("expected result is %f, returned %f\n", expectedzerozero, zerozero)
+	}
+
+	twoone := res.Get(2, 1)
+	expectedtwoone := 4.113229363293566e-05
+	if twoone != expectedtwoone {
+		t.Fatalf("expected result is %f, returned %f\n", expectedtwoone, twoone)
+	}
+}
+
+func TestWarpPerspective(t *testing.T) {
+	_, currentfile, _, _ := runtime.Caller(0)
+	filename := path.Join(path.Dir(currentfile), "../images/pic5.png")
+
+	image := LoadImage(filename)
+
+	if image == nil {
+		t.Fatal("LoadImage fail")
+	}
+	defer image.Release()
+
+	warped := image.Clone()
+	defer warped.Release()
+
+	rect := []CvPoint2D32f{
+		CvPoint2D32f{0, 0},
+		CvPoint2D32f{400, 0},
+		CvPoint2D32f{400, 300},
+		CvPoint2D32f{0, 300},
+	}
+	dst := []CvPoint2D32f{
+		CvPoint2D32f{0, 0},
+		CvPoint2D32f{400, 0},
+		CvPoint2D32f{200, 160},
+		CvPoint2D32f{0, 60},
+	}
+
+	M := GetPerspectiveTransform(rect, dst)
+	fillVal := ScalarAll(0)
+	WarpPerspective(image, warped, M, CV_INTER_LINEAR+CV_WARP_FILL_OUTLIERS, fillVal)
+	filename = path.Join(path.Dir(currentfile), "../images/pic5_warped.jpg")
+	// Uncomment this code to create the test image "../images/pic5_warped.jpg"
+	// It is part of the repo, and what this test compares against
+	//
+	//SaveImage(filename), warped, nil)
+
+	tempfilename := path.Join(os.TempDir(), "pic5_warped.jpg")
+	defer syscall.Unlink(tempfilename)
+	SaveImage(tempfilename, warped, nil)
+
+	// Compare actual image with expected image
+	same, err := BinaryCompare(filename, tempfilename)
+	if err != nil {
+		t.Fatal(err)
+	}
+	if !same {
+		t.Error("Expected warp file != actual warp file")
+	}
+}
+
 func TestResize(t *testing.T) {
 	_, currentfile, _, _ := runtime.Caller(0)
 	filename := path.Join(path.Dir(currentfile), "../images/lena.jpg")
