@@ -31,13 +31,13 @@ func main() {
 			if img != nil {
 				faces := cascade.DetectObjects(img)
 				for _, value := range faces {
-					opencv.Circle(img,
-						opencv.Point{
-							value.X() + (value.Width() / 2),
-							value.Y() + (value.Height() / 2),
-						},
-						value.Width()/2,
-						opencv.ScalarAll(255.0), 1, 1, 0)
+					upLeftPoint := opencv.Point{X: values.X(), Y: values.Y()}
+					downRightPoint := opencv.Point{
+						X: values.X() + values.Width(),
+						Y: values.Y() + values.Height()
+					}
+					bboxColor := opencv.NewScalar(0, 255.0, 0)
+					opencv.Rectangle(img, upLeftPoint, downRightPoint, bboxColor, 3, 0, 0)
 				}
 
 				win.ShowImage(img)
