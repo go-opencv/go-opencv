@@ -63,12 +63,13 @@ func LoadHaarClassifierCascade(haar string) *HaarCascade {
 }
 
 func (this *HaarCascade) DetectObjects(image *IplImage) []*Rect {
-	storage := C.cvCreateMemStorage(0)
+	storage := C.cvCreateMemStorage(C.int(0))
 	seq := C.cvHaarDetectObjects(unsafe.Pointer(image), this.cascade, storage, 1.1, 3, C.CV_HAAR_DO_CANNY_PRUNING, C.cvSize(0, 0), C.cvSize(0, 0))
 	var faces []*Rect
 	for i := 0; i < (int)(seq.total); i++ {
 		rect := (*Rect)((*_Ctype_CvRect)(unsafe.Pointer(C.cvGetSeqElem(seq, C.int(i)))))
-		faces = append(faces, rect)
+		rectgc := NewRect(rect.X(),rect.Y(),rect.Width(),rect.Height())
+		faces = append(faces, &rectgc)
 	}
 
 	storage_c := (*C.CvMemStorage)(storage)
