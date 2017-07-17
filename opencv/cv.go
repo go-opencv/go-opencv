@@ -56,6 +56,15 @@ func Smooth(src, dst *IplImage, smoothtype,
 //                      double param3 CV_DEFAULT(0),
 //                      double param4 CV_DEFAULT(0));
 
+/* Laplace The function calculates the Laplacian */
+func Laplace(src, dst *IplImage, aperture_size int) {
+	C.cvLaplace(unsafe.Pointer(src), unsafe.Pointer(dst), C.int(aperture_size))
+}
+
+//CVAPI(void) cvLaplace( const CvArr* src,
+//                       CvArr* dst,
+//                       int aperture_size CV_DEFAULT(3) );
+
 /*
 ConvertScale converts one image to another with optional linear transformation.
 */
