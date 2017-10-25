@@ -10,7 +10,7 @@ package main
 
 import (
 	"fmt"
-	"github.com/lazywei/go-opencv/opencv"
+	"github.com/go-opencv/go-opencv/opencv"
 	"os"
 )
 
