@@ -4,8 +4,8 @@ import (
 	"fmt"
 	"os"
 	"path"
-
-	"../opencv"
+	
+	"github.com/lazywei/go-opencv/opencv"
 )
 
 func main() {
