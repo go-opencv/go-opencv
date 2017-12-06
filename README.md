@@ -21,6 +21,8 @@ This is a fork of [chai's go-opencv](https://github.com/chai2010/opencv), which 
 
 Install Go and OpenCV, you might want to install both of them via `apt-get` or `homebrew`.
 
+You can reference the [link](https://docs.opencv.org/trunk/d7/d9f/tutorial_linux_install.html) to install required packages.
+
 ```
 go get github.com/lazywei/go-opencv
 cd $GOPATH/src/github.com/lazywei/go-opencv/samples
