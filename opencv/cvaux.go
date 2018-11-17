@@ -5,10 +5,6 @@
 package opencv
 
 //#include "opencv.h"
-//#cgo linux  pkg-config: opencv
-//#cgo darwin pkg-config: opencv
-//#cgo freebsd pkg-config: opencv
-//#cgo windows LDFLAGS: -lopencv_core242.dll -lopencv_imgproc242.dll -lopencv_photo242.dll -lopencv_highgui242.dll -lstdc++
 import "C"
 import (
 	"unsafe"
@@ -68,7 +64,7 @@ func (this *HaarCascade) DetectObjects(image *IplImage) []*Rect {
 	var faces []*Rect
 	for i := 0; i < (int)(seq.total); i++ {
 		rect := (*Rect)((*_Ctype_CvRect)(unsafe.Pointer(C.cvGetSeqElem(seq, C.int(i)))))
-		rectgc := NewRect(rect.X(),rect.Y(),rect.Width(),rect.Height())
+		rectgc := NewRect(rect.X(), rect.Y(), rect.Width(), rect.Height())
 		faces = append(faces, &rectgc)
 	}
 
