@@ -6,7 +6,7 @@ import (
 	//"path"
 	//"runtime"
 
-	"github.com/lazywei/go-opencv/opencv"
+	"github.com/zhenligod/go-opencv/opencv"
 	//"../opencv" // can be used in forks, comment in real application
 )
 

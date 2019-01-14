@@ -5,7 +5,7 @@ import (
 	"os"
 	"path"
 
-	"../opencv"
+	"github.com/zhenligod/go-opencv/opencv"
 )
 
 func main() {
