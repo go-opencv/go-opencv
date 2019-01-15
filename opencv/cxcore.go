@@ -58,6 +58,40 @@ func CreateImage(w, h, depth, channels int) *IplImage {
 	return (*IplImage)(img)
 }
 
+// Merge creates one multichannel array out of several single-channel ones.
+func Merge(imgBlue, imgGreen, imgRed, imgAlpha, dst *IplImage) {
+	C.cvMerge(
+		unsafe.Pointer(imgBlue),
+		unsafe.Pointer(imgGreen),
+		unsafe.Pointer(imgRed),
+		unsafe.Pointer(imgAlpha),
+		unsafe.Pointer(dst),
+	)
+}
+
+// Split divides a multi-channel array into several single-channel arrays.
+func Split(src, imgBlue, imgGreen, imgRed, imgAlpha *IplImage) {
+	C.cvSplit(
+		unsafe.Pointer(src),
+		unsafe.Pointer(imgBlue),
+		unsafe.Pointer(imgGreen),
+		unsafe.Pointer(imgRed),
+		unsafe.Pointer(imgAlpha),
+	)
+}
+
+// AddWeighted calculates the weighted sum of two images.
+func AddWeighted(src1 *IplImage, alpha float64, src2 *IplImage, beta float64, gamma float64, dst *IplImage) {
+	C.cvAddWeighted(
+		unsafe.Pointer(src1),
+		C.double(alpha),
+		unsafe.Pointer(src2),
+		C.double(beta),
+		C.double(gamma),
+		unsafe.Pointer(dst),
+	)
+}
+
 /* SetData assigns user data to the image header */
 func (img *IplImage) SetData(data unsafe.Pointer, step int) {
 	C.cvSetData(unsafe.Pointer(img), data, C.int(step))
