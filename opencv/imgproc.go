@@ -119,11 +119,13 @@ func DrawContours(image *IplImage, contours *Seq, externalColor, holeColor Scala
 }
 
 // CvSeq* cvApproxPoly(const void* src_seq, int header_size, CvMemStorage* storage, int method, double eps, int recursive=0 )
-func ApproxPoly(src *Seq, header_size int, storage *MemStorage, method int, eps float64, recursive int) *Seq {
+func ApproxPoly(src *Seq, method int, eps float64, recursive int) *Seq {
+	storage := C.cvCreateMemStorage(0)
+	header_size := (C.size_t)(unsafe.Sizeof(C.CvContour{}))
 	seq := C.cvApproxPoly(
 		unsafe.Pointer(src),
 		C.int(header_size),
-		(*C.CvMemStorage)(storage),
+		storage,
 		C.int(method),
 		C.double(eps),
 		C.int(recursive))
