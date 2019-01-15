@@ -5,7 +5,7 @@ import (
 	"path"
 	"runtime"
 
-	opencv "github.com/lazywei/go-opencv/opencv"
+	opencv "github.com/zhenligod/go-opencv/opencv"
 )
 
 func main() {
