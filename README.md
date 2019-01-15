@@ -24,8 +24,8 @@ Install Go and OpenCV, you might want to install both of them via `apt-get` or `
 You can reference the [link](https://docs.opencv.org/trunk/d7/d9f/tutorial_linux_install.html) to install required packages.
 
 ```
-go get github.com/lazywei/go-opencv
-cd $GOPATH/src/github.com/lazywei/go-opencv/samples
+go get github.com/go-opencv/go-opencv
+cd $GOPATH/src/github.com/go-opencv/go-opencv/samples
 go run hellocv.go
 ```
 
@@ -40,7 +40,7 @@ go run hellocv.go
 # include\opencv --> ${MinGWRoot}\include\opencv
 # include\opencv2 --> ${MinGWRoot}\include\opencv2
 
-go get github.com/lazywei/go-opencv
+go get github.com/go-opencv/go-opencv
 cd ${GoOpenCVRoot}/trunk/samples && go run hellocv.go
 ```
 
@@ -61,7 +61,7 @@ Please also note that the basic data structures in OpenCV (e.g., `cv::Mat`, `cv:
 ```go
 package main
 
-import . "github.com/lazywei/go-opencv/gocv"
+import . "github.com/go-opencv/go-opencv/gocv"
 import "github.com/gonum/matrix/mat64"
 
 func main() {
@@ -89,7 +89,7 @@ func main() {
 ```go
 package main
 
-import opencv "github.com/lazywei/go-opencv/opencv"
+import opencv "github.com/go-opencv/go-opencv/opencv"
 
 func main() {
 	filename := "bert.jpg"
@@ -118,7 +118,7 @@ go run webcam.go
 
 ### More
 
-You can find more samples at: https://github.com/lazywei/go-opencv/tree/master/samples
+You can find more samples at: https://github.com/go-opencv/go-opencv/tree/master/samples
 
 ## How to contribute
 
@@ -126,7 +126,7 @@ You can find more samples at: https://github.com/lazywei/go-opencv/tree/master/s
 - Clone the main repo, and add your fork as a remote
 
   ```
-  git clone https://github.com/lazywei/go-opencv.git
+  git clone https://github.com/go-opencv/go-opencv.git
   cd go-opencv
   git remote rename origin upstream
   git remote add origin https://github.com/your_github_account/go-opencv.git
