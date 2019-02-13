@@ -177,3 +177,83 @@ func MinAreaRect(points unsafe.Pointer) Box2D {
 func BoundingRect(points unsafe.Pointer) Rect {
 	return (Rect)(C.cvBoundingRect(points, C.int(0)))
 }
+
+const (
+	CV_HOUGH_STANDARD      = int(C.CV_HOUGH_STANDARD)
+	CV_HOUGH_PROBABILISTIC = int(C.CV_HOUGH_PROBABILISTIC)
+	CV_HOUGH_MULTI_SCALE   = int(C.CV_HOUGH_MULTI_SCALE)
+	CV_HOUGH_GRADIENT      = int(C.CV_HOUGH_GRADIENT)
+)
+
+type Point32 struct {
+	X,Y uint32
+}
+func (p Point32)Point() Point {
+	return Point {int(p.X), int(p.Y)}
+}
+type Line32 struct{
+	P1, P2 Point32
+}
+
+// Finds lines on binary image using one of several methods.
+//   line_storage is either memory storage or 1 x <max number of lines> CvMat, its
+//   number of columns is changed by the function.
+//   method is one of CV_HOUGH_*;
+//   rho, theta and threshold are used for each of those methods;
+//   param1 ~ line length, param2 ~ line gap - for probabilistic,
+//   param1 ~ srn, param2 ~ stn - for multi-scale 
+func HoughLines2(img *IplImage, method int, 
+				 rho, theta float64, 
+				 threshold int, p1, p2 float64)				[]Line32{
+	storage := C.cvCreateMemStorage(0)
+	var s *C.CvSeq
+	s = C.cvHoughLines2( 
+		unsafe.Pointer(img), unsafe.Pointer(storage), C.int(method), 
+		C.double(rho), C.double(theta), C.int(threshold),
+		C.double(p1),  C.double(p2))
+	seq := (*Seq)(s)
+	defer seq.Release()
+	if seq == nil || seq.Total() == 0 {
+		return []Line32{}
+	}
+	lines := make([]Line32, seq.Total(), seq.Total())
+	for i := range lines {
+		ptr := seq.GetElemAt(i)
+		lines[i].P1.X = *(*uint32)(ptr); p:=uintptr(ptr); p+=4; ptr=unsafe.Pointer(p)
+		lines[i].P1.Y = *(*uint32)(ptr); p =uintptr(ptr); p+=4; ptr=unsafe.Pointer(p)
+		lines[i].P2.X = *(*uint32)(ptr); p =uintptr(ptr); p+=4; ptr=unsafe.Pointer(p)
+		lines[i].P2.Y = *(*uint32)(ptr)
+	}
+	return lines
+}
+
+//finds lines in the black-n-white image using the standard or pyramid Hough transform
+func HoughLines(img *IplImage, rho, theta float64, threshold int, 
+				srn, stn float64)	[]Line32 {
+	return HoughLines2(img, CV_HOUGH_STANDARD, rho, theta, threshold, srn, stn)
+}
+
+//finds line segments in the black-n-white image using probabilistic Hough transform
+func HoughLinesP(img *IplImage, rho, theta float64, threshold int, 
+				minLineLength, maxLineGap float64)	[]Line32 {
+	return HoughLines2(img, CV_HOUGH_PROBABILISTIC, rho, theta, threshold, 
+		minLineLength, maxLineGap)
+}
+
+/*
+left for the future ...
+// Finds circles in the image 
+CVAPI(CvSeq*) cvHoughCircles( CvArr* image, void* circle_storage,
+                              int method, double dp, double min_dist,
+                              double param1 CV_DEFAULT(100),
+                              double param2 CV_DEFAULT(100),
+                              int min_radius CV_DEFAULT(0),
+                              int max_radius CV_DEFAULT(0));
+                              
+//! finds circles in the grayscale image using 2+1 gradient Hough transform
+CV_EXPORTS_W void HoughCircles( InputArray image, OutputArray circles,
+                               int method, double dp, double minDist,
+                               double param1=100, double param2=100,
+                               int minRadius=0, int maxRadius=0 );
+                              
+*/
